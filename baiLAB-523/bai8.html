@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 8 - Bộ đếm</title>
+    <style> body { font-family: Arial; text-align: center; margin: 100px; } #count { font-size: 80px; } </style>
+</head>
+<body>
+    <h1>Bộ đếm</h1>
+    <div id="count">0</div>
+    <button onclick="changeCount(-1)">-</button>
+    <button onclick="changeCount(1)">+</button>
+    <button onclick="resetCount()">Reset</button>
+
+    <script>
+        let count = 0;
+        const countEl = document.getElementById('count');
+
+        function updateDisplay() {
+            countEl.textContent = count;
+            countEl.style.color = count > 0 ? 'green' : count < 0 ? 'red' : 'black';
+        }
+
+        function changeCount(value) {
+            count += value;
+            updateDisplay();
+        }
+
+        function resetCount() {
+            count = 0;
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>

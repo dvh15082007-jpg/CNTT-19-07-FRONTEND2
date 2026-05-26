@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 12 - Quản lý sinh viên</title>
+    <style> body { font-family: Arial; text-align: center; } table { margin: 20px auto; } </style>
+</head>
+<body>
+    <h1>Quản lý sinh viên</h1>
+    <input type="text" id="name" placeholder="Họ tên">
+    <input type="text" id="class" placeholder="Lớp">
+    <button onclick="addStudent()">Thêm</button>
+    <table id="studentTable" border="1"></table>
+
+    <script>
+        let students = [
+            {id:1, name:"Nguyễn Văn A", class:"CNTT1"}
+        ];
+
+        function render() {
+            let html = `<tr><th>ID</th><th>Họ tên</th><th>Lớp</th><th>Hành động</th></tr>`;
+            students.forEach((s, i) => {
+                html += `<tr>
+                    <td>${s.id}</td>
+                    <td>${s.name}</td>
+                    <td>${s.class}</td>
+                    <td><button onclick="deleteStudent(${i})">Xóa</button></td>
+                </tr>`;
+            });
+            document.getElementById('studentTable').innerHTML = html;
+        }
+
+        function addStudent() {
+            const name = document.getElementById('name').value;
+            const cls = document.getElementById('class').value;
+            if (name && cls) {
+                students.push({id: students.length + 1, name, class: cls});
+                document.getElementById('name').value = '';
+                document.getElementById('class').value = '';
+                render();
+            }
+        }
+
+        function deleteStudent(index) {
+            students.splice(index, 1);
+            render();
+        }
+
+        render();
+    </script>
+</body>
+</html>

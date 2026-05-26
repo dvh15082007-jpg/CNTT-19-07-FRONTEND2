@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TechFest 2026</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+
+        body{
+            background-color: #f5f7fa;
+        }
+
+        /* HERO */
+        .hero{
+            background: linear-gradient(rgba(0,0,0,0.6),
+            rgba(0,0,0,0.6)),
+            url('https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1600&auto=format&fit=crop');
+
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 120px 0;
+        }
+
+        .hero h1{
+            font-size: 55px;
+            font-weight: bold;
+        }
+
+        .hero p{
+            font-size: 22px;
+        }
+
+        /* CARD */
+        .card{
+            border: none;
+            border-radius: 15px;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .card:hover{
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .icon-box{
+            font-size: 40px;
+            color: #0d6efd;
+            margin-bottom: 15px;
+        }
+
+        /* FOOTER */
+        footer{
+            background: #0d6efd;
+            color: white;
+            padding: 20px 0;
+            margin-top: 60px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+        <div class="container">
+
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-cpu"></i> TechFest 2026
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="menu">
+                <ul class="navbar-nav ms-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Trang chủ</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Sự kiện</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Diễn giả</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Liên hệ</a>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero text-center">
+
+        <div class="container">
+
+            <h1>Hội thảo Công nghệ 2026</h1>
+
+            <p class="lead mt-3">
+                Ngày 15/06/2026 - Đại học Đà Nẵng
+            </p>
+
+            <a href="#register" class="btn btn-warning btn-lg mt-4 px-4">
+                Đăng ký ngay
+            </a>
+
+        </div>
+
+    </section>
+
+    <!-- CONTENT -->
+    <div class="container py-5">
+
+        <div class="row g-4">
+
+            <!-- CARD 1 -->
+            <div class="col-md-4">
+
+                <div class="card h-100 text-center p-4">
+
+                    <div class="icon-box">
+                        <i class="bi bi-lightbulb"></i>
+                    </div>
+
+                    <h4>Điểm nổi bật</h4>
+
+                    <ul class="list-group list-group-flush mt-3">
+                        <li class="list-group-item">
+                            Workshop AI & Machine Learning
+                        </li>
+
+                        <li class="list-group-item">
+                            Cuộc thi Hackathon
+                        </li>
+
+                        <li class="list-group-item">
+                            Networking với chuyên gia
+                        </li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <!-- CARD 2 -->
+            <div class="col-md-4">
+
+                <div class="card h-100 text-center p-4">
+
+                    <div class="icon-box">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+
+                    <h4>Lịch trình</h4>
+
+                    <div class="mt-3 text-start">
+
+                        <p>
+                            <strong>08:00 - 12:00</strong><br>
+                            Hội thảo chính
+                        </p>
+
+                        <p>
+                            <strong>13:30 - 16:00</strong><br>
+                            Workshop chuyên sâu
+                        </p>
+
+                        <p>
+                            <strong>16:30 - 18:00</strong><br>
+                            Giao lưu doanh nghiệp
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CARD 3 -->
+            <div class="col-md-4">
+
+                <div class="card h-100 p-4" id="register">
+
+                    <div class="text-center">
+
+                        <div class="icon-box">
+                            <i class="bi bi-pencil-square"></i>
+                        </div>
+
+                        <h4>Đăng ký tham gia</h4>
+
+                    </div>
+
+                    <form class="mt-4">
+
+                        <input 
+                            type="text"
+                            class="form-control mb-3"
+                            placeholder="Họ và tên"
+                            required
+                        >
+
+                        <input 
+                            type="email"
+                            class="form-control mb-3"
+                            placeholder="Email"
+                            required
+                        >
+
+                        <input 
+                            type="tel"
+                            class="form-control mb-3"
+                            placeholder="Số điện thoại"
+                        >
+
+                        <button class="btn btn-success w-100">
+                            Gửi đăng ký
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="text-center">
+
+        <div class="container">
+
+            <p class="mb-0">
+                © 2026 TechFest - Hội thảo Công nghệ Việt Nam
+            </p>
+
+        </div>
+
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

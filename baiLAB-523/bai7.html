@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 7 - DOM</title>
+    <style> body { font-family: Arial; text-align: center; } img { width: 300px; } </style>
+</head>
+<body>
+    <h1 id="title">Trang Web Demo</h1>
+    <p id="desc">Đây là mô tả ban đầu.</p>
+    <img id="image" src="TNT.jpg">
+    <br><br>
+    <button onclick="changeContent()">Thay đổi nội dung</button>
+    <button onclick="resetContent()">Khôi phục</button>
+
+    <script>
+        function changeContent() {
+            document.getElementById('title').textContent = "Đã thay đổi tiêu đề!";
+            document.getElementById('desc').innerHTML = "Mô tả mới <strong>rất đẹp</strong>!";
+            document.getElementById('image').src = "do gojo.jpg";
+        }
+
+        function resetContent() {
+            document.getElementById('title').textContent = "Trang Web Demo";
+            document.getElementById('desc').textContent = "Đây là mô tả ban đầu.";
+            document.getElementById('image').src = "TNT.jpg";
+        }
+    </script>
+</body>
+</html>

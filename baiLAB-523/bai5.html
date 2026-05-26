@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 5 - Danh sách sản phẩm</title>
+    <style> body { font-family: Arial; text-align: center; } table { margin: 20px auto; border-collapse: collapse; } th, td { padding: 10px; border: 1px solid #ccc; } </style>
+</head>
+<body>
+    <h1>Danh sách sản phẩm</h1>
+    <input type="text" id="search" placeholder="Tìm theo tên" onkeyup="searchProduct()">
+    <input type="number" id="minPrice" placeholder="Giá tối thiểu" onkeyup="filterPrice()">
+    <button onclick="filterPrice()">Lọc</button>
+    
+    <table id="productTable"></table>
+
+    <script>
+        const products = [
+            {id:1, name:"Laptop Dell", price:15000000},
+            {id:2, name:"iPhone 14", price:22000000},
+            {id:3, name:"Tai nghe Sony", price:2500000},
+            {id:4, name:"Chuột Logitech", price:800000},
+            {id:5, name:"Bàn phím cơ", price:1200000}
+        ];
+
+        function renderProducts(data) {
+            let html = `<tr><th>ID</th><th>Tên</th><th>Giá</th></tr>`;
+            data.forEach(p => {
+                html += `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.price.toLocaleString()}đ</td></tr>`;
+            });
+            document.getElementById('productTable').innerHTML = html;
+        }
+
+        function searchProduct() {
+            const keyword = document.getElementById('search').value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(keyword));
+            renderProducts(filtered);
+        }
+
+        function filterPrice() {
+            const min = parseFloat(document.getElementById('minPrice').value) || 0;
+            const filtered = products.filter(p => p.price >= min);
+            renderProducts(filtered);
+        }
+
+        renderProducts(products);
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 15 - Validate Form</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style> body { font-family: Arial; max-width: 500px; margin: 40px auto; } .error { color: red; font-size: 14px; } </style>
+</head>
+<body>
+    <h1>Đăng ký tài khoản</h1>
+    <form id="registerForm">
+        <input type="text" id="fullname" placeholder="Họ tên" required><br><br>
+        <input type="email" id="email" placeholder="Email" required><br><br>
+        <input type="password" id="password" placeholder="Mật khẩu" required><br><br>
+        <input type="password" id="confirm" placeholder="Xác nhận mật khẩu" required><br><br>
+        <button type="submit">Đăng ký</button>
+    </form>
+    <div id="message"></div>
+
+    <script>
+        $("#registerForm").submit(function(e) {
+            e.preventDefault();
+            $(".error").remove();
+            let valid = true;
+
+            const full = $("#fullname").val().trim();
+            if (full.length < 3) {
+                $("#fullname").after('<div class="error">Họ tên phải có ít nhất 3 ký tự</div>');
+                valid = false;
+            }
+
+            const email = $("#email").val();
+            if (!email.includes('@')) {
+                $("#email").after('<div class="error">Email không hợp lệ</div>');
+                valid = false;
+            }
+
+            const pass = $("#password").val();
+            const confirm = $("#confirm").val();
+            if (pass.length < 6) {
+                $("#password").after('<div class="error">Mật khẩu phải có ít nhất 6 ký tự</div>');
+                valid = false;
+            }
+            if (pass !== confirm) {
+                $("#confirm").after('<div class="error">Mật khẩu xác nhận không khớp</div>');
+                valid = false;
+            }
+
+            if (valid) {
+                $("#message").html('<span style="color:green">Đăng ký thành công!</span>');
+            }
+        });
+    </script>
+</body>
+</html>

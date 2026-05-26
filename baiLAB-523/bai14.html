@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 14 - jQuery Effects</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style> body { font-family: Arial; text-align: center; margin: 50px; } #box { width: 300px; height: 150px; background: orange; margin: 20px auto; } </style>
+</head>
+<body>
+    <h1>Hiệu ứng jQuery</h1>
+    <div id="box">Khối nội dung</div>
+    <button onclick="$('#box').fadeOut(1000)">Fade Out</button>
+    <button onclick="$('#box').fadeIn(1000)">Fade In</button>
+    <button onclick="$('#box').slideUp(800)">Slide Up</button>
+    <button onclick="$('#box').slideDown(800)">Slide Down</button>
+    <button onclick="$('#box').slideToggle(800)">Slide Toggle</button>
+</body>
+</html>

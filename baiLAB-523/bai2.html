@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 2 - Khuyến mãi</title>
+    <style> body { font-family: Arial; text-align: center; margin: 50px; } </style>
+</head>
+<body>
+    <h1>Tính khuyến mãi</h1>
+    <input type="number" id="order" placeholder="Giá trị đơn hàng">
+    <select id="member">
+        <option value="0">Thành viên thường</option>
+        <option value="1">Thành viên bạc</option>
+        <option value="2">Thành viên vàng</option>
+    </select>
+    <br><button onclick="calculateDiscount()">Tính toán</button>
+    <div id="result"></div>
+
+    <script>
+        function calculateDiscount() {
+            const order = parseFloat(document.getElementById('order').value);
+            const level = parseInt(document.getElementById('member').value);
+            const resultDiv = document.getElementById('result');
+
+            if (!order || order <= 0) {
+                resultDiv.innerHTML = "Vui lòng nhập giá trị đơn hàng hợp lệ!";
+                return;
+            }
+
+            let discountRate = 0;
+            if (order >= 5000000) discountRate = 0.15;
+            else if (order >= 2000000) discountRate = 0.10;
+            else if (order >= 1000000) discountRate = 0.05;
+
+            if (level === 2) discountRate += 0.05;
+            else if (level === 1) discountRate += 0.03;
+
+            const discount = order * discountRate;
+            const total = order - discount;
+
+            resultDiv.innerHTML = `
+                Tiền gốc: ${order.toLocaleString()}đ<br>
+                Tỷ lệ giảm: ${(discountRate*100).toFixed(1)}%<br>
+                Tiền giảm: ${discount.toLocaleString()}đ<br>
+                Tổng thanh toán: <b>${total.toLocaleString()}đ</b>
+            `;
+        }
+    </script>
+</body>
+</html>

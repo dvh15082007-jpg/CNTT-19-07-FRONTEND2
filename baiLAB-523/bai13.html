@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 13 - jQuery Hide/Show</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style> body { font-family: Arial; text-align: center; margin: 50px; } </style>
+</head>
+<body>
+    <h1>Demo jQuery Hide / Show</h1>
+    <div id="content" style="background: #e0f0ff; padding: 20px; font-size: 18px;">
+        Đây là nội dung sẽ ẩn hoặc hiện
+    </div>
+    <br>
+    <button onclick="hideContent()">Ẩn</button>
+    <button onclick="showContent()">Hiện</button>
+    <button onclick="toggleContent()">Toggle</button>
+
+    <script>
+        function hideContent() { $("#content").hide(); }
+        function showContent() { $("#content").show(); }
+        function toggleContent() { $("#content").toggle(); }
+    </script>
+</body>
+</html>

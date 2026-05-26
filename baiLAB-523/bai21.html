@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 21 - CRUD Sinh viên</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style> body { font-family: Arial; text-align: center; } table { margin: 20px auto; } </style>
+</head>
+<body>
+    <h1>Quản lý Sinh viên - CRUD</h1>
+    
+    <input type="hidden" id="editId">
+    <input type="text" id="name" placeholder="Họ tên">
+    <input type="text" id="class" placeholder="Lớp">
+    <button onclick="saveStudent()">Lưu</button>
+    <button onclick="clearForm()">Làm mới</button>
+
+    <table id="studentTable" border="1"></table>
+
+    <script>
+        let students = [
+            {id:1, name:"Nguyễn Văn A", class:"CNTT1"}
+        ];
+
+        function renderTable() {
+            let html = `<tr><th>ID</th><th>Họ tên</th><th>Lớp</th><th>Hành động</th></tr>`;
+            students.forEach(s => {
+                html += `<tr>
+                    <td>${s.id}</td>
+                    <td>${s.name}</td>
+                    <td>${s.class}</td>
+                    <td>
+                        <button onclick="editStudent(${s.id})">Sửa</button>
+                        <button onclick="deleteStudent(${s.id})">Xóa</button>
+                    </td>
+                </tr>`;
+            });
+            $("#studentTable").html(html);
+        }
+
+        function saveStudent() {
+            const name = $("#name").val().trim();
+            const cls = $("#class").val().trim();
+            const editId = parseInt($("#editId").val());
+
+            if (!name || !cls) return alert("Vui lòng nhập đầy đủ!");
+
+            if (editId) {
+                const student = students.find(s => s.id === editId);
+                if (student) {
+                    student.name = name;
+                    student.class = cls;
+                }
+            } else {
+                students.push({
+                    id: students.length + 1,
+                    name: name,
+                    class: cls
+                });
+            }
+            renderTable();
+            clearForm();
+        }
+
+        function editStudent(id) {
+            const student = students.find(s => s.id === id);
+            if (student) {
+                $("#editId").val(student.id);
+                $("#name").val(student.name);
+                $("#class").val(student.class);
+            }
+        }
+
+        function deleteStudent(id) {
+            if (confirm("Xóa sinh viên này?")) {
+                students = students.filter(s => s.id !== id);
+                renderTable();
+            }
+        }
+
+        function clearForm() {
+            $("#editId").val('');
+            $("#name").val('');
+            $("#class").val('');
+        }
+
+        renderTable();
+    </script>
+</body>
+</html>

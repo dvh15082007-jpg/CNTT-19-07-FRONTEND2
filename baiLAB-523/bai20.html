@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 20 - Thêm sinh viên Ajax</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style> body { font-family: Arial; text-align: center; } table { margin: 20px auto; } </style>
+</head>
+<body>
+    <h1>Thêm sinh viên mới</h1>
+    <input type="text" id="name" placeholder="Họ tên"><br><br>
+    <input type="text" id="class" placeholder="Lớp"><br><br>
+    <button onclick="addStudent()">Thêm sinh viên</button>
+
+    <h2>Danh sách</h2>
+    <table id="studentTable" border="1"></table>
+
+    <script>
+        let students = [];
+
+        function renderTable() {
+            let html = `<tr><th>ID</th><th>Họ tên</th><th>Lớp</th></tr>`;
+            students.forEach((s, i) => {
+                html += `<tr><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td></tr>`;
+            });
+            $("#studentTable").html(html);
+        }
+
+        function addStudent() {
+            const name = $("#name").val().trim();
+            const cls = $("#class").val().trim();
+            if (!name || !cls) {
+                alert("Vui lòng nhập đầy đủ thông tin!");
+                return;
+            }
+
+            const newStudent = {
+                id: students.length + 1,
+                name: name,
+                class: cls
+            };
+
+            students.push(newStudent);
+            renderTable();
+
+            // Giả lập POST thành công
+            alert("Đã thêm sinh viên thành công!");
+            $("#name").val('');
+            $("#class").val('');
+        }
+
+        renderTable();
+    </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 3 - Đoán số</title>
+    <style> body { font-family: Arial; text-align: center; } </style>
+</head>
+<body>
+    <h1>Trò chơi đoán số (1-100)</h1>
+    <input type="number" id="guess" placeholder="Nhập số dự đoán">
+    <button onclick="checkGuess()">Kiểm tra</button>
+    <button onclick="resetGame()">Chơi lại</button>
+    <div id="message"></div>
+    <div id="attempts">Số lần đoán: 0</div>
+
+    <script>
+        let secretNumber = Math.floor(Math.random() * 100) + 1;
+        let attempts = 0;
+
+        function checkGuess() {
+            const guess = parseInt(document.getElementById('guess').value);
+            const message = document.getElementById('message');
+            attempts++;
+
+            document.getElementById('attempts').textContent = `Số lần đoán: ${attempts}`;
+
+            if (guess === secretNumber) {
+                message.innerHTML = `<span style="color:green">Chúc mừng! Bạn đã đoán đúng số ${secretNumber} sau ${attempts} lần.</span>`;
+            } else if (guess < secretNumber) {
+                message.textContent = "Số bí mật lớn hơn!";
+            } else {
+                message.textContent = "Số bí mật nhỏ hơn!";
+            }
+        }
+
+        function resetGame() {
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            attempts = 0;
+            document.getElementById('guess').value = '';
+            document.getElementById('message').textContent = '';
+            document.getElementById('attempts').textContent = 'Số lần đoán: 0';
+        }
+    </script>
+</body>
+</html>

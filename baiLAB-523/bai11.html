@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 11 - Tra cứu theo ID</title>
+    <style> body { font-family: Arial; text-align: center; margin: 50px; } </style>
+</head>
+<body>
+    <h1>Tra cứu sinh viên</h1>
+    <input type="number" id="idInput" placeholder="Nhập ID">
+    <button onclick="searchById()">Tra cứu</button>
+    <div id="result"></div>
+
+    <script>
+        const students = [
+            {id:1, name:"Nguyễn Văn A", class:"CNTT1", gpa:3.2},
+            {id:2, name:"Trần Thị B", class:"CNTT2", gpa:3.8},
+            {id:3, name:"Lê Văn C", class:"CNTT1", gpa:2.9}
+        ];
+
+        function searchById() {
+            const id = parseInt(document.getElementById('idInput').value);
+            const result = document.getElementById('result');
+            const student = students.find(s => s.id === id);
+
+            if (student) {
+                result.innerHTML = `<h3>Tìm thấy:</h3>
+                    <p><b>Họ tên:</b> ${student.name}</p>
+                    <p><b>Lớp:</b> ${student.class}</p>
+                    <p><b>GPA:</b> ${student.gpa}</p>`;
+            } else {
+                result.innerHTML = `<span style="color:red">Không tìm thấy sinh viên có ID ${id}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>

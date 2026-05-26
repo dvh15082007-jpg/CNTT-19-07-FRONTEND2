@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 06 - Callback Đơn Hàng</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            padding: 30px;
+        }
+
+        .container{
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        h1{
+            text-align: center;
+            color: #333;
+        }
+
+        button{
+            padding: 12px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 8px;
+            background: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover{
+            background: #0056b3;
+        }
+
+        .result{
+            margin-top: 20px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            line-height: 1.8;
+            font-size: 18px;
+        }
+
+        .success{
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Lab 06 - Tính Đơn Hàng Bằng Callback</h1>
+
+    <button onclick="runCase1()">
+        Chạy Test 1
+    </button>
+
+    <button onclick="runCase2()">
+        Chạy Test 2
+    </button>
+
+    <div id="output" class="result"></div>
+
+</div>
+
+<script>
+
+    // =========================
+    // BƯỚC 1 - TÍNH TIỀN HÀNG
+    // =========================
+
+    function tinhTienHang(order, callback){
+
+        let tongTien = 0;
+
+        order.products.forEach(product => {
+            tongTien += product.price * product.quantity;
+        });
+
+        callback(tongTien);
+    }
+
+    // =========================
+    // BƯỚC 2 - GIẢM GIÁ
+    // =========================
+
+    function giamGia(tongTien, discount, callback){
+
+        let tienSauGiam = tongTien - (tongTien * discount);
+
+        callback(tienSauGiam);
+    }
+
+    // =========================
+    // BƯỚC 3 - PHÍ SHIP
+    // =========================
+
+    function tinhPhiShip(tienSauGiam, shipFee, callback){
+
+        let tongThanhToan = tienSauGiam + shipFee;
+
+        callback(tongThanhToan);
+    }
+
+    // =========================
+    // BƯỚC 4 - THUẾ (MỞ RỘNG)
+    // =========================
+
+    function tinhThue(tongTien, taxRate, callback){
+
+        let tongSauThue = tongTien + (tongTien * taxRate);
+
+        callback(tongSauThue);
+    }
+
+    // =========================
+    // XỬ LÝ TOÀN BỘ ĐƠN HÀNG
+    // =========================
+
+    function xuLyDonHang(order){
+
+        const output = document.getElementById("output");
+
+        output.innerHTML = "<h3>Quá trình xử lý đơn hàng</h3>";
+
+        // Bước 1
+        tinhTienHang(order, function(tongTien){
+
+            output.innerHTML += `
+                Tiền hàng gốc: <b>${tongTien.toLocaleString()} VNĐ</b><br>
+            `;
+
+            // Bước 2
+            giamGia(tongTien, order.discount, function(sauGiam){
+
+                output.innerHTML += `
+                    Sau giảm giá (${order.discount * 100}%):
+                    <b>${sauGiam.toLocaleString()} VNĐ</b><br>
+                `;
+
+                // Bước 3
+                tinhPhiShip(sauGiam, order.shipFee, function(sauShip){
+
+                    output.innerHTML += `
+                        Cộng phí ship:
+                        <b>${sauShip.toLocaleString()} VNĐ</b><br>
+                    `;
+
+                    // Bước 4
+                    tinhThue(sauShip, order.taxRate, function(finalTotal){
+
+                        output.innerHTML += `
+                            Sau thuế (${order.taxRate * 100}%):
+                            <span class="success">
+                                ${finalTotal.toLocaleString()} VNĐ
+                            </span>
+                        `;
+                    });
+
+                });
+
+            });
+
+        });
+
+    }
+
+    // =========================
+    // TEST CASE 1
+    // =========================
+
+    function runCase1(){
+
+        const order1 = {
+
+            products: [
+                { name: "Áo", price: 200000, quantity: 2 },
+                { name: "Quần", price: 300000, quantity: 1 }
+            ],
+
+            discount: 0.1,
+            shipFee: 30000,
+            taxRate: 0.05
+        };
+
+        xuLyDonHang(order1);
+    }
+
+    // =========================
+    // TEST CASE 2
+    // =========================
+
+    function runCase2(){
+
+        const order2 = {
+
+            products: [
+                { name: "Giày", price: 500000, quantity: 1 },
+                { name: "Nón", price: 150000, quantity: 2 }
+            ],
+
+            discount: 0.15,
+            shipFee: 50000,
+            taxRate: 0.08
+        };
+
+        xuLyDonHang(order2);
+    }
+
+</script>
+
+</body>
+</html>
