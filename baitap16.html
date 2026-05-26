@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 16 - Bộ Đếm Tương Tác jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding-top: 50px; }
+        .counter-view { font-size: 5rem; font-weight: bold; margin: 20px; }
+        button { padding: 8px 16px; font-size: 1.1rem; margin: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Bộ Đếm Lượt Tương Tác Chỉ Số Giao Diện</h2>
+    
+    <div class="counter-view" id="numDisplay">0</div>
+
+    <div>
+        <button id="btnDecrement" style="background:#f44336; color:white; border:none;">Giảm (-1)</button>
+        <button id="btnReset" style="background:#9e9e9e; color:white; border:none;">Đặt Lại</button>
+        <button id="btnIncrement" style="background:#4caf50; color:white; border:none;">Tăng (+1)</button>
+        <button id="btnQuickAdd" style="background:#2196f3; color:white; border:none;">Tăng Nhanh (+10)</button>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let score = 0;
+
+            // Hàm chịu trách nhiệm cập nhật giao diện và đổi màu chữ số dựa theo giá trị âm dương
+            function syncInterface() {
+                $('#numDisplay').text(score);
+                
+                // Yêu cầu mở rộng: Tự động đổi màu chữ số hiển thị
+                if (score > 0) {
+                    $('#numDisplay').css('color', '#4caf50');
+                } else if (score < 0) {
+                    $('#numDisplay').css('color', '#f44336');
+                } else {
+                    $('#numDisplay').css('color', '#333333');
+                }
+            }
+
+            $('#btnIncrement').click(function() {
+                score++;
+                syncInterface();
+            });
+
+            $('#btnDecrement').click(function() {
+                // Quy tắc cho phép giảm xuống cả giá trị âm dưới không
+                score--;
+                syncInterface();
+            });
+
+            // Yêu cầu mở rộng: Nút chức năng tăng nhanh thêm 10 đơn vị
+            $('#btnQuickAdd').click(function() {
+                score += 10;
+                syncInterface();
+            });
+
+            $('#btnReset').click(function() {
+                score = 0;
+                syncInterface();
+            });
+        });
+    </script>
+</body>
+</html>

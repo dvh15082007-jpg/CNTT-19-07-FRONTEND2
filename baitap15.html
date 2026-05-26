@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 15 - Kiểm Tra Xác Thực Biểu Mẫu Form</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f1f5f9; padding: 40px; }
+        .reg-form { background: #fff; padding: 25px; border-radius: 8px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 4px; outline: none; }
+        .error-txt { color: #b91c1c; font-size: 0.85em; margin-top: 4px; display: none; }
+        button { width: 100%; padding: 12px; background: #4f46e5; color: white; border: none; font-size: 1rem; font-weight: bold; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="reg-form">
+        <h3 style="margin-top:0; text-align:center;">Đăng Ký Tài Khoản Hệ Thống</h3>
+        <form id="signupForm" novalidate>
+            <div class="form-group">
+                <label>Họ và Tên:</label>
+                <input type="text" id="username">
+                <div class="error-txt" id="errUser">Tên không được để trống!</div>
+            </div>
+            <div class="form-group">
+                <label>Địa chỉ Email:</label>
+                <input type="email" id="email">
+                <div class="error-txt" id="errEmail">Định dạng email không hợp lệ!</div>
+            </div>
+            <div class="form-group">
+                <label>Số điện thoại:</label>
+                <input type="tel" id="phone">
+                <div class="error-txt" id="errPhone">Số điện thoại Việt Nam bắt đầu bằng 0, gồm 10 chữ số!</div>
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu:</label>
+                <input type="password" id="password">
+                <div class="error-txt" id="errPass">Mật khẩu phải tối thiểu chứa từ 6 ký tự trở lên!</div>
+            </div>
+            <div class="form-group">
+                <label>Xác nhận mật khẩu:</label>
+                <input type="password" id="confirmPassword">
+                <div class="error-txt" id="errConfirm">Mật khẩu xác nhận không trùng khớp!</div>
+            </div>
+            <button type="submit">Xác Nhận Đăng Ký</button>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            
+            // Hàm tiện ích hỗ trợ thay đổi trực quan sắc tố viền khung ô nhập liệu tùy theo trạng thái hợp lệ
+            function setVisualState(elementSelector, errorSelector, isValid) {
+                if (isValid) {
+                    $(elementSelector).css('border-color', '#22c55e'); // Khung viền đổi sang màu xanh lá
+                    $(errorSelector).hide();
+                } else {
+                    $(elementSelector).css('border-color', '#ef4444'); // Khung viền lỗi đổi sang màu đỏ rực
+                    $(errorSelector).show();
+                }
+            }
+
+            $('#signupForm').submit(function(event) {
+                event.preventDefault(); // Chặn đứng hành vi gửi form tải lại trang truyền thống để jQuery làm chủ
+                
+                let isFormValid = true;
+
+                // 1. Kiểm tra xác thực tính hợp lệ của trường Họ Tên
+                const userVal = $('#username').val().trim();
+                if (userVal === "") {
+                    isFormValid = false;
+                    setVisualState('#username', '#errUser', false);
+                } else {
+                    setVisualState('#username', '#errUser', true);
+                }
+
+                // 2. Kiểm tra xác thực cấu trúc định dạng Email bằng biểu thức Regex tiêu chuẩn
+                const emailVal = $('#email').val().trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(emailVal)) {
+                    isFormValid = false;
+                    setVisualState('#email', '#errEmail', false);
+                } else {
+                    setVisualState('#email', '#errEmail', true);
+                }
+
+                // 3. Yêu cầu mở rộng: Kiểm tra tính hợp chuẩn của đầu số di động Việt Nam bằng Regex mẫu
+                const phoneVal = $('#phone').val().trim();
+                const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/;
+                if (!phoneRegex.test(phoneVal)) {
+                    isFormValid = false;
+                    setVisualState('#phone', '#errPhone', false);
+                } else {
+                    setVisualState('#phone', '#errPhone', true);
+                }
+
+                // 4. Kiểm tra độ dài an toàn tối thiểu của Mật Khẩu tài khoản
+                const passVal = $('#password').val();
+                if (passVal.length < 6) {
+                    isFormValid = false;
+                    setVisualState('#password', '#errPass', false);
+                } else {
+                    setVisualState('#password', '#errPass', true);
+                }
+
+                // 5. Kiểm soát sự trùng khớp đồng bộ giữa hai ô mật khẩu thiết lập
+                const confirmVal = $('#confirmPassword').val();
+                if (confirmVal === "" || confirmVal !== passVal) {
+                    isFormValid = false;
+                    setVisualState('#confirmPassword', '#errConfirm', false);
+                } else {
+                    setVisualState('#confirmPassword', '#errConfirm', true);
+                }
+
+                // Đưa ra quyết định cuối cùng dựa trên trạng thái tổng hợp của biến cờ hiệu báo
+                if (isFormValid) {
+                    alert("🎉 Chúc mừng! Toàn bộ thông tin hợp lệ. Hệ thống đăng ký tài khoản thành công!");
+                    $('#signupForm')[0].reset(); // Làm sạch toàn diện các trường nhập của form gốc
+                    $('input').css('border-color', '#cbd5e1'); // Đưa màu viền về trạng thái trung tính mặc định
+                }
+            });
+        });
+    </script>
+</body>
+</html>

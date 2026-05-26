@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bài 11 – Tra Cứu Theo ID</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1923;
+    --card: #162030;
+    --border: #1e2d3d;
+    --accent: #00d4ff;
+    --text: #e2f0ff;
+    --muted: #4a6a85;
+    --success: #00e5a0;
+    --error: #ff5c7c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .container { max-width: 520px; width: 100%; }
+  .tag { font-size: 0.67rem; color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  h1 { font-size: 2.3rem; font-weight: 700; margin-bottom: 0.3rem; }
+  h1 em { font-style: italic; color: var(--accent); }
+  .sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 2rem; }
+
+  .search-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 1.8rem;
+    margin-bottom: 1.2rem;
+  }
+  .search-row {
+    display: flex;
+    gap: 0.6rem;
+  }
+  .search-row input {
+    flex: 1;
+    background: #1a2d3f;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .search-row input:focus { border-color: var(--accent); }
+  .search-btn {
+    background: var(--accent);
+    color: #0f1923;
+    border: none;
+    border-radius: 10px;
+    padding: 0.8rem 1.4rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .search-btn:hover { opacity: 0.85; }
+  .clear-btn {
+    width: 100%;
+    margin-top: 0.7rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 10px;
+    padding: 0.6rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .clear-btn:hover { border-color: var(--error); color: var(--error); }
+
+  /* Quick picks */
+  .quick-label { font-size: 0.7rem; color: var(--muted); margin: 0.9rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .quick-row { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .qbtn {
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .qbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Result */
+  .result-card { display: none; background: var(--card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; }
+  .result-card.show { display: block; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+
+  .result-header {
+    background: linear-gradient(135deg, #1e3a5f, #162d4a);
+    border-bottom: 1px solid var(--border);
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .avatar {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #0088cc);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; font-weight: 700; color: #0f1923;
+    flex-shrink: 0;
+  }
+  .result-name { font-size: 1.1rem; font-weight: 700; }
+  .result-username { font-size: 0.8rem; color: var(--muted); }
+  .id-badge { margin-left: auto; background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.2); color: var(--accent); font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 6px; }
+
+  .result-body { padding: 1.5rem; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .info-item { background: #1a2d3f; border-radius: 10px; padding: 0.8rem 1rem; }
+  .info-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+  .info-value { font-size: 0.88rem; font-weight: 500; }
+  .info-item.full { grid-column: span 2; }
+
+  .error-state { display: none; text-align: center; padding: 2rem; }
+  .error-state.show { display: block; }
+  .error-icon { font-size: 2.5rem; margin-bottom: 0.7rem; }
+  .error-msg { color: var(--error); font-weight: 600; margin-bottom: 0.3rem; }
+  .error-sub { color: var(--muted); font-size: 0.85rem; }
+
+  .loading-state { display:none; text-align:center; padding:2rem; }
+  .loading-state.show { display:block; }
+  .pulse { display:inline-block; width:12px;height:12px;border-radius:50%;background:var(--accent);animation:pulse 1s infinite; }
+  .pulse:nth-child(2){animation-delay:.15s} .pulse:nth-child(3){animation-delay:.3s}
+  @keyframes pulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.2)} }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="tag">Buổi 4 · Bài Lab 11</div>
+  <h1>Tra Cứu <em>Theo ID</em></h1>
+  <p class="sub">Nhập mã định danh để xem thông tin chi tiết người dùng</p>
+
+  <div class="search-card">
+    <div class="search-row">
+      <input type="number" id="idInput" placeholder="Nhập ID (1–10)..." min="1" max="10">
+      <button class="search-btn" onclick="lookup()">🔍 Tra cứu</button>
+    </div>
+    <button class="clear-btn" onclick="clearResult()">✕ Xoá kết quả</button>
+    <div class="quick-label">Tra cứu nhanh</div>
+    <div class="quick-row">
+      <button class="qbtn" onclick="quickLook(1)">ID 1</button>
+      <button class="qbtn" onclick="quickLook(2)">ID 2</button>
+      <button class="qbtn" onclick="quickLook(3)">ID 3</button>
+      <button class="qbtn" onclick="quickLook(5)">ID 5</button>
+      <button class="qbtn" onclick="quickLook(9)">ID 9</button>
+      <button class="qbtn" onclick="quickLook(99)">ID 99 ❌</button>
+    </div>
+  </div>
+
+  <div class="loading-state" id="loading">
+    <div style="display:flex;gap:5px;justify-content:center;margin-bottom:0.6rem">
+      <div class="pulse"></div><div class="pulse"></div><div class="pulse"></div>
+    </div>
+    <div style="color:var(--muted);font-size:0.85rem">Đang tra cứu dữ liệu...</div>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-header">
+      <div class="avatar" id="resAvatar"></div>
+      <div>
+        <div class="result-name" id="resName"></div>
+        <div class="result-username" id="resUser"></div>
+      </div>
+      <div class="id-badge" id="resId"></div>
+    </div>
+    <div class="result-body">
+      <div class="info-grid">
+        <div class="info-item full"><div class="info-label">Email</div><div class="info-value" id="resEmail"></div></div>
+        <div class="info-item"><div class="info-label">Điện thoại</div><div class="info-value" id="resPhone"></div></div>
+        <div class="info-item"><div class="info-label">Website</div><div class="info-value" id="resWeb"></div></div>
+        <div class="info-item"><div class="info-label">Công ty</div><div class="info-value" id="resCo"></div></div>
+        <div class="info-item"><div class="info-label">Thành phố</div><div class="info-value" id="resCity"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="error-state" id="errorState">
+    <div class="error-icon">🔍</div>
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="error-sub" id="errorSub"></div>
+  </div>
+</div>
+
+<script>
+function quickLook(id) {
+  document.getElementById('idInput').value = id;
+  lookup();
+}
+
+async function lookup() {
+  const id = document.getElementById('idInput').value.trim();
+  if (!id) { alert('Vui lòng nhập ID!'); return; }
+
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('errorState').classList.remove('show');
+  document.getElementById('loading').classList.add('show');
+
+  try {
+    const res = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
+    document.getElementById('loading').classList.remove('show');
+
+    if (res.status === 404 || !res.ok) {
+      showError(`Không tìm thấy người dùng với ID = ${id}`, 'Vui lòng thử ID từ 1 đến 10');
+      return;
+    }
+
+    const u = await res.json();
+    if (!u || !u.id) {
+      showError(`Không có dữ liệu cho ID = ${id}`, 'ID không tồn tại trong hệ thống');
+      return;
+    }
+
+    document.getElementById('resAvatar').textContent = u.name.charAt(0);
+    document.getElementById('resName').textContent = u.name;
+    document.getElementById('resUser').textContent = `@${u.username}`;
+    document.getElementById('resId').textContent = `#${u.id}`;
+    document.getElementById('resEmail').textContent = u.email;
+    document.getElementById('resPhone').textContent = u.phone;
+    document.getElementById('resWeb').textContent = u.website;
+    document.getElementById('resCo').textContent = u.company.name;
+    document.getElementById('resCity').textContent = u.address.city;
+    document.getElementById('resultCard').classList.add('show');
+
+  } catch (err) {
+    document.getElementById('loading').classList.remove('show');
+    showError('Lỗi kết nối mạng', err.message);
+  }
+}
+
+function showError(msg, sub) {
+  document.getElementById('errorMsg').textContent = msg;
+  document.getElementById('errorSub').textContent = sub;
+  document.getElementById('errorState').classList.add('show');
+}
+
+function clearResult() {
+  document.getElementById('idInput').value = '';
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('errorState').classList.remove('show');
+}
+
+document.getElementById('idInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') lookup();
+});
+</script>
+</body>
+</html>

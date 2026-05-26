@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 17 - Giỏ Hàng Trực Tuyến Đơn Giản</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; }
+        .cart-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid #ddd; max-width: 600px; }
+        .qty-controls button { padding: 4px 10px; cursor: pointer; font-weight: bold; }
+        .qty-value { display: inline-block; width: 30px; text-align: center; font-weight: bold; }
+        .total-bill-box { margin-top: 20px; font-size: 1.3em; font-weight: bold; color: #e91e63; padding: 15px; background: #fce4ec; max-width: 570px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h2>Giỏ Hàng Của Bạn (Mô Phỏng Tính Toán Tức Thời)</h2>
+    
+    <div id="cartList">
+        <div class="cart-item" data-price="450000">
+            <div>
+                <strong class="item-name">Chuột Không Dây Logitech B100</strong><br>
+                <small>Đơn giá: 450,000 VND</small>
+            </div>
+            <div class="qty-controls">
+                <button class="btn-minus">-</button>
+                <span class="qty-value">1</span>
+                <button class="btn-plus">+</button>
+            </div>
+            <div>Thành tiền: <span class="subtotal-view">450,000</span> VND</div>
+        </div>
+
+        <div class="cart-item" data-price="1200000">
+            <div>
+                <strong class="item-name">Bàn Phím Cơ Dareu EK87</strong><br>
+                <small>Đơn giá: 1,200,000 VND</small>
+            </div>
+            <div class="qty-controls">
+                <button class="btn-minus">-</button>
+                <span class="qty-value">1</span>
+                <button class="btn-plus">+</button>
+            </div>
+            <div>Thành tiền: <span class="subtotal-view">1,200,000</span> VND</div>
+        </div>
+    </div>
+
+    <div class="total-bill-box">Tổng tiền phải thanh toán hóa đơn: <span id="grandTotal">1,650,000</span> VND</div>
+
+    <script>
+        $(document).ready(function() {
+            
+            // Hàm chịu trách nhiệm quét toàn bộ các dòng sản phẩm để tính toán tổng chi phí toàn giỏ hàng
+            function calculateGrandTotal() {
+                let totalBill = 0;
+                
+                $('.cart-item').each(function() {
+                    const price = parseInt($(this).attr('data-price'));
+                    const qty = parseInt($(this).find('.qty-value').text());
+                    const subtotal = price * qty;
+                    
+                    // Cập nhật thành tiền riêng cho từng dòng sản phẩm
+                    $(this).find('.subtotal-view').text(subtotal.toLocaleString());
+                    totalBill += subtotal;
+                });
+
+                // Cập nhật tổng hóa đơn cuối cùng lên giao diện
+                $('#grandTotal').text(totalBill.toLocaleString());
+            }
+
+            // Xử lý sự kiện tăng số lượng sản phẩm bằng cụm tìm kiếm phần tử tổ hợp của jQuery
+            $('.btn-plus').click(function() {
+                const qtySpan = $(this).siblings('.qty-value');
+                let currentQty = parseInt(qtySpan.text());
+                qtySpan.text(currentQty + 1);
+                calculateGrandTotal();
+            });
+
+            // Xử lý sự kiện giảm số lượng sản phẩm
+            $('.btn-minus').click(function() {
+                const qtySpan = $(this).siblings('.qty-value');
+                let currentQty = parseInt(qtySpan.text());
+                
+                // Quy ước nghiêm ngặt không cho phép số lượng sản phẩm tụt nhỏ hơn 1 trong giỏ hàng
+                if (currentQty > 1) {
+                    qtySpan.text(currentQty - 1);
+                    calculateGrandTotal();
+                } else {
+                    alert("Số lượng sản phẩm tối thiểu trong giỏ hàng phải bằng 1. Nếu muốn hủy mặt hàng, vui lòng dùng tính năng xóa!");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

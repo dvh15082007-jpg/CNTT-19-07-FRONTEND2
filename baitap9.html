@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bài 09 – Quản Lý Công Việc</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;600;700&family=Satoshi:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1117;
+    --surface: #161b27;
+    --card: #1c2333;
+    --border: #2d3748;
+    --accent: #38bdf8;
+    --green: #4ade80;
+    --red: #f87171;
+    --text: #f1f5f9;
+    --muted: #64748b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 580px; margin: 0 auto; }
+  .tag { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  h1 { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; margin-bottom: 0.3rem; }
+  h1 span { color: var(--accent); }
+  .sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 2rem; }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 1.5rem; }
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.9rem;
+    text-align: center;
+  }
+  .stat-box .sv { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 700; }
+  .stat-box .sl { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .sv-all { color: var(--accent); }
+  .sv-done { color: var(--green); }
+  .sv-pend { color: #fb923c; }
+
+  /* Add */
+  .add-form {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1.2rem;
+  }
+  .add-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .add-input:focus { border-color: var(--accent); }
+  .add-btn {
+    background: var(--accent);
+    color: #0e1117;
+    border: none;
+    border-radius: 12px;
+    padding: 0.85rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  .add-btn:hover { opacity: 0.85; }
+
+  /* Filters */
+  .filters { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+  .filter-btn {
+    padding: 0.4rem 1rem;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(56,189,248,0.08); }
+
+  /* Todo list */
+  .todo-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .todo-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    animation: slideIn 0.25s ease;
+    transition: opacity 0.2s, border-color 0.2s;
+  }
+  .todo-item.done { opacity: 0.55; }
+  .todo-item.done .todo-text { text-decoration: line-through; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .check-btn {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+  }
+  .check-btn:hover { border-color: var(--green); }
+  .todo-item.done .check-btn { background: var(--green); border-color: var(--green); color: #0e1117; }
+  .todo-text { flex: 1; font-size: 0.95rem; font-weight: 400; }
+  .todo-meta { font-size: 0.7rem; color: var(--muted); white-space: nowrap; }
+  .del-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.2rem;
+    border-radius: 6px;
+    transition: color 0.2s;
+    flex-shrink: 0;
+  }
+  .del-btn:hover { color: var(--red); }
+  .empty { text-align: center; color: var(--muted); padding: 3rem; font-size: 0.9rem; }
+
+  .clear-btn {
+    width: 100%;
+    margin-top: 1rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 10px;
+    padding: 0.65rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .clear-btn:hover { border-color: var(--red); color: var(--red); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="tag">Buổi 3 · Bài Lab 09</div>
+  <h1>Công Việc <span>Hôm Nay</span></h1>
+  <p class="sub">Thêm, hoàn thành và xoá công việc — không cần tải lại trang</p>
+
+  <div class="stats">
+    <div class="stat-box"><div class="sv sv-all" id="sAll">0</div><div class="sl">Tổng</div></div>
+    <div class="stat-box"><div class="sv sv-done" id="sDone">0</div><div class="sl">Xong</div></div>
+    <div class="stat-box"><div class="sv sv-pend" id="sPend">0</div><div class="sl">Chờ</div></div>
+  </div>
+
+  <div class="add-form">
+    <input class="add-input" id="taskInput" type="text" placeholder="Thêm công việc mới...">
+    <button class="add-btn" onclick="addTask()">+ Thêm</button>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all', this)">Tất cả</button>
+    <button class="filter-btn" onclick="setFilter('pending', this)">Chờ xử lý</button>
+    <button class="filter-btn" onclick="setFilter('done', this)">Đã hoàn thành</button>
+  </div>
+
+  <div class="todo-list" id="todoList"></div>
+  <button class="clear-btn" onclick="clearDone()">🗑 Xoá tất cả đã hoàn thành</button>
+</div>
+
+<script>
+let tasks = [
+  { id: 1, text: 'Ôn tập bài học JavaScript', done: false, time: '08:00' },
+  { id: 2, text: 'Làm bài lab số 09', done: false, time: '09:30' },
+  { id: 3, text: 'Đọc tài liệu DOM', done: true,  time: '07:00' },
+];
+let nextId = 4;
+let filter = 'all';
+
+function timeNow() {
+  const d = new Date();
+  return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+}
+
+function addTask() {
+  const input = document.getElementById('taskInput');
+  const text = input.value.trim();
+  if (!text) return;
+  tasks.unshift({ id: nextId++, text, done: false, time: timeNow() });
+  input.value = '';
+  render();
+}
+
+function toggleDone(id) {
+  const t = tasks.find(t => t.id === id);
+  if (t) t.done = !t.done;
+  render();
+}
+
+function deleteTask(id) {
+  tasks = tasks.filter(t => t.id !== id);
+  render();
+}
+
+function clearDone() {
+  tasks = tasks.filter(t => !t.done);
+  render();
+}
+
+function setFilter(f, btn) {
+  filter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function render() {
+  const list = document.getElementById('todoList');
+  let visible = tasks;
+  if (filter === 'pending') visible = tasks.filter(t => !t.done);
+  if (filter === 'done')    visible = tasks.filter(t => t.done);
+
+  if (visible.length === 0) {
+    list.innerHTML = '<div class="empty">✨ Không có công việc nào</div>';
+  } else {
+    list.innerHTML = visible.map(t => `
+      <div class="todo-item ${t.done ? 'done' : ''}" id="task-${t.id}">
+        <button class="check-btn" onclick="toggleDone(${t.id})">${t.done ? '✓' : ''}</button>
+        <span class="todo-text">${t.text}</span>
+        <span class="todo-meta">${t.time}</span>
+        <button class="del-btn" onclick="deleteTask(${t.id})">✕</button>
+      </div>`).join('');
+  }
+
+  document.getElementById('sAll').textContent  = tasks.length;
+  document.getElementById('sDone').textContent = tasks.filter(t => t.done).length;
+  document.getElementById('sPend').textContent = tasks.filter(t => !t.done).length;
+}
+
+document.getElementById('taskInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addTask();
+});
+
+render();
+</script>
+</body>
+</html>

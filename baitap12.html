@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bài 12 – Quản Lý Sinh Viên (CRUD)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f5f0;
+    --card: #fff;
+    --accent: #18181b;
+    --green: #16a34a;
+    --red: #dc2626;
+    --blue: #2563eb;
+    --text: #18181b;
+    --muted: #71717a;
+    --border: #e4e4e7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; padding: 2rem 1rem; }
+  .container { max-width: 900px; margin: 0 auto; }
+  .top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+  .tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.12em; margin-bottom: 0.3rem; }
+  h1 { font-size: 2rem; font-weight: 700; }
+  h1 span { color: var(--green); }
+  .api-note { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 0.6rem 1rem; font-size: 0.78rem; color: var(--green); max-width: 350px; }
+  .api-note code { font-family: 'IBM Plex Mono', monospace; background: #dcfce7; padding: 0.1rem 0.3rem; border-radius: 4px; }
+
+  .layout { display: grid; grid-template-columns: 300px 1fr; gap: 1.5rem; }
+  @media(max-width:700px) { .layout { grid-template-columns: 1fr; } }
+
+  /* Form */
+  .form-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+  }
+  .form-title { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.2rem; }
+  .fg { margin-bottom: 1rem; }
+  .fg label { display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 0.35rem; }
+  .fg input, .fg select {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    background: #fafafa;
+  }
+  .fg input:focus, .fg select:focus { border-color: var(--accent); background: #fff; }
+  .form-btns { display: flex; gap: 0.5rem; }
+  .btn-submit {
+    flex: 1;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    padding: 0.75rem;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-submit:hover { opacity: 0.85; }
+  .btn-cancel {
+    background: #f4f4f5;
+    color: var(--muted);
+    border: none;
+    border-radius: 9px;
+    padding: 0.75rem 1rem;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: none;
+    transition: background 0.2s;
+  }
+  .btn-cancel.show { display: block; }
+
+  /* Table area */
+  .table-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .table-title { font-weight: 700; font-size: 1rem; }
+  .count-badge { background: var(--accent); color: #fff; font-size: 0.75rem; padding: 0.2rem 0.7rem; border-radius: 99px; font-weight: 600; }
+  .refresh-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .refresh-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .status-bar { padding: 0.5rem 1.5rem; font-size: 0.8rem; border-bottom: 1px solid var(--border); min-height: 36px; display: flex; align-items: center; gap: 0.5rem; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .dot-loading { background: #f59e0b; animation: blink 1s infinite; }
+  .dot-ok { background: var(--green); }
+  .dot-err { background: var(--red); }
+  @keyframes blink { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    background: #fafafa;
+    border-bottom: 1px solid var(--border);
+  }
+  td { padding: 0.85rem 1.5rem; border-bottom: 1px solid #f4f4f5; font-size: 0.88rem; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafafa; }
+  .td-id { font-family: 'IBM Plex Mono', monospace; color: var(--muted); font-size: 0.78rem; }
+  .td-name { font-weight: 600; }
+  .td-gpa { font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
+  .td-gpa.high { color: var(--green); }
+  .td-gpa.mid { color: #ca8a04; }
+  .td-gpa.low { color: var(--red); }
+  .action-btns { display: flex; gap: 0.4rem; }
+  .btn-edit, .btn-del {
+    padding: 0.3rem 0.7rem;
+    border-radius: 7px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s;
+  }
+  .btn-edit { background: #dbeafe; color: var(--blue); }
+  .btn-del  { background: #fee2e2; color: var(--red); }
+  .btn-edit:hover, .btn-del:hover { opacity: 0.7; }
+  .empty-row td { text-align: center; color: var(--muted); padding: 3rem; }
+
+  /* Using demo data note */
+  .demo-note {
+    background: #fef9c3;
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    font-size: 0.8rem;
+    color: #92400e;
+    margin-bottom: 1.5rem;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="top">
+    <div>
+      <div class="tag">// Buổi 4 · Bài Lab 12 — CRUD API</div>
+      <h1>Quản Lý <span>Sinh Viên</span></h1>
+    </div>
+    <div class="api-note">
+      🔗 API: <code>mockapi.io/students</code><br>
+      Thao tác: <code>GET / POST / PUT / DELETE</code>
+    </div>
+  </div>
+
+  <div class="demo-note">
+    ⚠️ <strong>Demo mode:</strong> Bài lab này dùng dữ liệu cục bộ thay cho MockAPI.io. Trong thực tế, thay URL bằng endpoint MockAPI thật của bạn.
+  </div>
+
+  <div class="layout">
+    <div class="form-card">
+      <div class="form-title" id="formTitle">➕ Thêm Sinh Viên</div>
+      <div class="fg"><label>Mã SV</label><input id="fId" type="text" placeholder="SV001"></div>
+      <div class="fg"><label>Họ và tên</label><input id="fName" type="text" placeholder="Nguyễn Văn A"></div>
+      <div class="fg"><label>Lớp</label><input id="fClass" type="text" placeholder="CNTT01"></div>
+      <div class="fg"><label>GPA</label><input id="fGpa" type="number" placeholder="3.5" step="0.1" min="0" max="4"></div>
+      <div class="form-btns">
+        <button class="btn-submit" id="btnSubmit" onclick="submitForm()">Thêm mới</button>
+        <button class="btn-cancel" id="btnCancel" onclick="cancelEdit()">Huỷ</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-title">Danh Sách Sinh Viên <span class="count-badge" id="countBadge">0</span></span>
+          <button class="refresh-btn" onclick="loadData()">↻ Tải lại</button>
+        </div>
+        <div class="status-bar" id="statusBar">
+          <div class="dot dot-loading"></div> Đang tải dữ liệu...
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Mã SV</th><th>Họ tên</th><th>Lớp</th><th>GPA</th><th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Demo data (replace URL with MockAPI in production)
+let students = [
+  { id: 'SV001', name: 'Nguyễn Văn An',    lop: 'CNTT01', gpa: 3.8 },
+  { id: 'SV002', name: 'Trần Thị Bình',    lop: 'CNTT01', gpa: 3.2 },
+  { id: 'SV003', name: 'Lê Hoàng Cường',   lop: 'CNTT02', gpa: 2.9 },
+  { id: 'SV004', name: 'Phạm Thị Dung',    lop: 'CNTT02', gpa: 3.6 },
+  { id: 'SV005', name: 'Hoàng Văn Em',     lop: 'CNTT03', gpa: 3.1 },
+];
+let editId = null;
+
+function setStatus(type, msg) {
+  const bar = document.getElementById('statusBar');
+  const dotClass = type === 'loading' ? 'dot-loading' : type === 'ok' ? 'dot-ok' : 'dot-err';
+  bar.innerHTML = `<div class="dot ${dotClass}"></div> ${msg}`;
+}
+
+function loadData() {
+  setStatus('loading', 'Đang tải dữ liệu...');
+  // Simulate fetch delay
+  setTimeout(() => {
+    renderTable();
+    setStatus('ok', `Tải thành công — ${students.length} sinh viên`);
+  }, 400);
+}
+
+function gpaClass(g) {
+  return g >= 3.5 ? 'high' : g >= 2.5 ? 'mid' : 'low';
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tbody');
+  document.getElementById('countBadge').textContent = students.length;
+  if (students.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Chưa có sinh viên nào</td></tr>';
+    return;
+  }
+  tbody.innerHTML = students.map(s => `
+    <tr>
+      <td class="td-id">${s.id}</td>
+      <td class="td-name">${s.name}</td>
+      <td>${s.lop}</td>
+      <td class="td-gpa ${gpaClass(s.gpa)}">${s.gpa.toFixed(1)}</td>
+      <td>
+        <div class="action-btns">
+          <button class="btn-edit" onclick="editStudent('${s.id}')">✏️ Sửa</button>
+          <button class="btn-del" onclick="deleteStudent('${s.id}')">🗑 Xoá</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function submitForm() {
+  const id    = document.getElementById('fId').value.trim();
+  const name  = document.getElementById('fName').value.trim();
+  const lop   = document.getElementById('fClass').value.trim();
+  const gpa   = parseFloat(document.getElementById('fGpa').value);
+
+  if (!id || !name || !lop || isNaN(gpa)) { alert('Vui lòng điền đầy đủ thông tin!'); return; }
+
+  setStatus('loading', 'Đang xử lý...');
+  setTimeout(() => {
+    if (editId) {
+      const idx = students.findIndex(s => s.id === editId);
+      if (idx >= 0) students[idx] = { id, name, lop, gpa };
+      setStatus('ok', `Cập nhật "${name}" thành công`);
+      cancelEdit();
+    } else {
+      if (students.find(s => s.id === id)) { alert('Mã SV đã tồn tại!'); setStatus('err', 'Trùng mã SV'); return; }
+      students.push({ id, name, lop, gpa });
+      setStatus('ok', `Thêm "${name}" thành công`);
+      clearForm();
+    }
+    renderTable();
+  }, 300);
+}
+
+function editStudent(id) {
+  const s = students.find(st => st.id === id);
+  if (!s) return;
+  editId = id;
+  document.getElementById('fId').value = s.id;
+  document.getElementById('fName').value = s.name;
+  document.getElementById('fClass').value = s.lop;
+  document.getElementById('fGpa').value = s.gpa;
+  document.getElementById('formTitle').textContent = '✏️ Chỉnh Sửa Sinh Viên';
+  document.getElementById('btnSubmit').textContent = 'Cập nhật';
+  document.getElementById('btnCancel').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteStudent(id) {
+  const s = students.find(st => st.id === id);
+  if (!confirm(`Xoá sinh viên "${s?.name}"?`)) return;
+  setStatus('loading', 'Đang xoá...');
+  setTimeout(() => {
+    students = students.filter(st => st.id !== id);
+    renderTable();
+    setStatus('ok', `Đã xoá thành công`);
+  }, 300);
+}
+
+function cancelEdit() {
+  editId = null;
+  clearForm();
+  document.getElementById('formTitle').textContent = '➕ Thêm Sinh Viên';
+  document.getElementById('btnSubmit').textContent = 'Thêm mới';
+  document.getElementById('btnCancel').classList.remove('show');
+}
+
+function clearForm() {
+  ['fId','fName','fClass','fGpa'].forEach(id => document.getElementById(id).value = '');
+}
+
+loadData();
+</script>
+</body>
+</html>

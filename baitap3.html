@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bài 03 – Trò Chơi Đoán Số</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090a;
+    --card: #111214;
+    --border: #1e2022;
+    --accent: #7c3aed;
+    --glow: rgba(124,58,237,0.4);
+    --text: #e8e8e8;
+    --muted: #555;
+    --higher: #3b82f6;
+    --lower: #ec4899;
+    --win: #22c55e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .container { width: 100%; max-width: 440px; text-align: center; }
+  .chip {
+    display: inline-block;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.3rem 1rem;
+    border-radius: 99px;
+    margin-bottom: 1.5rem;
+  }
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 900;
+    margin-bottom: 0.4rem;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+
+  .difficulty {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  .diff-btn {
+    padding: 0.5rem 1.2rem;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .diff-btn.active, .diff-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(124,58,237,0.1);
+  }
+
+  .game-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .game-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 200px;
+    background: var(--glow);
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+
+  .attempts-bar {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .dot.used { background: var(--accent); }
+  .dot.fail { background: #ef4444; }
+
+  .range-display {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .range-display span { color: var(--text); }
+
+  .input-wrap {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .input-wrap input {
+    flex: 1;
+    background: #1a1c1f;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 1.5rem;
+    text-align: center;
+    padding: 0.8rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-wrap input:focus { border-color: var(--accent); }
+  .guess-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 0.8rem 1.4rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .guess-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+  .guess-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+  .message {
+    min-height: 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    transition: all 0.3s;
+  }
+  .msg-higher { color: var(--higher); }
+  .msg-lower  { color: var(--lower); }
+  .msg-win    { color: var(--win); }
+  .msg-fail   { color: #ef4444; }
+
+  .history {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+    min-height: 30px;
+    margin-bottom: 1.2rem;
+  }
+  .hist-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .hist-tag.high { border-color: var(--higher); color: var(--higher); }
+  .hist-tag.low  { border-color: var(--lower);  color: var(--lower);  }
+  .hist-tag.exact { border-color: var(--win); color: var(--win); }
+
+  .reset-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 10px;
+    padding: 0.7rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+  }
+  .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .stats {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+  .stat { text-align: center; }
+  .stat-val { font-family: 'Space Mono', monospace; font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="chip">Buổi 1 · Bài Lab 03</div>
+  <h1>Đoán Con Số</h1>
+  <p class="sub">Hãy đoán số bí mật trước khi hết lượt!</p>
+
+  <div class="difficulty">
+    <button class="diff-btn active" onclick="setDiff(10, 10, this)">Dễ (1–10)</button>
+    <button class="diff-btn" onclick="setDiff(100, 8, this)">Vừa (1–100)</button>
+    <button class="diff-btn" onclick="setDiff(1000, 6, this)">Khó (1–1000)</button>
+  </div>
+
+  <div class="game-card">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-val" id="statTries">0</div>
+        <div class="stat-label">Lượt đã đoán</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="statMax">10</div>
+        <div class="stat-label">Tối đa</div>
+      </div>
+    </div>
+
+    <div class="attempts-bar" id="attBar"></div>
+    <div class="range-display">Số bí mật trong khoảng <span id="rangeText">1 – 10</span></div>
+
+    <div class="input-wrap">
+      <input type="number" id="guessInput" placeholder="?" min="1">
+      <button class="guess-btn" id="guessBtn" onclick="makeGuess()">Đoán</button>
+    </div>
+
+    <div class="message" id="message">Bắt đầu đoán nào! 🎯</div>
+    <div class="history" id="history"></div>
+    <button class="reset-btn" onclick="initGame()">🔄 Chơi lại</button>
+  </div>
+</div>
+
+<script>
+let secret, maxTries, range, tries, guesses, gameOver;
+
+function setDiff(r, max, btn) {
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  range = r; maxTries = max;
+  initGame();
+}
+
+function initGame() {
+  range = range || 10;
+  maxTries = maxTries || 10;
+  secret = Math.floor(Math.random() * range) + 1;
+  tries = 0; guesses = []; gameOver = false;
+  document.getElementById('guessInput').value = '';
+  document.getElementById('message').textContent = 'Bắt đầu đoán nào! 🎯';
+  document.getElementById('message').className = 'message';
+  document.getElementById('history').innerHTML = '';
+  document.getElementById('guessBtn').disabled = false;
+  document.getElementById('statTries').textContent = '0';
+  document.getElementById('statMax').textContent = maxTries;
+  document.getElementById('rangeText').textContent = `1 – ${range}`;
+  document.getElementById('guessInput').max = range;
+  buildBar();
+}
+
+function buildBar() {
+  const bar = document.getElementById('attBar');
+  bar.innerHTML = '';
+  for (let i = 0; i < maxTries; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.id = `dot-${i}`;
+    bar.appendChild(d);
+  }
+}
+
+function makeGuess() {
+  if (gameOver) return;
+  const input = document.getElementById('guessInput');
+  const val = parseInt(input.value);
+
+  if (!val || val < 1 || val > range) {
+    setMsg(`Nhập số từ 1 đến ${range}`, '');
+    return;
+  }
+
+  const dot = document.getElementById(`dot-${tries}`);
+  dot.classList.add('used');
+  tries++;
+  guesses.push(val);
+  document.getElementById('statTries').textContent = tries;
+
+  const tag = document.createElement('div');
+  tag.className = 'hist-tag';
+
+  if (val === secret) {
+    tag.className += ' exact';
+    tag.textContent = val;
+    document.getElementById('history').appendChild(tag);
+    setMsg(`🎉 Chính xác! Số ${secret} — bạn đoán đúng sau ${tries} lần!`, 'msg-win');
+    gameOver = true;
+    document.getElementById('guessBtn').disabled = true;
+  } else if (tries >= maxTries) {
+    tag.className += ' fail';
+    tag.textContent = val;
+    document.getElementById('history').appendChild(tag);
+    dot.classList.add('fail');
+    setMsg(`💀 Hết lượt! Số bí mật là ${secret}`, 'msg-fail');
+    gameOver = true;
+    document.getElementById('guessBtn').disabled = true;
+  } else if (val < secret) {
+    tag.className += ' high';
+    tag.textContent = `${val} ↑`;
+    document.getElementById('history').appendChild(tag);
+    setMsg(`📈 Cao hơn! Thử số lớn hơn ${val}`, 'msg-higher');
+  } else {
+    tag.className += ' low';
+    tag.textContent = `${val} ↓`;
+    document.getElementById('history').appendChild(tag);
+    setMsg(`📉 Thấp hơn! Thử số nhỏ hơn ${val}`, 'msg-lower');
+  }
+  input.value = '';
+  input.focus();
+}
+
+function setMsg(txt, cls) {
+  const m = document.getElementById('message');
+  m.textContent = txt;
+  m.className = 'message ' + cls;
+}
+
+document.getElementById('guessInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') makeGuess();
+});
+
+initGame();
+</script>
+</body>
+</html>
