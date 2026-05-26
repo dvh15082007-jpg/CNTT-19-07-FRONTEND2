@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>LAB 14 - jQuery Effects</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+
+        body {
+            background: linear-gradient(135deg, #020617, #0f172a);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .box {
+            width: 750px;
+            background: rgba(255,255,255,0.05);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .effect-box {
+            margin-top: 35px;
+            background: rgba(255,255,255,0.08);
+            padding: 35px;
+            border-radius: 20px;
+            display: none;
+        }
+
+        .highlight {
+            border: 3px solid #38bdf8;
+            box-shadow: 0 0 20px #38bdf8;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="box">
+
+        <h1 class="mb-4">
+            jQuery Effects
+        </h1>
+
+        <div class="d-flex gap-3
+                    justify-content-center
+                    flex-wrap">
+
+            <button class="btn btn-success"
+                    id="fadeInBtn">
+
+                Fade In
+
+            </button>
+
+            <button class="btn btn-danger"
+                    id="fadeOutBtn">
+
+                Fade Out
+
+            </button>
+
+            <button class="btn btn-warning"
+                    id="slideBtn">
+
+                Slide Toggle
+
+            </button>
+
+            <button class="btn btn-info"
+                    id="chainBtn">
+
+                Chaining Effect
+
+            </button>
+
+        </div>
+
+        <div class="effect-box"
+             id="effectBox">
+
+            <h2>
+                Front-End Animation
+            </h2>
+
+            <p class="mt-3">
+                jQuery hỗ trợ rất nhiều hiệu ứng UI đơn giản nhưng mạnh mẽ.
+            </p>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        $("#fadeInBtn").click(function() {
+
+            $("#effectBox")
+                .fadeIn(700);
+        });
+
+        $("#fadeOutBtn").click(function() {
+
+            $("#effectBox")
+                .fadeOut(700);
+        });
+
+        $("#slideBtn").click(function() {
+
+            $("#effectBox")
+                .slideToggle(700);
+        });
+
+        $("#chainBtn").click(function() {
+
+            $("#effectBox")
+
+                .slideDown(500)
+
+                .fadeTo(500, 0.5)
+
+                .fadeTo(500, 1)
+
+                .addClass("highlight");
+
+            setTimeout(() => {
+
+                $("#effectBox")
+                    .removeClass("highlight");
+
+            }, 2000);
+        });
+
+    </script>
+
+</body>
+
+</html>
