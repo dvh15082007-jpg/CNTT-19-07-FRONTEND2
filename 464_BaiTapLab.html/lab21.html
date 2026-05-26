@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 21 - CRUD Ajax</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+
+body{
+    font-family: Arial;
+    padding: 30px;
+}
+
+button{
+    padding: 10px 15px;
+    margin: 5px;
+}
+
+</style>
+
+</head>
+<body>
+
+<h1>CRUD AJAX</h1>
+
+<button id="get">GET</button>
+
+<button id="post">POST</button>
+
+<button id="put">PUT</button>
+
+<button id="delete">DELETE</button>
+
+<script>
+
+let url = "https://jsonplaceholder.typicode.com/posts";
+
+$("#get").click(function(){
+
+    $.ajax({
+
+        url:url,
+
+        method:"GET",
+
+        success:function(data){
+
+            console.log(data);
+
+            alert("GET thành công");
+
+        }
+
+    });
+
+});
+
+$("#post").click(function(){
+
+    $.ajax({
+
+        url:url,
+
+        method:"POST",
+
+        data:{
+            title:"Hello"
+        },
+
+        success:function(data){
+
+            console.log(data);
+
+            alert("POST thành công");
+
+        }
+
+    });
+
+});
+
+$("#put").click(function(){
+
+    $.ajax({
+
+        url:url + "/1",
+
+        method:"PUT",
+
+        data:{
+            title:"Update"
+        },
+
+        success:function(data){
+
+            console.log(data);
+
+            alert("PUT thành công");
+
+        }
+
+    });
+
+});
+
+$("#delete").click(function(){
+
+    $.ajax({
+
+        url:url + "/1",
+
+        method:"DELETE",
+
+        success:function(){
+
+            alert("DELETE thành công");
+
+        }
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>

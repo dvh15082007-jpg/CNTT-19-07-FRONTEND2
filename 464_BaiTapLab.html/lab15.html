@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 15</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+
+body{
+    font-family: Arial;
+    padding: 30px;
+}
+
+input{
+    display:block;
+    margin-bottom:15px;
+    padding:10px;
+    width:300px;
+}
+
+button{
+    padding:10px 20px;
+}
+
+</style>
+
+</head>
+<body>
+
+<h1>Đăng Ký</h1>
+
+<form id="formDangKy">
+
+<input type="text" id="email" placeholder="Email">
+
+<input type="password" id="matKhau" placeholder="Mật khẩu">
+
+<button type="submit">Đăng ký</button>
+
+</form>
+
+<script>
+
+$("#formDangKy").submit(function(e){
+
+    e.preventDefault();
+
+    let email = $("#email").val();
+    let pass = $("#matKhau").val();
+
+    if(email == ""){
+        alert("Email không được trống");
+        return;
+    }
+
+    if(pass.length < 6){
+        alert("Mật khẩu tối thiểu 6 ký tự");
+        return;
+    }
+
+    alert("Đăng ký thành công");
+
+});
+
+</script>
+
+</body>
+</html>

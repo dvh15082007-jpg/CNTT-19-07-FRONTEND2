@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 20 - Ajax POST</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+
+body{
+    font-family: Arial;
+    padding: 30px;
+}
+
+input{
+    padding: 10px;
+    width: 300px;
+}
+
+button{
+    padding: 10px;
+}
+
+</style>
+
+</head>
+<body>
+
+<h1>Thêm Bài Viết</h1>
+
+<input type="text" id="title" placeholder="Nhập tiêu đề">
+
+<button id="gui">Gửi</button>
+
+<script>
+
+$("#gui").click(function(){
+
+    let title = $("#title").val();
+
+    $.ajax({
+
+        url:"https://jsonplaceholder.typicode.com/posts",
+
+        method:"POST",
+
+        data:{
+            title:title,
+            body:"Demo body"
+        },
+
+        success:function(data){
+
+            alert("Thêm thành công");
+
+            console.log(data);
+
+        }
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>

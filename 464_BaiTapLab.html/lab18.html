@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 18 - CRUD Thành Viên</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+
+body{
+    font-family: Arial;
+    padding: 30px;
+}
+
+input{
+    padding: 10px;
+    width: 250px;
+}
+
+button{
+    padding: 10px;
+    cursor: pointer;
+}
+
+li{
+    margin: 10px 0;
+}
+
+</style>
+
+</head>
+<body>
+
+<h1>Danh Sách Thành Viên</h1>
+
+<input type="text" id="ten">
+
+<button id="them">Thêm</button>
+
+<ul id="danhSach"></ul>
+
+<script>
+
+$("#them").click(function(){
+
+    let ten = $("#ten").val();
+
+    if(ten == ""){
+
+        alert("Nhập tên");
+
+        return;
+    }
+
+    $("#danhSach").append(`
+    
+    <li>
+    
+        ${ten}
+    
+        <button class="xoa">Xóa</button>
+    
+    </li>
+    
+    `);
+
+    $("#ten").val("");
+
+});
+
+$(document).on("click",".xoa",function(){
+
+    $(this).parent().remove();
+
+});
+
+</script>
+
+</body>
+</html>
