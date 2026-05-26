@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>DOM</title>
+</head>
+<body>
+
+<h1 id="title">Xin chào</h1>
+<p id="text">Nội dung cũ</p>
+
+<img id="img" src="https://picsum.photos/200" width="200">
+
+<br><br>
+
+<button onclick="doiNoiDung()">Thay đổi</button>
+
+<script>
+function doiNoiDung(){
+
+    document.getElementById("title").innerText =
+    "Tiêu đề mới";
+
+    document.getElementById("text").innerText =
+    "Nội dung mới";
+
+    document.getElementById("img").src =
+    "https://picsum.photos/300";
+}
+</script>
+
+</body>
+</html>
