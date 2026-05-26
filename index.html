@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Đào Tạo Chuyên Ngành 2026</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Be Vietnam Pro',sans-serif;
+}
+
+body{
+    background:
+    radial-gradient(circle at top left,#1e3a8a,#0f172a 40%),
+    linear-gradient(135deg,#111827,#020617);
+
+    color:white;
+    padding:40px;
+    overflow-x:hidden;
+}
+
+/* HIỆU ỨNG NỀN */
+
+body::before{
+    content:'';
+    position:fixed;
+    width:600px;
+    height:600px;
+    background:#8b5cf6;
+    filter:blur(180px);
+    top:-200px;
+    left:-200px;
+    opacity:0.25;
+    z-index:-1;
+}
+
+body::after{
+    content:'';
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:#06b6d4;
+    filter:blur(180px);
+    bottom:-200px;
+    right:-100px;
+    opacity:0.2;
+    z-index:-1;
+}
+
+.container{
+    max-width:1450px;
+    margin:auto;
+}
+
+/* TITLE */
+
+.title{
+    text-align:center;
+    margin-bottom:50px;
+}
+
+.title h1{
+    font-size:68px;
+    font-weight:800;
+    background:linear-gradient(
+        to right,
+        #38bdf8,
+        #8b5cf6,
+        #ec4899
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    animation:glow 2s infinite alternate;
+}
+
+.title p{
+    margin-top:15px;
+    font-size:24px;
+    color:#cbd5e1;
+    letter-spacing:1px;
+}
+
+@keyframes glow{
+
+    from{
+        filter:drop-shadow(0 0 10px #8b5cf6);
+    }
+
+    to{
+        filter:drop-shadow(0 0 25px #06b6d4);
+    }
+
+}
+
+/* GRID */
+
+.grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:25px;
+}
+
+/* CARD */
+
+.card{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.1);
+
+    backdrop-filter:blur(18px);
+
+    border-radius:35px;
+    padding:35px;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,0.3),
+    inset 0 0 10px rgba(255,255,255,0.03);
+
+    transition:0.5s;
+}
+
+.card:hover{
+    transform:translateY(-10px) scale(1.01);
+}
+
+/* BIG CARD */
+
+.big-card{
+    display:flex;
+    gap:35px;
+    align-items:center;
+    min-height:420px;
+}
+
+/* IMAGE */
+
+.image-box{
+    width:380px;
+    height:340px;
+    border-radius:30px;
+    overflow:hidden;
+    position:relative;
+
+    border:3px solid rgba(255,255,255,0.1);
+
+    box-shadow:
+        0 0 25px rgba(139,92,246,0.4),
+        0 0 50px rgba(6,182,212,0.25);
+}
+
+.image-box img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:0.6s;
+}
+
+.image-box:hover img{
+    transform:scale(1.08);
+}
+
+.image-box::after{
+
+    content:'CÔNG NGHỆ THÔNG TIN';
+
+    position:absolute;
+    bottom:0;
+    left:0;
+
+    width:100%;
+    padding:18px;
+
+    text-align:center;
+
+    font-size:24px;
+    font-weight:700;
+
+    background:linear-gradient(
+        to top,
+        rgba(2,6,23,0.95),
+        rgba(2,6,23,0.2)
+    );
+
+    letter-spacing:1px;
+}
+
+.image-box::before{
+
+    content:'';
+
+    position:absolute;
+
+    top:-100%;
+    left:-50%;
+
+    width:200%;
+    height:200%;
+
+    background:linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.18),
+        transparent
+    );
+
+    animation:scan 4s linear infinite;
+}
+
+@keyframes scan{
+
+    0%{
+        transform:rotate(25deg) translateY(-100%);
+    }
+
+    100%{
+        transform:rotate(25deg) translateY(100%);
+    }
+
+}
+
+/* CONTENT */
+
+.content h2{
+    font-size:44px;
+    margin-bottom:35px;
+
+    background:linear-gradient(
+        to right,
+        #38bdf8,
+        #8b5cf6
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.list{
+    display:flex;
+    flex-direction:column;
+    gap:28px;
+}
+
+.item{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    font-size:30px;
+    color:#f8fafc;
+}
+
+.item span{
+
+    width:65px;
+    height:65px;
+
+    border-radius:20px;
+
+    background:linear-gradient(
+        135deg,
+        #8b5cf6,
+        #ec4899
+    );
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:30px;
+
+    box-shadow:0 0 20px rgba(139,92,246,0.5);
+}
+
+/* RIGHT */
+
+.right{
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+}
+
+.small-card{
+    min-height:195px;
+}
+
+.small-card h3{
+    font-size:32px;
+    margin-bottom:25px;
+    color:#f472b6;
+}
+
+.icons{
+    display:flex;
+    justify-content:space-around;
+    margin-top:30px;
+    font-size:65px;
+}
+
+/* BOTTOM */
+
+.bottom{
+    margin-top:35px;
+
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+
+    gap:25px;
+}
+
+.bottom-card{
+
+    background:rgba(255,255,255,0.05);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    border-radius:30px;
+
+    padding:40px;
+
+    text-align:center;
+
+    font-size:30px;
+    font-weight:700;
+
+    transition:0.5s;
+}
+
+.bottom-card:hover{
+
+    transform:translateY(-8px);
+
+    background:linear-gradient(
+        135deg,
+        #8b5cf6,
+        #06b6d4
+    );
+}
+
+.bottom-card .emoji{
+    font-size:60px;
+    margin-bottom:20px;
+}
+
+/* FOOTER */
+
+.footer{
+
+    margin-top:40px;
+
+    background:linear-gradient(
+        to right,
+        #06b6d4,
+        #8b5cf6
+    );
+
+    border-radius:35px;
+
+    padding:35px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+
+    gap:20px;
+
+    box-shadow:0 0 40px rgba(139,92,246,0.4);
+}
+
+.footer h2{
+    font-size:42px;
+}
+
+.footer p{
+    font-size:24px;
+    margin-top:8px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1100px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .big-card{
+        flex-direction:column;
+        text-align:center;
+    }
+
+    .bottom{
+        grid-template-columns:1fr;
+    }
+
+    .title h1{
+        font-size:48px;
+    }
+
+    .image-box{
+        width:100%;
+        max-width:450px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- TITLE -->
+
+    <div class="title">
+
+        <h1>ĐÀO TẠO CHUYÊN NGÀNH 2026</h1>
+
+        <p>
+            Khoa Công Nghệ Thông Tin - Trường Đại Học Đại Nam
+        </p>
+
+    </div>
+
+    <!-- MAIN GRID -->
+
+    <div class="grid">
+
+        <!-- LEFT -->
+
+        <div class="card big-card">
+
+            <div class="image-box">
+
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTWtl5mmjF8n0gEzmZYP-CaApoVM4LPsUKaw&s" alt="CNTT">
+
+            </div>
+
+            <div class="content">
+
+                <h2>CÔNG NGHỆ THÔNG TIN</h2>
+
+                <div class="list">
+
+                    <div class="item">
+                        <span>⚡</span>
+                        Hệ thống nhúng
+                    </div>
+
+                    <div class="item">
+                        <span>💻</span>
+                        Phát triển phần mềm
+                    </div>
+
+                    <div class="item">
+                        <span>🤖</span>
+                        Robot & Trí tuệ nhân tạo
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+
+        <div class="right">
+
+            <div class="card small-card">
+
+                <h3>HỆ THỐNG THÔNG TIN</h3>
+
+                <div class="icons">
+                    ☁️ 📊 📱
+                </div>
+
+            </div>
+
+            <div class="card small-card">
+
+                <h3>KHOA HỌC MÁY TÍNH</h3>
+
+                <div class="icons">
+                    📈 🤖
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- BOTTOM -->
+
+    <div class="bottom">
+
+        <div class="bottom-card">
+
+            <div class="emoji">🎓</div>
+
+            Chương trình đào tạo thực tiễn
+
+        </div>
+
+        <div class="bottom-card">
+
+            <div class="emoji">💼</div>
+
+            Cơ hội thực tập doanh nghiệp
+
+        </div>
+
+        <div class="bottom-card">
+
+            <div class="emoji">🌐</div>
+
+            Hệ sinh thái công nghệ hiện đại
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        <div>
+
+            <h2>DAI NAM UNIVERSITY</h2>
+
+            <p>
+                Khơi dậy tiềm năng - Vươn tới thành công
+            </p>
+
+        </div>
+
+        <div>
+
+            <p>📍 Hà Nội, Việt Nam</p>
+
+            <p>📞 Hotline: 0981 595 599</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
