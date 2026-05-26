@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 05 - Quản lý sản phẩm</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #ffd6e7, #d6e7ff);
+
+        min-height: 100vh;
+
+        padding: 30px;
+      }
+
+      .container {
+        max-width: 900px;
+
+        margin: auto;
+
+        background: white;
+
+        padding: 30px;
+
+        border-radius: 25px;
+
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        text-align: center;
+
+        color: #ff4f8d;
+
+        margin-bottom: 20px;
+      }
+
+      input {
+        width: 100%;
+
+        padding: 12px;
+
+        margin-top: 10px;
+
+        border-radius: 12px;
+
+        border: 2px solid #ddd;
+
+        outline: none;
+      }
+
+      button {
+        padding: 12px;
+
+        margin-top: 10px;
+
+        border: none;
+
+        border-radius: 12px;
+
+        background: #ff5c93;
+
+        color: white;
+
+        cursor: pointer;
+
+        margin-right: 5px;
+      }
+
+      button:hover {
+        background: #ff2d74;
+      }
+
+      .card {
+        background: #fff5f8;
+
+        padding: 15px;
+
+        border-radius: 15px;
+
+        margin-top: 15px;
+
+        line-height: 2;
+      }
+
+      select {
+        padding: 8px;
+
+        border-radius: 8px;
+      }
+
+      #tong {
+        margin-top: 20px;
+
+        padding: 15px;
+
+        background: #eaf7ff;
+
+        border-radius: 15px;
+
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>🛒 Quản lý sản phẩm 💖</h1>
+
+      <input type="text" id="timTen" placeholder="Nhập tên sản phẩm" />
+
+      <button onclick="timSanPham()">Tìm sản phẩm</button>
+
+      <input type="number" id="giaMax" placeholder="Lọc giá nhỏ hơn" />
+
+      <button onclick="locGia()">Lọc theo giá</button>
+
+      <br />
+
+      <button onclick="sapXepTang()">Giá tăng ↑</button>
+
+      <button onclick="sapXepGiam()">Giá giảm ↓</button>
+
+      <button onclick="hienThi(dsSanPham)">Hiện tất cả</button>
+
+      <div id="danhSach"></div>
+
+      <div id="tong"></div>
+    </div>
+
+    <script>
+      let dsSanPham = [
+        {
+          ten: "Tai nghe Bluetooth",
+
+          gia: [250000, 450000, 800000],
+
+          soLuong: 20,
+        },
+
+        {
+          ten: "Chuột Gaming",
+
+          gia: [180000, 350000, 650000],
+
+          soLuong: 15,
+        },
+
+        {
+          ten: "Bàn phím cơ",
+
+          gia: [400000, 900000, 1800000],
+
+          soLuong: 8,
+        },
+
+        {
+          ten: "Màn hình",
+
+          gia: [2500000, 4500000, 8500000],
+
+          soLuong: 4,
+        },
+
+        {
+          ten: "Laptop",
+
+          gia: [12000000, 18000000, 25000000],
+
+          soLuong: 3,
+        },
+      ];
+
+      function hienThi(ds) {
+        let html = ds
+          .map(
+            (sp) => `
+
+<div class="card">
+
+📦 Tên:
+
+<b>
+${sp.ten}
+</b>
+
+<br>
+
+💰 Chọn mức giá:
+
+<select>
+
+${sp.gia
+  .map(
+    (g) => `
+
+<option>
+
+${g.toLocaleString()}
+đ
+
+</option>
+
+`
+  )
+  .join("")}
+
+</select>
+
+<br>
+
+📊 Tồn kho:
+
+<b>
+
+${sp.soLuong}
+
+sản phẩm
+
+</b>
+
+</div>
+
+`
+          )
+          .join("");
+
+        document.getElementById("danhSach").innerHTML = html;
+
+        tongTonKho();
+      }
+
+      function timSanPham() {
+        let ten = document.getElementById("timTen").value.toLowerCase();
+
+        let ketQua = dsSanPham.find((sp) => sp.ten.toLowerCase().includes(ten));
+
+        if (ketQua) {
+          hienThi([ketQua]);
+        } else {
+          document.getElementById("danhSach").innerHTML =
+            "<h3>Không tìm thấy sản phẩm</h3>";
+        }
+      }
+
+      function locGia() {
+        let gia = Number(document.getElementById("giaMax").value);
+
+        let ketQua = dsSanPham.filter((sp) => sp.gia[0] <= gia);
+
+        hienThi(ketQua);
+      }
+
+      function sapXepTang() {
+        dsSanPham.sort((a, b) => a.gia[0] - b.gia[0]);
+
+        hienThi(dsSanPham);
+      }
+
+      function sapXepGiam() {
+        dsSanPham.sort((a, b) => b.gia[0] - a.gia[0]);
+
+        hienThi(dsSanPham);
+      }
+
+      function tongTonKho() {
+        let tong = dsSanPham.reduce(
+          (sum, sp) => sum + sp.gia[0] * sp.soLuong,
+
+          0
+        );
+
+        document.getElementById("tong").innerHTML = `
+
+💵 Tổng giá trị tồn kho:
+
+<b>
+
+${tong.toLocaleString()}
+đ
+
+</b>
+
+`;
+      }
+
+      hienThi(dsSanPham);
+    </script>
+  </body>
+</html>

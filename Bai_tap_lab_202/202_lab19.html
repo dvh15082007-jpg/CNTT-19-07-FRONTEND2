@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tải và hiển thị dữ liệu danh sách</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial;
+        background: linear-gradient(135deg, #c9d6ff, #e2e2e2);
+        display: flex;
+        justify-content: center;
+        padding: 25px;
+      }
+
+      .container {
+        width: 1000px;
+        background: white;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      h2 {
+        text-align: center;
+        color: #3f51b5;
+        margin-bottom: 15px;
+      }
+
+      .top {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+      }
+
+      input,
+      select {
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid #ccc;
+        flex: 1;
+        min-width: 160px;
+        outline: none;
+        transition: 0.3s;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: #3f51b5;
+        box-shadow: 0 0 5px rgba(63, 81, 181, 0.3);
+      }
+
+      button {
+        padding: 10px 14px;
+        border: none;
+        border-radius: 12px;
+        background: #3f51b5;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background: #283593;
+        transform: translateY(-2px);
+      }
+
+      .status {
+        text-align: center;
+        margin: 10px 0;
+        font-weight: bold;
+      }
+
+      .loading {
+        color: #ff9800;
+      }
+      .success {
+        color: #4caf50;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        overflow: hidden;
+        border-radius: 12px;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+      }
+
+      th {
+        background: #e8eaf6;
+        color: #3f51b5;
+      }
+
+      tr:hover {
+        background: #f5f7ff;
+        transition: 0.2s;
+      }
+
+      .pagination {
+        margin-top: 15px;
+        text-align: center;
+      }
+
+      .page-btn {
+        margin: 3px;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 8px;
+        background: #e0e0e0;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .page-btn.active {
+        background: #3f51b5;
+        color: white;
+      }
+
+      .page-btn:hover {
+        background: #9fa8da;
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>📡 TẢI VÀ HIỂN THỊ DỮ LIỆU DANH SÁCH</h2>
+
+      <div class="top">
+        <input type="text" id="search" placeholder="🔍 Tìm theo tên..." />
+
+        <select id="filter">
+          <option value="ALL">Tất cả lớp</option>
+          <option value="CNTT18-07">CNTT18-07</option>
+        </select>
+
+        <button id="sortBtn">⬆ Sắp xếp</button>
+        <button id="reloadBtn">🔄 Tải lại</button>
+      </div>
+
+      <div class="status" id="status"></div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Lớp</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+
+        <tbody id="data"></tbody>
+      </table>
+
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+    <script>
+      /* ================= 30 SINH VIÊN ================= */
+      let students = [
+        {
+          id: 19710000,
+          name: "Nguyễn Minh Khang",
+          class: "CNTT18-07",
+          email: "khang@gmail.com",
+        },
+        {
+          id: 19710001,
+          name: "Trần Gia Huy",
+          class: "CNTT18-07",
+          email: "huy@gmail.com",
+        },
+        {
+          id: 19710002,
+          name: "Lê Hoàng Nam",
+          class: "CNTT18-07",
+          email: "nam@gmail.com",
+        },
+        {
+          id: 19710003,
+          name: "Phạm Anh Tuấn",
+          class: "CNTT18-07",
+          email: "tuan@gmail.com",
+        },
+        {
+          id: 19710004,
+          name: "Hoàng Đức Minh",
+          class: "CNTT18-07",
+          email: "minh@gmail.com",
+        },
+
+        {
+          id: 19710005,
+          name: "Vũ Quang Huy",
+          class: "CNTT18-07",
+          email: "huy2@gmail.com",
+        },
+        {
+          id: 19710006,
+          name: "Bùi Thành Đạt",
+          class: "CNTT18-07",
+          email: "dat@gmail.com",
+        },
+        {
+          id: 19710007,
+          name: "Đỗ Nhật Minh",
+          class: "CNTT18-07",
+          email: "minh2@gmail.com",
+        },
+        {
+          id: 19710008,
+          name: "Nguyễn Đức Anh",
+          class: "CNTT18-07",
+          email: "anh@gmail.com",
+        },
+        {
+          id: 19710009,
+          name: "Phan Minh Quân",
+          class: "CNTT18-07",
+          email: "quan@gmail.com",
+        },
+
+        {
+          id: 19710010,
+          name: "Trương Gia Bảo",
+          class: "CNTT18-07",
+          email: "bao@gmail.com",
+        },
+        {
+          id: 19710011,
+          name: "Ngô Văn Phúc",
+          class: "CNTT18-07",
+          email: "phuc@gmail.com",
+        },
+        {
+          id: 19710012,
+          name: "Lý Hoàng Long",
+          class: "CNTT18-07",
+          email: "long@gmail.com",
+        },
+        {
+          id: 19710013,
+          name: "Đặng Tuấn Kiệt",
+          class: "CNTT18-07",
+          email: "kiet@gmail.com",
+        },
+        {
+          id: 19710014,
+          name: "Huỳnh Minh Đức",
+          class: "CNTT18-07",
+          email: "duc@gmail.com",
+        },
+
+        {
+          id: 19710015,
+          name: "Nguyễn Thành Phát",
+          class: "CNTT18-07",
+          email: "phat@gmail.com",
+        },
+        {
+          id: 19710016,
+          name: "Trần Minh Quân",
+          class: "CNTT18-07",
+          email: "quan2@gmail.com",
+        },
+        {
+          id: 19710017,
+          name: "Lê Văn Hùng",
+          class: "CNTT18-07",
+          email: "hung@gmail.com",
+        },
+        {
+          id: 19710018,
+          name: "Phạm Quốc Bảo",
+          class: "CNTT18-07",
+          email: "bao2@gmail.com",
+        },
+        {
+          id: 19710019,
+          name: "Vũ Minh Hoàng",
+          class: "CNTT18-07",
+          email: "hoang@gmail.com",
+        },
+
+        {
+          id: 19710020,
+          name: "Bùi Gia Hưng",
+          class: "CNTT18-07",
+          email: "hung@gmail.com",
+        },
+        {
+          id: 19710021,
+          name: "Đỗ Văn Tài",
+          class: "CNTT18-07",
+          email: "tai@gmail.com",
+        },
+        {
+          id: 19710022,
+          name: "Nguyễn Hoàng Phúc",
+          class: "CNTT18-07",
+          email: "phuc2@gmail.com",
+        },
+        {
+          id: 19710023,
+          name: "Trần Quốc Khánh",
+          class: "CNTT18-07",
+          email: "khanh@gmail.com",
+        },
+        {
+          id: 19710024,
+          name: "Lê Nhật Minh",
+          class: "CNTT18-07",
+          email: "minh3@gmail.com",
+        },
+
+        {
+          id: 19710025,
+          name: "Phạm Duy Khôi",
+          class: "CNTT18-07",
+          email: "khoi@gmail.com",
+        },
+        {
+          id: 19710026,
+          name: "Vũ Anh Dũng",
+          class: "CNTT18-07",
+          email: "dung@gmail.com",
+        },
+        {
+          id: 19710027,
+          name: "Bùi Minh Tuấn",
+          class: "CNTT18-07",
+          email: "tuan2@gmail.com",
+        },
+        {
+          id: 19710028,
+          name: "Đặng Gia Huy",
+          class: "CNTT18-07",
+          email: "huy3@gmail.com",
+        },
+        {
+          id: 19710029,
+          name: "Ngô Minh Trí",
+          class: "CNTT18-07",
+          email: "tri@gmail.com",
+        },
+      ];
+
+      let perPage = 10;
+      let currentPage = 1;
+      let sortAsc = true;
+      let filtered = students;
+
+      /* ================= RENDER ================= */
+      function render() {
+        let start = (currentPage - 1) * perPage;
+        let end = start + perPage;
+
+        let pageData = filtered.slice(start, end);
+
+        let html = "";
+
+        pageData.forEach((s) => {
+          html += `
+<tr>
+<td>${s.id}</td>
+<td>${s.name}</td>
+<td>${s.class}</td>
+<td>${s.email}</td>
+</tr>
+`;
+        });
+
+        $("#data").html(html);
+        renderPage();
+      }
+
+      /* ================= PAGINATION ================= */
+      function renderPage() {
+        let total = Math.ceil(filtered.length / perPage);
+        let html = "";
+
+        for (let i = 1; i <= total; i++) {
+          html += `<button class="page-btn ${
+            i == currentPage ? "active" : ""
+          }" onclick="goPage(${i})">${i}</button>`;
+        }
+
+        $("#pagination").html(html);
+      }
+
+      window.goPage = function (p) {
+        currentPage = p;
+        render();
+      };
+
+      /* ================= SEARCH ================= */
+      $("#search").on("input", function () {
+        let key = $(this).val().toLowerCase();
+
+        filtered = students.filter((s) => s.name.toLowerCase().includes(key));
+
+        currentPage = 1;
+        render();
+      });
+
+      /* ================= FILTER ================= */
+      $("#filter").change(function () {
+        let val = $(this).val();
+
+        filtered =
+          val == "ALL" ? students : students.filter((s) => s.class == val);
+
+        currentPage = 1;
+        render();
+      });
+
+      /* ================= SORT ================= */
+      $("#sortBtn").click(function () {
+        sortAsc = !sortAsc;
+
+        filtered.sort((a, b) =>
+          sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
+        );
+
+        $(this).text(sortAsc ? "⬆ A-Z" : "⬇ Z-A");
+
+        render();
+      });
+
+      /* ================= RELOAD ================= */
+      $("#reloadBtn").click(function () {
+        filtered = students;
+        currentPage = 1;
+        $("#search").val("");
+        $("#filter").val("ALL");
+        render();
+      });
+
+      /* ================= INIT ================= */
+      $(document).ready(function () {
+        render();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lab 15 - Validate Form jQuery</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial;
+        background: linear-gradient(135deg, #d6e7ff, #ffd6e7);
+        display: flex;
+        justify-content: center;
+        padding: 40px;
+      }
+
+      /* BOX */
+      .container {
+        width: 520px;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        text-align: center;
+        color: #6a1b9a;
+      }
+
+      /* INPUT */
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border-radius: 8px;
+        border: 2px solid #ddd;
+        outline: none;
+        transition: 0.2s;
+      }
+
+      /* ERROR TEXT */
+      .error {
+        color: red;
+        font-size: 13px;
+        margin-bottom: 8px;
+        min-height: 16px;
+      }
+
+      /* BUTTON */
+      button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 10px;
+        background: #7b1fa2;
+        color: white;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #4a148c;
+      }
+
+      /* VALID / INVALID */
+      .valid {
+        border: 2px solid green !important;
+      }
+
+      .invalid {
+        border: 2px solid red !important;
+      }
+
+      /* SUCCESS */
+      .success {
+        text-align: center;
+        color: green;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>📝 Đăng ký tài khoản CNTT</h2>
+
+      <form id="formRegister">
+        <label>Họ tên</label>
+        <input type="text" id="name" />
+        <div class="error" id="errName"></div>
+
+        <label>Email</label>
+        <input type="text" id="email" />
+        <div class="error" id="errEmail"></div>
+
+        <label>Số điện thoại</label>
+        <input type="text" id="phone" />
+        <div class="error" id="errPhone"></div>
+
+        <label>Mật khẩu</label>
+        <input type="password" id="password" />
+        <div class="error" id="errPass"></div>
+
+        <label>Xác nhận mật khẩu</label>
+        <input type="password" id="confirm" />
+        <div class="error" id="errConfirm"></div>
+
+        <button type="submit">Đăng ký</button>
+
+        <div class="success" id="success"></div>
+      </form>
+    </div>
+
+    <script>
+      /* =========================
+   BẮT SỰ KIỆN SUBMIT
+========================= */
+      $("#formRegister").submit(function (e) {
+        e.preventDefault();
+
+        /* RESET */
+        $(".error").text("");
+        $("input").removeClass("valid invalid");
+        $("#success").text("");
+
+        /* LẤY DỮ LIỆU */
+        let name = $("#name").val().trim();
+        let email = $("#email").val().trim();
+        let phone = $("#phone").val().trim();
+        let pass = $("#password").val().trim();
+        let confirm = $("#confirm").val().trim();
+
+        let isValid = true;
+
+        /* ================= NAME ================= */
+        if (name === "") {
+          $("#errName").text("❌ Họ tên không được để trống");
+          $("#name").addClass("invalid");
+          isValid = false;
+        } else {
+          $("#name").addClass("valid");
+        }
+
+        /* ================= EMAIL ================= */
+        let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (email === "") {
+          $("#errEmail").text("❌ Email không được để trống");
+          $("#email").addClass("invalid");
+          isValid = false;
+        } else if (!emailRegex.test(email)) {
+          $("#errEmail").text("❌ Email không hợp lệ");
+          $("#email").addClass("invalid");
+          isValid = false;
+        } else {
+          $("#email").addClass("valid");
+        }
+
+        /* ================= PHONE (MỞ RỘNG) ================= */
+        let phoneRegex = /^[0-9]{9,11}$/;
+
+        if (phone === "") {
+          $("#errPhone").text("❌ SĐT không được để trống");
+          $("#phone").addClass("invalid");
+          isValid = false;
+        } else if (!phoneRegex.test(phone)) {
+          $("#errPhone").text("❌ SĐT phải 9–11 số");
+          $("#phone").addClass("invalid");
+          isValid = false;
+        } else {
+          $("#phone").addClass("valid");
+        }
+
+        /* ================= PASSWORD ================= */
+        if (pass.length < 6) {
+          $("#errPass").text("❌ Mật khẩu tối thiểu 6 ký tự");
+          $("#password").addClass("invalid");
+          isValid = false;
+        } else {
+          $("#password").addClass("valid");
+        }
+
+        /* ================= CONFIRM ================= */
+        if (confirm !== pass) {
+          $("#errConfirm").text("❌ Mật khẩu không khớp");
+          $("#confirm").addClass("invalid");
+          isValid = false;
+        } else {
+          $("#confirm").addClass("valid");
+        }
+
+        /* ================= SUCCESS ================= */
+        if (isValid) {
+          $("#success").text("✔ Đăng ký thành công!");
+          $("#formRegister")[0].reset();
+        }
+      });
+    </script>
+  </body>
+</html>

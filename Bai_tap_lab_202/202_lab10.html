@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lab 10 - Môn CNTT</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial;
+        background: linear-gradient(135deg, #ffd6e7, #d6e7ff);
+        display: flex;
+        justify-content: center;
+        padding: 40px;
+      }
+
+      .box {
+        width: 750px;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        text-align: center;
+        color: #ff4f8d;
+      }
+
+      /* CARD */
+      .card {
+        background: #fff5f8;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .card h3 {
+        margin: 0;
+        color: #333;
+      }
+
+      .card p {
+        margin: 4px 0;
+        color: #666;
+      }
+
+      /* BUTTON */
+      button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 10px;
+        background: #ff5d95;
+        color: white;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+
+      button:hover {
+        background: #ff2d74;
+      }
+
+      /* STATUS */
+      .status {
+        margin-top: 8px;
+        font-weight: bold;
+      }
+
+      .success {
+        color: green;
+      }
+      .error {
+        color: red;
+      }
+      .loading {
+        color: #ff4f8d;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="box">
+      <h1>📚 Tải dữ liệu môn CNTT</h1>
+
+      <div id="list"></div>
+    </div>
+
+    <script>
+      /* ======================
+   15 MÔN CNTT
+====================== */
+      const subjects = [
+        { id: 1, name: "Lập trình C cơ bản", type: "Programming" },
+        { id: 2, name: "Cấu trúc dữ liệu & giải thuật", type: "DSA" },
+        { id: 3, name: "Lập trình Java", type: "Programming" },
+        { id: 4, name: "Lập trình Web HTML CSS JS", type: "Web" },
+        { id: 5, name: "Cơ sở dữ liệu SQL", type: "Database" },
+        { id: 6, name: "Hệ điều hành", type: "System" },
+        { id: 7, name: "Mạng máy tính", type: "Network" },
+        { id: 8, name: "An toàn thông tin", type: "Security" },
+        { id: 9, name: "Trí tuệ nhân tạo AI", type: "AI" },
+        { id: 10, name: "Machine Learning cơ bản", type: "AI" },
+        { id: 11, name: "Lập trình Python", type: "Programming" },
+        { id: 12, name: "Phân tích thiết kế hệ thống", type: "System Design" },
+        { id: 13, name: "NodeJS Backend", type: "Backend" },
+        { id: 14, name: "ReactJS Frontend", type: "Frontend" },
+        { id: 15, name: "Cloud Computing", type: "Cloud" },
+      ];
+
+      /* ======================
+   MÔN LỖI GIẢ LẬP
+====================== */
+      const errorList = [3, 7, 12]; // mấy môn này fail
+
+      /* ======================
+   RENDER
+====================== */
+      function render() {
+        const list = document.getElementById("list");
+
+        list.innerHTML = "";
+
+        subjects.forEach((item) => {
+          let div = document.createElement("div");
+          div.classList.add("card");
+
+          div.innerHTML = `
+<h3>📘 ${item.name}</h3>
+<p>🏷️ Loại: ${item.type}</p>
+
+<button onclick="loadSubject(${item.id}, this.nextElementSibling)">
+📥 Tải dữ liệu
+</button>
+
+<div class="status"></div>
+`;
+
+          list.appendChild(div);
+        });
+      }
+
+      /* ======================
+   LOAD DATA (FAKE API)
+====================== */
+      function loadSubject(id, statusEl) {
+        statusEl.innerHTML =
+          "<span class='loading'>⏳ Đang tải dữ liệu...</span>";
+
+        setTimeout(() => {
+          if (errorList.includes(id)) {
+            statusEl.innerHTML =
+              "<span class='error'>❌ Không tải được dữ liệu</span>";
+          } else {
+            statusEl.innerHTML =
+              "<span class='success'>✔ Tải dữ liệu thành công</span>";
+          }
+        }, 700);
+      }
+
+      /* INIT */
+      render();
+    </script>
+  </body>
+</html>

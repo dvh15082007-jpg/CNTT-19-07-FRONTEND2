@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 18 - Quản Lý Thành Viên</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #fff0f5, #ffe4e1);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .app-container {
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 12px 24px rgba(255, 182, 193, 0.4);
+            width: 100%;
+            max-width: 550px;
+            padding: 30px;
+            border: 4px solid #ffb6c1;
+            position: relative;
+        }
+
+        h2 {
+            color: #ff69b4;
+            font-size: 1.8rem;
+            margin-top: 0;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px #fff0f5;
+        }
+
+        .subtitle {
+            color: #ffa07a;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #ffdae0;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+            background-color: #fffafb;
+            color: #ff69b4;
+        }
+
+        input[type="text"]::placeholder {
+            color: #ffb6c1;
+        }
+
+        input[type="text"]:focus {
+            border-color: #ff69b4;
+            box-shadow: 0 0 8px rgba(255, 105, 180, 0.2);
+            background-color: #ffffff;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            color: white;
+            padding: 12px 25px;
+            box-shadow: 0 4px 10px rgba(255, 20, 147, 0.3);
+        }
+
+        .btn-add:hover {
+            filter: brightness(1.05);
+            box-shadow: 0 6px 14px rgba(255, 20, 147, 0.4);
+        }
+
+        .member-list {
+            list-style: none;
+            padding: 0;
+margin: 0;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .member-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .member-list::-webkit-scrollbar-thumb {
+            background-color: #ffb6c1;
+            border-radius: 10px;
+        }
+
+        .member-item {
+            background-color: #fff5f6;
+            border: 1px solid #ffe4e1;
+            border-radius: 16px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: popIn 0.3s ease;
+            transition: all 0.3s ease;
+        }
+
+        .member-item:hover {
+            background-color: #ffeef0;
+            transform: translateY(-2px);
+        }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #4a4a4a;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .member-badge {
+            background-color: #ffb6c1;
+            color: white;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .member-name {
+            word-break: break-all;
+            padding-right: 10px;
+        }
+
+        .edit-input {
+            display: none;
+            width: 60%;
+            padding: 6px 12px !important;
+            margin: 0 !important;
+            font-size: 0.9rem !important;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .btn-edit { background-color: #ffb74d; }
+        .btn-edit:hover { filter: brightness(1.05); }
+
+        .btn-delete { background-color: #ff8a80; }
+        .btn-delete:hover { filter: brightness(1.05); }
+
+        .btn-save { background-color: #81c784; display: none; }
+
+        .empty-msg {
+            color: #bbb;
+            font-style: italic;
+            margin: 20px 0;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .github-footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 2px dashed #ffdae0;
+        }
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 18px;
+            background-color: #ffb6c1;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+.github-link:hover {
+            background-color: #ff69b4;
+            box-shadow: 0 4px 10px rgba(255, 105, 180, 0.3);
+        }
+        .github-link svg {
+            fill: currentColor;
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <h2>BÀI LAB 18 🐾</h2>
+        <div class="subtitle">Quản Lý Danh Sách Thành Viên</div>
+
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="🔍 Tìm kiếm thành viên...">
+        </div>
+        
+        <div class="input-group">
+            <input type="text" id="member-name-input" placeholder="Nhập tên thành viên mới tại đây nha...">
+            <button id="btn-add-member" class="btn-add">Thêm Mới ✨</button>
+        </div>
+        
+        <ul id="member-list" class="member-list">
+            <li class="member-item"><div class="member-info"><span class="member-badge">1</span><span class="member-name">Ngô Thanh Hà</span><input type="text" class="edit-input" value="Ngô Thanh Hà"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">2</span><span class="member-name">Định Trọng Quỳnh</span><input type="text" class="edit-input" value="Định Trọng Quỳnh"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">3</span><span class="member-name">Nguyễn Hoàng Anh Vũ</span><input type="text" class="edit-input" value="Nguyễn Hoàng Anh Vũ"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">4</span><span class="member-name">Trần Lâm Bảo Ngọc</span><input type="text" class="edit-input" value="Trần Lâm Bảo Ngọc"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">5</span><span class="member-name">Phạm Minh Tuấn</span><input type="text" class="edit-input" value="Phạm Minh Tuấn"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+<li class="member-item"><div class="member-info"><span class="member-badge">6</span><span class="member-name">Lê Huyền My</span><input type="text" class="edit-input" value="Lê Huyền My"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">7</span><span class="member-name">Vũ Gia Bách</span><input type="text" class="edit-input" value="Vũ Gia Bách"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">8</span><span class="member-name">Đặng Thu Thảo</span><input type="text" class="edit-input" value="Đặng Thu Thảo"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">9</span><span class="member-name">Bùi Minh Triết</span><input type="text" class="edit-input" value="Bùi Minh Triết"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">10</span><span class="member-name">Hoàng Khánh Linh</span><input type="text" class="edit-input" value="Hoàng Khánh Linh"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">11</span><span class="member-name">Phan Anh Đức</span><input type="text" class="edit-input" value="Phan Anh Đức"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">12</span><span class="member-name">Đỗ Thùy Dương</span><input type="text" class="edit-input" value="Đỗ Thùy Dương"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+<li class="member-item"><div class="member-info"><span class="member-badge">13</span><span class="member-name">Trịnh Thiên Phúc</span><input type="text" class="edit-input" value="Trịnh Thiên Phúc"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">14</span><span class="member-name">Nguyễn Uyển Nhi</span><input type="text" class="edit-input" value="Nguyễn Uyển Nhi"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">15</span><span class="member-name">Dương Quốc Bảo</span><input type="text" class="edit-input" value="Dương Quốc Bảo"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">16</span><span class="member-name">Lý Hải Yến</span><input type="text" class="edit-input" value="Lý Hải Yến"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">17</span><span class="member-name">Tạ Quang Vinh</span><input type="text" class="edit-input" value="Tạ Quang Vinh"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">18</span><span class="member-name">Võ Đan Thanh</span><input type="text" class="edit-input" value="Võ Đan Thanh"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+            <li class="member-item"><div class="member-info"><span class="member-badge">19</span><span class="member-name">Mai Đăng Khoa</span><input type="text" class="edit-input" value="Mai Đăng Khoa"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+<li class="member-item"><div class="member-info"><span class="member-badge">20</span><span class="member-name">Nguyễn Diệp Chi</span><input type="text" class="edit-input" value="Nguyễn Diệp Chi"></div><div class="action-btns"><button class="btn-action btn-edit">Sửa ✏️</button><button class="btn-action btn-save">Lưu 💾</button><button class="btn-action btn-delete">Xóa 🗑️</button></div></li>
+        </ul>
+
+        <div class="github-footer">
+            <a href="https://github.com/TenUserCuaBan/TenRepositoryCuaBan" target="_blank" class="github-link">
+                <svg viewBox="0 0 16 16" version="1.1" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                Gửi bài lên GitHub 🚀
+            </a>
+        </div>
+    </div>
+<script>
+        $(document).ready(function() {
+            
+            function updateOrderNumbers() {
+                let items = $('#member-list').children('.member-item:visible');
+                
+                if($('#member-list').children('.member-item').length === 0) {
+                    if($('.empty-msg').length === 0) {
+                        $('#member-list').html('<li class="empty-msg">Chưa có thành viên nào trong danh sách hết á! 🌸</li>');
+                    }
+                } else {
+                    $('.empty-msg').remove();
+                    
+                    $('#member-list').children('.member-item').each(function(index) {
+                        $(this).find('.member-badge').text(index + 1);
+                    });
+                }
+            }
+
+            $('#btn-add-member').click(function() {
+                let inputVal = $('#member-name-input').val().trim();
+                
+                if(inputVal === "") {
+                    alert("Bạn ơi, hãy nhập tên thành viên trước nha! 🥰");
+                    return;
+                }
+
+                let newMemberHTML = `
+                    <li class="member-item">
+                        <div class="member-info">
+                            <span class="member-badge">0</span>
+                            <span class="member-name">${inputVal}</span>
+                            <input type="text" class="edit-input" value="${inputVal}">
+                        </div>
+                        <div class="action-btns">
+                            <button class="btn-action btn-edit">Sửa ✏️</button>
+                            <button class="btn-action btn-save">Lưu 💾</button>
+                            <button class="btn-action btn-delete">Xóa 🗑️</button>
+                        </div>
+                    </li>
+                `;
+
+                $('#member-list').append(newMemberHTML);
+                $('#member-name-input').val("").focus();
+                updateOrderNumbers();
+            });
+
+            $('#member-name-input').keypress(function(e) {
+                if(e.which === 13) {
+                    $('#btn-add-member').click();
+                }
+            });
+
+            $('#member-list').on('click', '.btn-delete', function() {
+                if(confirm("Bạn có chắc chắn muốn xóa thành viên này không nè? 🥺")) {
+                    $(this).closest('.member-item').remove();
+                    updateOrderNumbers();
+                }
+            });
+
+            $('#member-list').on('click', '.btn-edit', function() {
+                let $item = $(this).closest('.member-item');
+                $item.find('.member-name').hide();
+                $item.find('.edit-input').val($item.find('.member-name').text()).show().focus();
+                $(this).hide();
+                $item.find('.btn-save').show();
+            });
+
+            $('#member-list').on('click', '.btn-save', function() {
+let $item = $(this).closest('.member-item');
+                let newName = $item.find('.edit-input').val().trim();
+                
+                if(newName === "") {
+                    alert("Tên thành viên không được để trống đâu nè! 😶");
+                    return;
+                }
+
+                $item.find('.member-name').text(newName).show();
+                $item.find('.edit-input').hide();
+                $(this).hide();
+                $item.find('.btn-edit').show();
+            });
+
+            $('#search-input').on('keyup', function() {
+                let searchText = $(this).val().toLowerCase();
+                
+                $('#member-list .member-item').each(function() {
+                    let currentName = $(this).find('.member-name').text().toLowerCase();
+                    if(currentName.indexOf(searchText) > -1) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

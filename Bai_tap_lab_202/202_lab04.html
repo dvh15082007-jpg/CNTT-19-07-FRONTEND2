@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 04 - Xử lý điểm sinh viên</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        height: 100vh;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+
+        background: linear-gradient(135deg, #ffd6e7, #d6e7ff);
+      }
+
+      .container {
+        width: 500px;
+
+        background: white;
+
+        padding: 30px;
+
+        border-radius: 25px;
+
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+        text-align: center;
+      }
+
+      .icon {
+        font-size: 55px;
+
+        margin-bottom: 10px;
+      }
+
+      h1 {
+        color: #ff4f8d;
+
+        margin-bottom: 20px;
+      }
+
+      input {
+        width: 100%;
+
+        padding: 12px;
+
+        margin-top: 10px;
+
+        border-radius: 12px;
+
+        border: 2px solid #ddd;
+
+        outline: none;
+      }
+
+      input:focus {
+        border-color: #ff7ca8;
+      }
+
+      button {
+        width: 100%;
+
+        padding: 12px;
+
+        margin-top: 12px;
+
+        border: none;
+
+        border-radius: 15px;
+
+        background: #ff5d95;
+
+        color: white;
+
+        font-size: 16px;
+
+        cursor: pointer;
+
+        transition: 0.3s;
+      }
+
+      button:hover {
+        background: #ff2d74;
+
+        transform: scale(1.03);
+      }
+
+      #ketQua {
+        margin-top: 20px;
+
+        padding: 15px;
+
+        border-radius: 15px;
+
+        background: #fff5f8;
+
+        line-height: 2;
+
+        text-align: left;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="icon">📚💖</div>
+
+      <h1>XỬ LÝ ĐIỂM SINH VIÊN</h1>
+
+      <input type="number" id="diemMoi" placeholder="Nhập điểm mới (0 - 10)" />
+
+      <button onclick="themDiem()">Thêm điểm</button>
+
+      <button onclick="xoaThapNhat()">Loại bỏ điểm thấp nhất</button>
+
+      <button onclick="xuLyDiem()">Tính kết quả</button>
+
+      <div id="ketQua"></div>
+    </div>
+
+    <script>
+      let diem = [8, 7, 9, 6, 8];
+
+      hienThi();
+
+      function themDiem() {
+        let diemMoi = Number(document.getElementById("diemMoi").value);
+
+        if (diemMoi < 0 || diemMoi > 10) {
+          alert("Nhập điểm từ 0 đến 10");
+
+          return;
+        }
+
+        diem.push(diemMoi);
+
+        document.getElementById("diemMoi").value = "";
+
+        hienThi();
+      }
+
+      function xoaThapNhat() {
+        let min = Math.min(...diem);
+
+        let viTri = diem.indexOf(min);
+
+        diem.splice(viTri, 1);
+
+        hienThi();
+      }
+
+      function xuLyDiem() {
+        let tong = diem.reduce(
+          (sum, x) => sum + x,
+
+          0
+        );
+
+        let trungBinh = tong / diem.length;
+
+        let hocLuc = "";
+
+        if (trungBinh < 5) {
+          hocLuc = "Yếu";
+        } else if (trungBinh < 7) {
+          hocLuc = "Trung bình";
+        } else if (trungBinh < 8) {
+          hocLuc = "Khá";
+        } else {
+          hocLuc = "Giỏi";
+        }
+
+        document.getElementById("ketQua").innerHTML = `
+
+📋 Danh sách điểm:
+
+<b>
+${diem.join(" - ")}
+</b>
+
+<br>
+
+📌 Tổng điểm:
+
+<b>
+${tong}
+</b>
+
+<br>
+
+⭐ Điểm trung bình:
+
+<b>
+${trungBinh.toFixed(2)}
+</b>
+
+<br>
+
+🏆 Học lực:
+
+<b>
+${hocLuc}
+</b>
+
+`;
+      }
+
+      function hienThi() {
+        document.getElementById("ketQua").innerHTML = `
+📋 Điểm hiện tại:
+
+<b>
+${diem.join(" - ")}
+</b>
+`;
+      }
+    </script>
+  </body>
+</html>

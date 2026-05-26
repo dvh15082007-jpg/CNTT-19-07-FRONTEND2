@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 03 - Trò chơi dự đoán số</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background: linear-gradient(135deg, #ffd6e7, #d6e7ff);
+      }
+
+      .container {
+        width: 450px;
+
+        background: white;
+
+        padding: 30px;
+
+        border-radius: 25px;
+
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+
+        text-align: center;
+
+        transition: 0.3s;
+      }
+
+      .container:hover {
+        transform: translateY(-5px);
+      }
+
+      .icon {
+        font-size: 55px;
+        margin-bottom: 10px;
+      }
+
+      h1 {
+        color: #ff4f8d;
+        margin-bottom: 15px;
+      }
+
+      select,
+      input {
+        width: 100%;
+
+        padding: 12px;
+
+        margin-top: 10px;
+
+        border-radius: 12px;
+
+        border: 2px solid #ddd;
+
+        outline: none;
+      }
+
+      select:focus,
+      input:focus {
+        border-color: #ff76a8;
+      }
+
+      button {
+        width: 100%;
+
+        padding: 12px;
+
+        margin-top: 15px;
+
+        border: none;
+
+        border-radius: 15px;
+
+        background: #ff5d95;
+
+        color: white;
+
+        font-size: 16px;
+
+        cursor: pointer;
+
+        transition: 0.3s;
+      }
+
+      button:hover {
+        background: #ff2f74;
+
+        transform: scale(1.03);
+      }
+
+      #ketQua {
+        margin-top: 20px;
+
+        padding: 15px;
+
+        background: #fff5f8;
+
+        border-radius: 15px;
+
+        font-weight: bold;
+
+        line-height: 1.8;
+
+        min-height: 100px;
+      }
+
+      #lichSu {
+        margin-top: 15px;
+
+        padding: 10px;
+
+        border-radius: 12px;
+
+        background: #f8f8f8;
+
+        text-align: left;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="icon">🎲💖</div>
+
+      <h1>DỰ ĐOÁN SỐ</h1>
+
+      <select id="mucDo">
+        <option value="10">Dễ (1 - 10)</option>
+
+        <option value="50">Trung bình (1 - 50)</option>
+
+        <option value="100">Khó (1 - 100)</option>
+      </select>
+
+      <input type="number" id="soDoan" placeholder="Nhập số bạn đoán" />
+
+      <button onclick="doanSo()">Đoán ngay</button>
+
+      <button onclick="choiLai()">Chơi lại</button>
+
+      <div id="ketQua">Hãy chọn mức độ và bắt đầu 🎯</div>
+
+      <div id="lichSu">📜 Lịch sử:</div>
+    </div>
+
+    <script>
+      let soBiMat;
+
+      let soLanDoan;
+
+      let gioiHan;
+
+      let lichSu = [];
+
+      const toiDaLuot = 7;
+
+      batDau();
+
+      function batDau() {
+        gioiHan = Number(document.getElementById("mucDo").value);
+
+        soBiMat = Math.floor(Math.random() * gioiHan) + 1;
+
+        soLanDoan = 0;
+
+        lichSu = [];
+
+        document.getElementById("soDoan").value = "";
+
+        document.getElementById("ketQua").innerHTML = `
+Đoán số từ
+1 → ${gioiHan}
+
+<br>
+
+Bạn có
+${toiDaLuot}
+lượt
+`;
+
+        document.getElementById("lichSu").innerHTML = "📜 Lịch sử: ";
+      }
+
+      function doanSo() {
+        let so = Number(document.getElementById("soDoan").value);
+
+        let ketQua = document.getElementById("ketQua");
+
+        if (so < 1 || so > gioiHan) {
+          ketQua.innerHTML = `
+⚠ Nhập số từ
+1 → ${gioiHan}
+`;
+
+          return;
+        }
+
+        if (soLanDoan >= toiDaLuot) {
+          return;
+        }
+
+        soLanDoan++;
+
+        lichSu.push(so);
+
+        document.getElementById("lichSu").innerHTML = `
+📜 Lịch sử:
+${lichSu.join(" → ")}
+`;
+
+        if (so < soBiMat) {
+          ketQua.innerHTML = `
+📈 Sai rồi
+
+<br>
+
+Số bí mật lớn hơn
+<b>${so}</b>
+
+<br>
+
+Lượt:
+${soLanDoan}/${toiDaLuot}
+
+`;
+        } else if (so > soBiMat) {
+          ketQua.innerHTML = `
+📉 Sai rồi
+
+<br>
+
+Số bí mật nhỏ hơn
+<b>${so}</b>
+
+<br>
+
+Lượt:
+${soLanDoan}/${toiDaLuot}
+
+`;
+        } else {
+          ketQua.innerHTML = `
+🎉 CHÚC MỪNG 🎉
+
+<br>
+
+Bạn đoán đúng số:
+
+<b>${soBiMat}</b>
+
+<br>
+
+Bạn đã thắng sau:
+
+<b>${soLanDoan}</b>
+
+lần đoán
+
+`;
+
+          return;
+        }
+
+        if (soLanDoan >= toiDaLuot) {
+          ketQua.innerHTML = `
+😥 HẾT LƯỢT
+
+<br>
+
+Số đúng là:
+
+<b>${soBiMat}</b>
+
+`;
+        }
+      }
+
+      function choiLai() {
+        batDau();
+      }
+
+      document.getElementById("mucDo").addEventListener("change", batDau);
+    </script>
+  </body>
+</html>

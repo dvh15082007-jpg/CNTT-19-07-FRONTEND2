@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lab 12 - Fake API CRUD</title>
+
+    <style>
+      body {
+        font-family: Arial;
+        background: linear-gradient(135deg, #ffd6e7, #d6e7ff);
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .box {
+        width: 900px;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        text-align: center;
+        color: #ff4f8d;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+      }
+
+      button {
+        padding: 10px;
+        border: none;
+        border-radius: 10px;
+        background: #ff5d95;
+        color: white;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+
+      button:hover {
+        background: #ff2d74;
+      }
+
+      .card {
+        background: #fff5f8;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 12px;
+      }
+
+      .status {
+        text-align: center;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="box">
+      <h1>📚 Quản lý sinh viên (Fake API)</h1>
+
+      <!-- FORM -->
+      <input id="name" placeholder="Tên sinh viên" />
+      <input id="class" placeholder="Lớp CNTT18-07" />
+      <input id="email" placeholder="Email" />
+
+      <button onclick="addStudent()">➕ Thêm sinh viên</button>
+
+      <p id="status"></p>
+
+      <div id="list"></div>
+    </div>
+
+    <script>
+      /* =========================
+   FAKE DATABASE (GIỐNG API)
+========================= */
+      let students = JSON.parse(localStorage.getItem("students")) || [
+        {
+          id: 1,
+          name: "Nguyễn Minh Khang",
+          class: "CNTT18-07",
+          email: "khang1@gmail.com",
+        },
+        {
+          id: 2,
+          name: "Trần Gia Huy",
+          class: "CNTT18-07",
+          email: "huy2@gmail.com",
+        },
+        {
+          id: 3,
+          name: "Lê Hoàng Nam",
+          class: "CNTT18-07",
+          email: "nam3@gmail.com",
+        },
+        {
+          id: 4,
+          name: "Phạm Anh Tuấn",
+          class: "CNTT18-07",
+          email: "tuan4@gmail.com",
+        },
+        {
+          id: 5,
+          name: "Hoàng Đức Minh",
+          class: "CNTT18-07",
+          email: "minh5@gmail.com",
+        },
+      ];
+
+      /* ===== fake fetch GET ===== */
+      function fetchStudents() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(students);
+          }, 500);
+        });
+      }
+
+      /* ===== fake fetch POST ===== */
+      function addToServer(student) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            student.id = Date.now();
+            students.push(student);
+            localStorage.setItem("students", JSON.stringify(students));
+            resolve(student);
+          }, 500);
+        });
+      }
+
+      /* ===== fake fetch DELETE ===== */
+      function deleteFromServer(id) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            students = students.filter((s) => s.id !== id);
+            localStorage.setItem("students", JSON.stringify(students));
+            resolve();
+          }, 300);
+        });
+      }
+
+      /* ======================
+   LOAD DATA
+====================== */
+      async function loadStudents() {
+        document.getElementById("status").innerText = "⏳ Đang tải...";
+
+        let data = await fetchStudents();
+        render(data);
+
+        document.getElementById("status").innerText = "✔ Đã tải xong";
+
+        setTimeout(() => {
+          document.getElementById("status").innerText = "";
+        }, 1000);
+      }
+
+      /* ======================
+   RENDER
+====================== */
+      function render(data) {
+        let list = document.getElementById("list");
+        list.innerHTML = "";
+
+        data.forEach((s) => {
+          list.innerHTML += `
+<div class="card">
+<h3>👤 ${s.name}</h3>
+<p>📚 ${s.class}</p>
+<p>📧 ${s.email}</p>
+
+<button onclick="deleteStudent(${s.id})">🗑 Xóa</button>
+</div>
+`;
+        });
+      }
+
+      /* ======================
+   ADD STUDENT (POST)
+====================== */
+      async function addStudent() {
+        let name = document.getElementById("name").value;
+        let cls = document.getElementById("class").value;
+        let email = document.getElementById("email").value;
+
+        if (!name || !cls || !email) {
+          alert("❌ Nhập đầy đủ!");
+          return;
+        }
+
+        await addToServer({ name, class: cls, email });
+
+        document.getElementById("name").value = "";
+        document.getElementById("class").value = "";
+        document.getElementById("email").value = "";
+
+        document.getElementById("status").innerText = "✔ Đã thêm thành công";
+
+        loadStudents();
+      }
+
+      /* ======================
+   DELETE STUDENT
+====================== */
+      async function deleteStudent(id) {
+        await deleteFromServer(id);
+        document.getElementById("status").innerText = "🗑 Đã xóa thành công";
+
+        loadStudents();
+      }
+
+      /* INIT */
+      loadStudents();
+    </script>
+  </body>
+</html>

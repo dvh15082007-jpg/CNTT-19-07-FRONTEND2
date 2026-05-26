@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lab 13 - jQuery Hide Show</title>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial;
+        background: linear-gradient(135deg, #ffd6e7, #d6e7ff);
+        display: flex;
+        justify-content: center;
+        padding: 40px;
+      }
+
+      .box {
+        width: 600px;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      h1 {
+        color: #ff4f8d;
+      }
+
+      .content {
+        background: #fff5f8;
+        padding: 20px;
+        margin-top: 15px;
+        border-radius: 12px;
+        font-size: 18px;
+        transition: all 0.3s ease;
+      }
+
+      button {
+        padding: 10px 15px;
+        margin: 5px;
+        border: none;
+        border-radius: 10px;
+        background: #ff5d95;
+        color: white;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #ff2d74;
+      }
+
+      .status {
+        margin-top: 10px;
+        font-weight: bold;
+        color: #333;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="box">
+      <h1>📌 jQuery Ẩn / Hiện nội dung</h1>
+
+      <div class="content" id="boxContent">
+        👋 Đây là nội dung đang được điều khiển bằng jQuery. Bạn có thể ẩn, hiện
+        hoặc toggle nó.
+      </div>
+
+      <!-- BUTTONS -->
+      <button id="hideBtn">Ẩn</button>
+      <button id="showBtn">Hiện</button>
+      <button id="toggleBtn">Toggle</button>
+      <button id="checkBtn">Kiểm tra trạng thái</button>
+
+      <div class="status" id="status"></div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        /* ẨN */
+        $("#hideBtn").click(function () {
+          $("#boxContent").hide();
+          updateStatus("🔴 Đang ẩn");
+        });
+
+        /* HIỆN */
+        $("#showBtn").click(function () {
+          $("#boxContent").show();
+          updateStatus("🟢 Đang hiển thị");
+        });
+
+        /* TOGGLE */
+        $("#toggleBtn").click(function () {
+          $("#boxContent").toggle();
+
+          setTimeout(checkState, 100);
+        });
+
+        /* KIỂM TRA */
+        $("#checkBtn").click(function () {
+          checkState();
+        });
+
+        function checkState() {
+          if ($("#boxContent").is(":visible")) {
+            updateStatus("🟢 Nội dung đang HIỂN THỊ");
+          } else {
+            updateStatus("🔴 Nội dung đang BỊ ẨN");
+          }
+        }
+
+        /* update text */
+        function updateStatus(text) {
+          $("#status").text(text);
+        }
+      });
+    </script>
+  </body>
+</html>

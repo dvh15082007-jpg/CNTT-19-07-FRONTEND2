@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nội dung cần làm</title>
+
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial;
+        background: linear-gradient(135deg, #ffd6e7, #d6e7ff);
+      }
+
+      .box {
+        width: 430px;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        text-align: center;
+        color: #ff4f8d;
+      }
+
+      /* INPUT */
+      .input-area {
+        display: flex;
+        gap: 8px;
+      }
+
+      input {
+        flex: 1;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        outline: none;
+      }
+
+      button {
+        padding: 10px;
+        border: none;
+        border-radius: 10px;
+        background: #ff5d95;
+        color: white;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #ff2d74;
+      }
+
+      /* FILTER */
+      .filter {
+        display: flex;
+        gap: 5px;
+        margin-top: 10px;
+      }
+
+      .filter button {
+        flex: 1;
+        background: #eee;
+        color: #333;
+      }
+
+      .filter button.active {
+        background: #ff5d95;
+        color: white;
+      }
+
+      /* LIST */
+      ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 15px;
+      }
+
+      li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      /* DONE */
+      .done {
+        text-decoration: line-through;
+        color: gray;
+      }
+
+      /* ACTION */
+      .actions button {
+        margin-left: 5px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="box">
+      <h1>💖 Nội dung cần làm</h1>
+
+      <!-- INPUT -->
+      <div class="input-area">
+        <input id="taskInput" placeholder="Nhập nội dung cần làm..." />
+        <button onclick="addTask()">Thêm</button>
+      </div>
+
+      <!-- FILTER -->
+      <div class="filter">
+        <button onclick="setFilter('all')" class="active">Tất cả</button>
+        <button onclick="setFilter('done')">Hoàn thành</button>
+        <button onclick="setFilter('todo')">Chưa hoàn thành</button>
+      </div>
+
+      <!-- LIST -->
+      <ul id="list"></ul>
+    </div>
+
+    <script>
+      /* =====================
+   STATE (có sẵn dữ liệu)
+===================== */
+
+      let tasks = JSON.parse(localStorage.getItem("tasks")) || [
+        { id: 1, text: "Học JavaScript DOM", done: false },
+        { id: 2, text: "Làm bài lab 09", done: true },
+        { id: 3, text: "Đi học buổi sáng", done: false },
+        { id: 4, text: "Ôn lại HTML CSS", done: true },
+        { id: 5, text: "Làm bài tập GitHub", done: false },
+      ];
+
+      let filter = "all";
+
+      /* =====================
+   SAVE LOCALSTORAGE
+===================== */
+      function save() {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+      }
+
+      /* =====================
+   ADD TASK
+===================== */
+      function addTask() {
+        let input = document.getElementById("taskInput");
+        let text = input.value.trim();
+
+        if (text === "") return;
+
+        tasks.push({
+          id: Date.now(),
+          text: text,
+          done: false,
+        });
+
+        input.value = "";
+        save();
+        render();
+      }
+
+      /* =====================
+   TOGGLE DONE
+===================== */
+      function toggleTask(id) {
+        tasks = tasks.map((t) => {
+          if (t.id === id) {
+            t.done = !t.done;
+          }
+          return t;
+        });
+
+        save();
+        render();
+      }
+
+      /* =====================
+   DELETE TASK
+===================== */
+      function deleteTask(id) {
+        tasks = tasks.filter((t) => t.id !== id);
+        save();
+        render();
+      }
+
+      /* =====================
+   FILTER
+===================== */
+      function setFilter(type) {
+        filter = type;
+
+        document.querySelectorAll(".filter button").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+
+        event.target.classList.add("active");
+
+        render();
+      }
+
+      /* =====================
+   RENDER
+===================== */
+      function render() {
+        let list = document.getElementById("list");
+        list.innerHTML = "";
+
+        let filtered = tasks;
+
+        if (filter === "done") {
+          filtered = tasks.filter((t) => t.done);
+        } else if (filter === "todo") {
+          filtered = tasks.filter((t) => !t.done);
+        }
+
+        filtered.forEach((task) => {
+          let li = document.createElement("li");
+
+          li.innerHTML = `
+<span class="${task.done ? "done" : ""}">
+${task.text}
+</span>
+
+<div class="actions">
+<button onclick="toggleTask(${task.id})">✔</button>
+<button onclick="deleteTask(${task.id})">🗑</button>
+</div>
+`;
+
+          list.appendChild(li);
+        });
+      }
+
+      /* INIT */
+      render();
+    </script>
+  </body>
+</html>

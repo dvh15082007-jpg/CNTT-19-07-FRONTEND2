@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lab 11 - Quản lý sinh viên CNTT</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial;
+        background: linear-gradient(135deg, #ffd6e7, #d6e7ff);
+        display: flex;
+        justify-content: center;
+        padding: 25px;
+      }
+
+      .box {
+        width: 900px;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        text-align: center;
+        color: #ff4f8d;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      input {
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        outline: none;
+      }
+
+      button {
+        padding: 10px;
+        border: none;
+        border-radius: 10px;
+        background: #ff5d95;
+        color: white;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+
+      button:hover {
+        background: #ff2d74;
+      }
+
+      .search {
+        display: flex;
+        gap: 8px;
+        margin-top: 15px;
+      }
+
+      .search input {
+        flex: 1;
+      }
+
+      .card {
+        background: #fff5f8;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .small {
+        color: #666;
+        margin: 3px 0;
+      }
+
+      .status {
+        margin-top: 10px;
+        font-weight: bold;
+        color: green;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="box">
+      <h1>📚 Quản lý sinh viên CNTT18-07</h1>
+
+      <!-- INPUT -->
+      <div class="grid">
+        <input id="id" placeholder="Mã định danh" />
+        <input id="name" placeholder="Tên sinh viên" />
+        <input id="class" placeholder="Lớp" />
+        <input id="email" placeholder="Email" />
+      </div>
+
+      <button onclick="addStudent()">➕ Thêm sinh viên</button>
+      <button onclick="sortAZ()">🔤 Sắp xếp A → Z</button>
+
+      <!-- SEARCH -->
+      <div class="search">
+        <input id="searchBox" placeholder="Tìm kiếm ID / tên / lớp / email" />
+        <button onclick="search()">🔎 Tìm</button>
+        <button onclick="clearSearch()">🧹 Xóa</button>
+      </div>
+
+      <div id="status"></div>
+
+      <div id="list"></div>
+    </div>
+
+    <script>
+      /* ======================
+   30 SINH VIÊN
+====================== */
+      let students = [
+        {
+          id: 19710000,
+          name: "Nguyễn Minh Khang",
+          class: "CNTT18-07",
+          email: "nguyenminhkhang19710000@gmail.com",
+        },
+        {
+          id: 19710001,
+          name: "Trần Gia Huy",
+          class: "CNTT18-07",
+          email: "trangiahuy19710001@gmail.com",
+        },
+        {
+          id: 19710002,
+          name: "Lê Hoàng Nam",
+          class: "CNTT18-07",
+          email: "lehoangnam19710002@gmail.com",
+        },
+        {
+          id: 19710003,
+          name: "Phạm Anh Tuấn",
+          class: "CNTT18-07",
+          email: "phamanhtuan19710003@gmail.com",
+        },
+        {
+          id: 19710004,
+          name: "Hoàng Đức Minh",
+          class: "CNTT18-07",
+          email: "hoangducminh19710004@gmail.com",
+        },
+
+        {
+          id: 19710005,
+          name: "Vũ Thành Đạt",
+          class: "CNTT18-07",
+          email: "vuthanhdat19710005@gmail.com",
+        },
+        {
+          id: 19710006,
+          name: "Đặng Quốc Bảo",
+          class: "CNTT18-07",
+          email: "dangquocbao19710006@gmail.com",
+        },
+        {
+          id: 19710007,
+          name: "Bùi Minh Khôi",
+          class: "CNTT18-07",
+          email: "buiminhkhoi19710007@gmail.com",
+        },
+        {
+          id: 19710008,
+          name: "Ngô Nhật Minh",
+          class: "CNTT18-07",
+          email: "gonhatminh19710008@gmail.com",
+        },
+        {
+          id: 19710009,
+          name: "Phan Tuấn Kiệt",
+          class: "CNTT18-07",
+          email: "phantuankiet19710009@gmail.com",
+        },
+
+        {
+          id: 19710010,
+          name: "Lý Gia Bảo",
+          class: "CNTT18-07",
+          email: "lygiabao19710010@gmail.com",
+        },
+        {
+          id: 19710011,
+          name: "Huỳnh Anh Khoa",
+          class: "CNTT18-07",
+          email: "huynhanhkhoa19710011@gmail.com",
+        },
+        {
+          id: 19710012,
+          name: "Trịnh Minh Quân",
+          class: "CNTT18-07",
+          email: "trinhminhquan19710012@gmail.com",
+        },
+        {
+          id: 19710013,
+          name: "Nguyễn Quốc Việt",
+          class: "CNTT18-07",
+          email: "nguyenquocviet19710013@gmail.com",
+        },
+        {
+          id: 19710014,
+          name: "Phạm Văn Long",
+          class: "CNTT18-07",
+          email: "phamvanlong19710014@gmail.com",
+        },
+
+        {
+          id: 19710015,
+          name: "Đỗ Hoàng Phúc",
+          class: "CNTT18-07",
+          email: "dohoangphuc19710015@gmail.com",
+        },
+        {
+          id: 19710016,
+          name: "Trần Minh Đức",
+          class: "CNTT18-07",
+          email: "tranminhduc19710016@gmail.com",
+        },
+        {
+          id: 19710017,
+          name: "Nguyễn Khánh Duy",
+          class: "CNTT18-07",
+          email: "nguyenkhanhduy19710017@gmail.com",
+        },
+        {
+          id: 19710018,
+          name: "Bạch Gia Hưng",
+          class: "CNTT18-07",
+          email: "bachgiahung19710018@gmail.com",
+        },
+        {
+          id: 19710019,
+          name: "Võ Nhật Trường",
+          class: "CNTT18-07",
+          email: "vonhattruong19710019@gmail.com",
+        },
+
+        {
+          id: 19710020,
+          name: "Trương Gia Bảo",
+          class: "CNTT18-07",
+          email: "truonggiabao19710020@gmail.com",
+        },
+        {
+          id: 19710021,
+          name: "Nguyễn Hữu Lộc",
+          class: "CNTT18-07",
+          email: "nguyenhuuloc19710021@gmail.com",
+        },
+        {
+          id: 19710022,
+          name: "Phạm Quang Huy",
+          class: "CNTT18-07",
+          email: "phamquanghuy19710022@gmail.com",
+        },
+        {
+          id: 19710023,
+          name: "Lê Minh Khánh",
+          class: "CNTT18-07",
+          email: "leminhkhanh19710023@gmail.com",
+        },
+        {
+          id: 19710024,
+          name: "Đinh Văn An",
+          class: "CNTT18-07",
+          email: "dinhvanaan19710024@gmail.com",
+        },
+
+        {
+          id: 19710025,
+          name: "Ngô Tuấn Kiệt",
+          class: "CNTT18-07",
+          email: "gotuankiet19710025@gmail.com",
+        },
+        {
+          id: 19710026,
+          name: "Trần Quốc Huy",
+          class: "CNTT18-07",
+          email: "tranquochuy19710026@gmail.com",
+        },
+        {
+          id: 19710027,
+          name: "Phạm Gia Hân",
+          class: "CNTT18-07",
+          email: "phamgianhan19710027@gmail.com",
+        },
+        {
+          id: 19710028,
+          name: "Nguyễn Nhật Hào",
+          class: "CNTT18-07",
+          email: "nguyennhathao19710028@gmail.com",
+        },
+        {
+          id: 19710029,
+          name: "Lê Văn Phúc",
+          class: "CNTT18-07",
+          email: "levanphuc19710029@gmail.com",
+        },
+      ];
+
+      /* RENDER */
+      function render(data = students) {
+        const list = document.getElementById("list");
+        list.innerHTML = "";
+
+        data.forEach((s) => {
+          list.innerHTML += `
+<div class="card">
+<h3>👤 ${s.name} (${s.id})</h3>
+<p class="small">📚 Lớp: ${s.class}</p>
+<p class="small">📧 Email: ${s.email}</p>
+<button onclick="deleteStudent(${s.id})">🗑 Xóa</button>
+</div>
+`;
+        });
+      }
+
+      /* ADD */
+      function addStudent() {
+        let id = document.getElementById("id").value.trim();
+        let name = document.getElementById("name").value.trim();
+        let cls = document.getElementById("class").value.trim();
+        let email = document.getElementById("email").value.trim();
+
+        if (!id || !name || !cls || !email) {
+          alert("❌ Nhập đầy đủ thông tin!");
+          return;
+        }
+
+        students.push({
+          id: Number(id),
+          name,
+          class: cls,
+          email,
+        });
+
+        /* RESET FORM */
+        document.getElementById("id").value = "";
+        document.getElementById("name").value = "";
+        document.getElementById("class").value = "";
+        document.getElementById("email").value = "";
+
+        /* MESSAGE */
+        let status = document.getElementById("status");
+        status.innerText = "✔ Đã thêm sinh viên thành công!";
+
+        setTimeout(() => (status.innerText = ""), 2000);
+
+        render();
+      }
+
+      /* DELETE */
+      function deleteStudent(id) {
+        students = students.filter((s) => s.id !== id);
+        render();
+      }
+
+      /* SEARCH */
+      function search() {
+        let key = document.getElementById("searchBox").value.toLowerCase();
+
+        let result = students.filter(
+          (s) =>
+            s.id.toString().includes(key) ||
+            s.name.toLowerCase().includes(key) ||
+            s.class.toLowerCase().includes(key) ||
+            s.email.toLowerCase().includes(key)
+        );
+
+        document.getElementById(
+          "status"
+        ).innerText = `🔎 Tìm thấy ${result.length} kết quả`;
+
+        render(result);
+      }
+
+      /* CLEAR */
+      function clearSearch() {
+        document.getElementById("searchBox").value = "";
+        document.getElementById("status").innerText = "";
+        render();
+      }
+
+      /* SORT A-Z */
+      function sortAZ() {
+        students.sort((a, b) => a.name.localeCompare(b.name, "vi"));
+        render();
+      }
+
+      render();
+    </script>
+  </body>
+</html>

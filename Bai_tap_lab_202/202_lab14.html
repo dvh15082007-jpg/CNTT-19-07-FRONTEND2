@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CNTT Tech Effects Pro</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial;
+        background: linear-gradient(135deg, #cfd9ff, #ffd6e7);
+        display: flex;
+        justify-content: center;
+        padding: 40px;
+      }
+
+      .box {
+        width: 750px;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      h1 {
+        color: #6a1b9a;
+      }
+
+      .buttons {
+        margin-bottom: 10px;
+      }
+
+      button {
+        padding: 10px 12px;
+        margin: 5px;
+        border: none;
+        border-radius: 10px;
+        background: #7b1fa2;
+        color: white;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      button:hover {
+        background: #4a148c;
+        transform: scale(1.05);
+      }
+
+      /* CONTENT */
+      .content {
+        display: none;
+        margin-top: 20px;
+        padding: 20px;
+        border-radius: 12px;
+        background: #f3e5f5;
+        text-align: left;
+        line-height: 1.6;
+        font-size: 16px;
+        transition: 0.3s;
+      }
+
+      /* highlight */
+      .active {
+        box-shadow: 0 0 20px rgba(123, 31, 162, 0.5);
+        transform: scale(1.02);
+      }
+
+      /* status */
+      .status {
+        margin-top: 10px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .title {
+        font-weight: bold;
+        font-size: 18px;
+        color: #4a148c;
+        margin-bottom: 5px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="box">
+      <h1>💻 CNTT TECH EFFECTS PRO</h1>
+
+      <div class="buttons">
+        <button id="fadeBtn">Fade Effect</button>
+        <button id="slideBtn">Slide Effect</button>
+        <button id="toggleBtn">Toggle Mix</button>
+        <button id="comboBtn">Chaining FX</button>
+        <button id="resetBtn">Reset</button>
+      </div>
+
+      <div class="status" id="status">
+        Chọn hiệu ứng để hiển thị nội dung CNTT
+      </div>
+
+      <div class="content" id="box"></div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        function showContent(title, text, effect) {
+          $("#box").stop(true, true).hide();
+
+          if (effect === "fade") {
+            $("#box")
+              .html(`<div class="title">${title}</div>${text}`)
+              .fadeIn(600)
+              .addClass("active");
+          } else if (effect === "slide") {
+            $("#box")
+              .html(`<div class="title">${title}</div>${text}`)
+              .slideDown(600)
+              .addClass("active");
+          }
+
+          $("#status").text("✔ Đang chạy hiệu ứng: " + effect);
+        }
+
+        /* ================= FADE ================= */
+        $("#fadeBtn").click(function () {
+          showContent(
+            "💻 Web Development",
+            "HTML, CSS, JS là nền tảng xây dựng website. Frontend tạo giao diện, Backend xử lý dữ liệu.",
+            "fade"
+          );
+        });
+
+        /* ================= SLIDE ================= */
+        $("#slideBtn").click(function () {
+          $("#box")
+            .stop(true, true)
+            .slideUp(300)
+            .queue(function (next) {
+              $(this).html(`
+<div class="title">🗄 Database Systems</div>
+SQL dùng để quản lý dữ liệu trong MySQL, SQL Server...
+`);
+
+              next();
+            })
+            .slideDown(600)
+            .addClass("active");
+
+          $("#status").text("✔ Slide effect running");
+        });
+
+        /* ================= TOGGLE ================= */
+        $("#toggleBtn").click(function () {
+          $("#box").stop(true, true).slideToggle(500).toggleClass("active");
+
+          $("#status").text("✔ Toggle effect");
+        });
+
+        /* ================= CHAINING ================= */
+        $("#comboBtn").click(function () {
+          $("#box")
+            .stop(true, true)
+            .fadeOut(300)
+            .slideDown(300)
+            .fadeIn(400)
+            .html(
+              `
+<div class="title">🔐 Cyber Security</div>
+Bảo mật hệ thống, mã hóa dữ liệu, chống tấn công mạng và bảo vệ thông tin.
+`
+            )
+            .addClass("active");
+
+          $("#status").text("✔ Chaining effect running");
+        });
+
+        /* ================= RESET ================= */
+        $("#resetBtn").click(function () {
+          $("#box").stop(true, true).hide().removeClass("active");
+          $("#status").text("Chọn hiệu ứng để hiển thị nội dung CNTT");
+        });
+      });
+    </script>
+  </body>
+</html>

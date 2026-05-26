@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 07 - DOM hoàn chỉnh</title>
+
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial;
+        background: linear-gradient(135deg, #ffd6e7, #d6e7ff);
+      }
+
+      .box {
+        width: 420px;
+        background: white;
+        padding: 25px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+      }
+
+      h1 {
+        color: #ff4f8d;
+      }
+
+      p {
+        color: #555;
+      }
+
+      img {
+        width: 220px;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 15px;
+        margin-top: 10px;
+        transition: 0.3s;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        outline: none;
+      }
+
+      button {
+        margin-top: 10px;
+        padding: 10px;
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        background: #ff5d95;
+        color: white;
+        cursor: pointer;
+        font-size: 15px;
+        transition: 0.2s;
+      }
+
+      button:hover {
+        background: #ff2d74;
+        transform: scale(1.02);
+      }
+
+      /* DARK MODE */
+      .dark {
+        background: #222;
+        color: white;
+      }
+
+      .dark p {
+        color: #ddd;
+      }
+
+      .dark h1 {
+        color: #ffb3d1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="box" id="box">
+      <h1 id="title">Xin chào 👋</h1>
+
+      <p id="desc">Nhập nội dung để thay đổi giao diện</p>
+
+      <img
+        id="img"
+        src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+      />
+
+      <!-- INPUT -->
+      <input id="ipTitle" placeholder="Nhập tiêu đề mới" />
+      <input id="ipDesc" placeholder="Nhập mô tả mới" />
+
+      <!-- BUTTON -->
+      <button onclick="capNhat()">Cập nhật nội dung</button>
+      <button onclick="doiAnh()">Đổi ảnh ngẫu nhiên</button>
+      <button onclick="doiTheme()">Đổi theme</button>
+      <button onclick="reset()">Khôi phục</button>
+    </div>
+
+    <script>
+      /* DANH SÁCH ẢNH RANDOM */
+      const images = [
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+        "https://images.unsplash.com/photo-1518791841217-8f162f1e1131",
+        "https://images.unsplash.com/photo-1520975918316-8b1a5f8d2f05",
+        "https://images.unsplash.com/photo-1507149833265-60c372daea22",
+        "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8",
+      ];
+
+      /* CẬP NHẬT NỘI DUNG */
+      function capNhat() {
+        let title = document.getElementById("ipTitle").value;
+        let desc = document.getElementById("ipDesc").value;
+
+        if (title) {
+          document.getElementById("title").innerText = title;
+        }
+
+        if (desc) {
+          document.getElementById("desc").textContent = desc;
+        }
+      }
+
+      /* ĐỔI ẢNH NGẪU NHIÊN */
+      function doiAnh() {
+        let index = Math.floor(Math.random() * images.length);
+
+        document.getElementById("img").src = images[index];
+      }
+
+      /* ĐỔI THEME */
+      function doiTheme() {
+        document.getElementById("box").classList.toggle("dark");
+      }
+
+      /* RESET */
+      function reset() {
+        document.getElementById("title").innerText = "Xin chào 👋";
+
+        document.getElementById("desc").textContent =
+          "Nhập nội dung để thay đổi giao diện";
+
+        document.getElementById("img").src = images[0];
+
+        document.getElementById("ipTitle").value = "";
+        document.getElementById("ipDesc").value = "";
+
+        document.getElementById("box").classList.remove("dark");
+      }
+    </script>
+  </body>
+</html>

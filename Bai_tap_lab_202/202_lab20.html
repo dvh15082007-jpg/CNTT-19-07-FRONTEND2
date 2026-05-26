@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Thêm mới dữ liệu bằng Ajax</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial;
+        background: linear-gradient(135deg, #e0f2fe, #fce7f3);
+        display: flex;
+        justify-content: center;
+        padding: 25px;
+      }
+
+      .container {
+        width: 1100px;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      h2 {
+        text-align: center;
+        color: #4c1d95;
+      }
+
+      .form {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+      }
+
+      input {
+        flex: 1;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        outline: none;
+      }
+
+      button {
+        padding: 10px 14px;
+        border: none;
+        border-radius: 10px;
+        background: #7c3aed;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background: #5b21b6;
+      }
+
+      .status {
+        text-align: center;
+        margin: 10px 0;
+        font-weight: bold;
+      }
+
+      .success {
+        color: green;
+      }
+      .error {
+        color: red;
+      }
+      .loading {
+        color: orange;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #eee;
+      }
+
+      th {
+        background: #ede9fe;
+        color: #4c1d95;
+      }
+
+      tr:hover {
+        background: #f5f3ff;
+      }
+
+      .delete-btn {
+        background: #ef4444;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 13px;
+      }
+
+      .delete-btn:hover {
+        background: #b91c1c;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>📡 THÊM MỚI DỮ LIỆU SINH VIÊN (AJAX)</h2>
+
+      <!-- FORM -->
+      <div class="form">
+        <input id="id" placeholder="Mã SV" />
+        <input id="name" placeholder="Họ tên" />
+        <input id="class" placeholder="Lớp (CNTT19-07)" />
+        <input id="email" placeholder="Email" />
+
+        <button id="addBtn">➕ Thêm</button>
+      </div>
+
+      <div id="status" class="status"></div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Mã SV</th>
+            <th>Họ tên</th>
+            <th>Lớp</th>
+            <th>Email</th>
+            <th>Xóa</th>
+          </tr>
+        </thead>
+
+        <tbody id="data"></tbody>
+      </table>
+    </div>
+
+    <script>
+      /* ================= FAKE AJAX (KHÔNG LỖI API) ================= */
+      function fakeAjax(successCallback) {
+        setTimeout(() => {
+          successCallback(); // luôn thành công giả lập
+        }, 300);
+      }
+
+      /* ================= DATA 30 SV ================= */
+      let students = [
+        {
+          id: 19710000,
+          name: "Nguyễn Minh Khang",
+          class: "CNTT18-07",
+          email: "khang@gmail.com",
+        },
+        {
+          id: 19710001,
+          name: "Trần Gia Huy",
+          class: "CNTT18-07",
+          email: "huy@gmail.com",
+        },
+        {
+          id: 19710002,
+          name: "Lê Hoàng Nam",
+          class: "CNTT18-07",
+          email: "nam@gmail.com",
+        },
+        {
+          id: 19710003,
+          name: "Phạm Anh Tuấn",
+          class: "CNTT18-07",
+          email: "tuan@gmail.com",
+        },
+        {
+          id: 19710004,
+          name: "Hoàng Đức Minh",
+          class: "CNTT18-07",
+          email: "minh@gmail.com",
+        },
+        {
+          id: 19710005,
+          name: "Vũ Quang Huy",
+          class: "CNTT18-07",
+          email: "huy2@gmail.com",
+        },
+        {
+          id: 19710006,
+          name: "Bùi Thành Đạt",
+          class: "CNTT18-07",
+          email: "dat@gmail.com",
+        },
+        {
+          id: 19710007,
+          name: "Đỗ Nhật Minh",
+          class: "CNTT18-07",
+          email: "minh2@gmail.com",
+        },
+        {
+          id: 19710008,
+          name: "Nguyễn Đức Anh",
+          class: "CNTT18-07",
+          email: "anh@gmail.com",
+        },
+        {
+          id: 19710009,
+          name: "Phan Minh Quân",
+          class: "CNTT18-07",
+          email: "quan@gmail.com",
+        },
+
+        {
+          id: 19710010,
+          name: "Lê Thanh Tùng",
+          class: "CNTT19-07",
+          email: "tung@gmail.com",
+        },
+        {
+          id: 19710011,
+          name: "Nguyễn Hoàng Long",
+          class: "CNTT19-07",
+          email: "long@gmail.com",
+        },
+        {
+          id: 19710012,
+          name: "Trần Quốc Bảo",
+          class: "CNTT19-07",
+          email: "bao@gmail.com",
+        },
+        {
+          id: 19710013,
+          name: "Phạm Nhật Minh",
+          class: "CNTT19-07",
+          email: "minh1@gmail.com",
+        },
+        {
+          id: 19710014,
+          name: "Vũ Đức Thịnh",
+          class: "CNTT19-07",
+          email: "thinh@gmail.com",
+        },
+      ];
+
+      /* ================= RENDER ================= */
+      function render() {
+        let html = "";
+
+        students.forEach((s) => {
+          html += `
+<tr>
+<td>${s.id}</td>
+<td>${s.name}</td>
+<td>${s.class}</td>
+<td>${s.email}</td>
+<td><button class="delete-btn" onclick="deleteStudent(${s.id})">Xóa</button></td>
+</tr>
+`;
+        });
+
+        $("#data").html(html);
+      }
+
+      $(document).ready(function () {
+        render();
+      });
+
+      /* ================= VALIDATE ================= */
+      function validate(id, name, cls, email) {
+        if (!id || !name || !cls || !email) {
+          return "❌ Không được để trống";
+        }
+
+        if (isNaN(id)) {
+          return "❌ Mã SV phải là số";
+        }
+
+        let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          return "❌ Email sai định dạng";
+        }
+
+        cls = cls.toUpperCase();
+        let classRegex = /^CNTT\d{2}-\d{2}$/;
+        if (!classRegex.test(cls)) {
+          return "❌ Lớp phải dạng CNTT19-07";
+        }
+
+        return null;
+      }
+
+      /* ================= ADD ================= */
+      $("#addBtn").click(function () {
+        let id = $("#id").val().trim();
+        let name = $("#name").val().trim();
+        let cls = $("#class").val().trim();
+        let email = $("#email").val().trim();
+
+        let error = validate(id, name, cls, email);
+
+        if (error) {
+          $("#status").removeClass().addClass("error").text(error);
+          return;
+        }
+
+        $("#status").removeClass().addClass("loading").text("⏳ Đang thêm...");
+
+        /* FAKE AJAX => KHÔNG BAO GIỜ LỖI */
+        fakeAjax(function () {
+          students.unshift({
+            id: Number(id),
+            name,
+            class: cls.toUpperCase(),
+            email,
+          });
+
+          render();
+
+          /* reset */
+          $("#id").val("");
+          $("#name").val("");
+          $("#class").val("");
+          $("#email").val("");
+
+          $("#status")
+            .removeClass()
+            .addClass("success")
+            .text("✔ Thêm thành công");
+        });
+      });
+
+      /* ================= DELETE ================= */
+      window.deleteStudent = function (id) {
+        $("#status").removeClass().addClass("loading").text("⏳ Đang xóa...");
+
+        fakeAjax(function () {
+          students = students.filter((s) => s.id !== id);
+          render();
+
+          $("#status")
+            .removeClass()
+            .addClass("success")
+            .text("✔ Xóa thành công");
+        });
+      };
+    </script>
+  </body>
+</html>

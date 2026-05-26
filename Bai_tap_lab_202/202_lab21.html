@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CRUD Sinh Viên Ajax Local</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial;
+        background: linear-gradient(135deg, #e0f2fe, #fce7f3);
+        display: flex;
+        justify-content: center;
+        padding: 25px;
+      }
+
+      .container {
+        width: 1100px;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      h2 {
+        text-align: center;
+        color: #4c1d95;
+      }
+
+      .form {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+
+      input {
+        flex: 1;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        padding: 10px 14px;
+        border: none;
+        border-radius: 10px;
+        background: #7c3aed;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background: #5b21b6;
+      }
+
+      .status {
+        text-align: center;
+        margin: 10px 0;
+        font-weight: bold;
+      }
+
+      .success {
+        color: green;
+      }
+      .error {
+        color: red;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #eee;
+      }
+
+      th {
+        background: #ede9fe;
+        color: #4c1d95;
+      }
+
+      tr:hover {
+        background: #f5f3ff;
+      }
+
+      .btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .edit {
+        background: #f59e0b;
+        color: white;
+      }
+      .delete {
+        background: #ef4444;
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>📡 QUẢN LÝ SINH VIÊN (CRUD KHÔNG CẦN API)</h2>
+
+      <div class="form">
+        <input id="id" placeholder="Mã SV" />
+        <input id="name" placeholder="Họ tên" />
+        <input id="class" placeholder="Lớp CNTT19-07" />
+        <input id="email" placeholder="Email" />
+
+        <button id="addBtn">➕ Thêm</button>
+        <button id="updateBtn" style="background: #f59e0b">✏ Sửa</button>
+      </div>
+
+      <div id="status" class="status"></div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Mã SV</th>
+            <th>Họ tên</th>
+            <th>Lớp</th>
+            <th>Email</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+
+        <tbody id="data"></tbody>
+      </table>
+    </div>
+
+    <script>
+      /* ================= DATA 30 SINH VIÊN ================= */
+      let students = [
+        {
+          id: 19710000,
+          name: "Nguyễn Minh Khang",
+          class: "CNTT18-07",
+          email: "khang@gmail.com",
+        },
+        {
+          id: 19710001,
+          name: "Trần Gia Huy",
+          class: "CNTT18-07",
+          email: "huy@gmail.com",
+        },
+        {
+          id: 19710002,
+          name: "Lê Hoàng Nam",
+          class: "CNTT18-07",
+          email: "nam@gmail.com",
+        },
+        {
+          id: 19710003,
+          name: "Phạm Anh Tuấn",
+          class: "CNTT18-07",
+          email: "tuan@gmail.com",
+        },
+        {
+          id: 19710004,
+          name: "Hoàng Đức Minh",
+          class: "CNTT18-07",
+          email: "minh@gmail.com",
+        },
+        {
+          id: 19710005,
+          name: "Vũ Quang Huy",
+          class: "CNTT18-07",
+          email: "huy2@gmail.com",
+        },
+        {
+          id: 19710006,
+          name: "Bùi Thành Đạt",
+          class: "CNTT18-07",
+          email: "dat@gmail.com",
+        },
+        {
+          id: 19710007,
+          name: "Đỗ Nhật Minh",
+          class: "CNTT18-07",
+          email: "minh2@gmail.com",
+        },
+        {
+          id: 19710008,
+          name: "Nguyễn Đức Anh",
+          class: "CNTT18-07",
+          email: "anh@gmail.com",
+        },
+        {
+          id: 19710009,
+          name: "Phan Minh Quân",
+          class: "CNTT18-07",
+          email: "quan@gmail.com",
+        },
+
+        {
+          id: 19710010,
+          name: "Lê Thanh Tùng",
+          class: "CNTT19-07",
+          email: "tung@gmail.com",
+        },
+        {
+          id: 19710011,
+          name: "Nguyễn Hoàng Long",
+          class: "CNTT19-07",
+          email: "long@gmail.com",
+        },
+        {
+          id: 19710012,
+          name: "Trần Quốc Bảo",
+          class: "CNTT19-07",
+          email: "bao@gmail.com",
+        },
+        {
+          id: 19710013,
+          name: "Phạm Nhật Minh",
+          class: "CNTT19-07",
+          email: "minh1@gmail.com",
+        },
+        {
+          id: 19710014,
+          name: "Vũ Đức Thịnh",
+          class: "CNTT19-07",
+          email: "thinh@gmail.com",
+        },
+        {
+          id: 19710015,
+          name: "Ngô Văn Hậu",
+          class: "CNTT19-07",
+          email: "hau@gmail.com",
+        },
+        {
+          id: 19710016,
+          name: "Đặng Quốc Việt",
+          class: "CNTT19-07",
+          email: "viet@gmail.com",
+        },
+        {
+          id: 19710017,
+          name: "Bùi Gia Bảo",
+          class: "CNTT19-07",
+          email: "bao2@gmail.com",
+        },
+        {
+          id: 19710018,
+          name: "Nguyễn Tuấn Kiệt",
+          class: "CNTT19-07",
+          email: "kiet@gmail.com",
+        },
+        {
+          id: 19710019,
+          name: "Trần Văn Duy",
+          class: "CNTT19-07",
+          email: "duy@gmail.com",
+        },
+
+        {
+          id: 19710020,
+          name: "Phạm Minh Quân",
+          class: "CNTT19-07",
+          email: "quan2@gmail.com",
+        },
+        {
+          id: 19710021,
+          name: "Lê Đức Anh",
+          class: "CNTT19-07",
+          email: "dan@gmail.com",
+        },
+        {
+          id: 19710022,
+          name: "Hoàng Văn Nam",
+          class: "CNTT19-07",
+          email: "nam2@gmail.com",
+        },
+        {
+          id: 19710023,
+          name: "Nguyễn Hữu Phúc",
+          class: "CNTT19-07",
+          email: "phuc@gmail.com",
+        },
+        {
+          id: 19710024,
+          name: "Trịnh Gia Huy",
+          class: "CNTT19-07",
+          email: "huy3@gmail.com",
+        },
+      ];
+
+      let editIndex = -1;
+
+      /* ================= RENDER ================= */
+      function render() {
+        let html = "";
+
+        students.forEach((s, index) => {
+          html += `
+<tr>
+<td>${s.id}</td>
+<td>${s.name}</td>
+<td>${s.class}</td>
+<td>${s.email}</td>
+<td>
+<button class="btn edit" onclick="editStudent(${index})">Sửa</button>
+<button class="btn delete" onclick="deleteStudent(${index})">Xóa</button>
+</td>
+</tr>
+`;
+        });
+
+        $("#data").html(html);
+      }
+
+      $(document).ready(function () {
+        render();
+      });
+
+      /* ================= ADD ================= */
+      $("#addBtn").click(function () {
+        let id = $("#id").val();
+        let name = $("#name").val();
+        let cls = $("#class").val();
+        let email = $("#email").val();
+
+        if (!id || !name || !cls || !email) {
+          $("#status").text("❌ Không được để trống").addClass("error");
+          return;
+        }
+
+        students.push({
+          id: Number(id),
+          name,
+          class: cls,
+          email,
+        });
+
+        render();
+
+        $("#status")
+          .text("✔ Thêm thành công")
+          .removeClass()
+          .addClass("success");
+
+        $("#id").val("");
+        $("#name").val("");
+        $("#class").val("");
+        $("#email").val("");
+      });
+
+      /* ================= EDIT ================= */
+      window.editStudent = function (index) {
+        let s = students[index];
+
+        $("#id").val(s.id);
+        $("#name").val(s.name);
+        $("#class").val(s.class);
+        $("#email").val(s.email);
+
+        editIndex = index;
+      };
+
+      /* ================= UPDATE ================= */
+      $("#updateBtn").click(function () {
+        if (editIndex === -1) {
+          $("#status").text("❌ Chưa chọn sinh viên để sửa");
+          return;
+        }
+
+        students[editIndex] = {
+          id: Number($("#id").val()),
+          name: $("#name").val(),
+          class: $("#class").val(),
+          email: $("#email").val(),
+        };
+
+        render();
+
+        $("#status").text("✔ Cập nhật thành công").addClass("success");
+
+        editIndex = -1;
+      });
+
+      /* ================= DELETE ================= */
+      window.deleteStudent = function (index) {
+        students.splice(index, 1);
+        render();
+
+        $("#status").text("✔ Xóa thành công").addClass("success");
+      };
+    </script>
+  </body>
+</html>
