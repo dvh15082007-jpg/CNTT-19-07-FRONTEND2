@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 19</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+body{
+    font-family:Arial;
+    background:#f5f5f5;
+}
+
+.container{
+    width:800px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    border:1px solid #ccc;
+    padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Danh sách user Ajax</h2>
+
+<button id="load">
+Tải dữ liệu
+</button>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Tên</th>
+
+<th>Email</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tbody"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+$("#load").click(function(){
+
+    $.ajax({
+
+        url:
+        "https://jsonplaceholder.typicode.com/users",
+
+        method:"GET",
+
+        success:function(data){
+
+            let html="";
+
+            data.forEach(function(user){
+
+                html+=`
+
+                <tr>
+
+                    <td>${user.id}</td>
+
+                    <td>${user.name}</td>
+
+                    <td>${user.email}</td>
+
+                </tr>
+
+                `;
+
+            });
+
+            $("#tbody").html(html);
+
+        }
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>

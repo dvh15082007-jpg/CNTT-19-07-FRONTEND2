@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 9</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#f4f4f4;
+}
+
+.container{
+    width:500px;
+    margin:40px auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+}
+
+input{
+    width:70%;
+    padding:10px;
+}
+
+button{
+    padding:10px;
+}
+
+li{
+    margin:10px 0;
+}
+
+.done{
+    text-decoration:line-through;
+    color:gray;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Quản lý công việc</h2>
+
+<input
+id="task"
+placeholder="Nhập công việc"
+>
+
+<button onclick="them()">
+Thêm
+</button>
+
+<ul id="list"></ul>
+
+</div>
+
+<script>
+
+let congViec=[];
+
+function render(){
+
+    let html="";
+
+    congViec.forEach(function(item,index){
+
+        html+=`
+        <li class="${item.done?"done":""}">
+
+            ${item.text}
+
+            <button onclick="hoanThanh(${index})">
+                ✓
+            </button>
+
+            <button onclick="xoa(${index})">
+                Xóa
+            </button>
+
+        </li>
+        `;
+
+    });
+
+    list.innerHTML=html;
+}
+
+function them(){
+
+    let value=task.value.trim();
+
+    if(value==="") return;
+
+    congViec.push({
+
+        text:value,
+
+        done:false
+
+    });
+
+    task.value="";
+
+    render();
+}
+
+function hoanThanh(i){
+
+    congViec[i].done=
+        !congViec[i].done;
+
+    render();
+}
+
+function xoa(i){
+
+    congViec.splice(i,1);
+
+    render();
+}
+
+</script>
+
+</body>
+</html>

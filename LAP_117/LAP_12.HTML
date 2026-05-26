@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 11</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#eee;
+}
+
+.container{
+    width:600px;
+    margin:auto;
+    margin-top:40px;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+}
+
+input{
+    padding:10px;
+    width:200px;
+}
+
+button{
+    padding:10px;
+}
+
+#result{
+    margin-top:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Tra cứu user theo ID</h2>
+
+<input
+type="number"
+id="userId"
+placeholder="Nhập ID"
+>
+
+<button onclick="searchUser()">
+Tra cứu
+</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+async function searchUser(){
+
+    let id=
+        document.getElementById("userId").value;
+
+    if(id===""){
+
+        result.innerHTML=
+            "Nhập ID";
+
+        return;
+    }
+
+    let response=
+        await fetch(
+            "https://jsonplaceholder.typicode.com/users/"+id
+        );
+
+    let user=
+        await response.json();
+
+    if(!user.id){
+
+        result.innerHTML=
+            "Không tìm thấy";
+
+        return;
+    }
+
+    result.innerHTML=`
+
+        <h3>${user.name}</h3>
+
+        <p>Email: ${user.email}</p>
+
+        <p>Phone: ${user.phone}</p>
+
+        <p>Website: ${user.website}</p>
+
+    `;
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 13</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+
+body{
+    font-family:Arial;
+    text-align:center;
+    background:#f4f4f4;
+    margin-top:50px;
+}
+
+.box{
+    width:500px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+}
+
+.content{
+    margin-top:20px;
+    padding:20px;
+    background:#dff4ff;
+    border-radius:10px;
+}
+
+button{
+    padding:10px 18px;
+    margin:5px;
+    cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Ẩn hiện nội dung bằng jQuery</h2>
+
+<button id="hideBtn">
+Ẩn
+</button>
+
+<button id="showBtn">
+Hiện
+</button>
+
+<button id="toggleBtn">
+Toggle
+</button>
+
+<div class="content" id="content">
+
+Xin chào, đây là nội dung demo jQuery
+
+</div>
+
+</div>
+
+<script>
+
+$(document).ready(function(){
+
+    $("#hideBtn").click(function(){
+
+        $("#content").hide();
+
+    });
+
+    $("#showBtn").click(function(){
+
+        $("#content").show();
+
+    });
+
+    $("#toggleBtn").click(function(){
+
+        $("#content").toggle();
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>

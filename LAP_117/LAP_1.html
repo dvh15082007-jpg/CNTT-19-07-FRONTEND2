@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 1 BMI</title>
+    <style>
+        body{
+            font-family: Arial;
+            text-align:center;
+            margin-top:50px;
+        }
+        input,button{
+            padding:10px;
+            margin:10px;
+        }
+        #ketQua{
+            font-size:20px;
+            font-weight:bold;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Tính BMI</h2>
+
+<input type="number" id="cao" placeholder="Chiều cao (m)">
+<input type="number" id="nang" placeholder="Cân nặng (kg)">
+<button onclick="tinhBMI()">Tính</button>
+
+<p id="ketQua"></p>
+
+<script>
+function tinhBMI(){
+    let h=Number(document.getElementById("cao").value);
+    let w=Number(document.getElementById("nang").value);
+
+    if(h<=0||w<=0){
+        ketQua.innerText="Nhập lại dữ liệu";
+        return;
+    }
+
+    let bmi=(w/(h*h)).toFixed(2);
+    let loai="";
+
+    if(bmi<18.5) loai="Gầy";
+    else if(bmi<25) loai="Bình thường";
+    else if(bmi<30) loai="Thừa cân";
+    else loai="Béo phì";
+
+    ketQua.innerText="BMI: "+bmi+" - "+loai;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 2</title>
+</head>
+<body>
+
+<h2>Tính khuyến mãi</h2>
+
+<input id="tien" type="number" placeholder="Nhập tiền">
+
+<select id="hang">
+    <option>Thường</option>
+    <option>Bạc</option>
+    <option>Vàng</option>
+</select>
+
+<button onclick="tinh()">Tính</button>
+
+<p id="kq"></p>
+
+<script>
+function tinh(){
+
+    let tong=Number(tien.value);
+    let hang=document.getElementById("hang").value;
+
+    let giam=0;
+
+    if(tong>=500000) giam=10;
+    else if(tong>=200000) giam=5;
+
+    if(hang==="Bạc") giam+=5;
+    if(hang==="Vàng") giam+=10;
+
+    let tienGiam=tong*giam/100;
+    let thanhToan=tong-tienGiam;
+
+    kq.innerHTML=
+        "Tiền gốc: "+tong+"<br>"+
+        "Giảm: "+giam+"%<br>"+
+        "Tiền giảm: "+tienGiam+"<br>"+
+        "Thanh toán: "+thanhToan;
+}
+</script>
+
+</body>
+</html>

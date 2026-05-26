@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 3</title>
+</head>
+<body>
+
+<h2>Đoán số</h2>
+
+<input id="so" type="number">
+
+<button onclick="kiemTra()">Đoán</button>
+<button onclick="choiLai()">Chơi lại</button>
+
+<p id="tb"></p>
+
+<script>
+
+let biMat=Math.floor(Math.random()*10)+1;
+let dem=0;
+
+function kiemTra(){
+
+    let n=Number(so.value);
+    dem++;
+
+    if(n<biMat){
+        tb.innerText="Nhỏ hơn";
+    }
+    else if(n>biMat){
+        tb.innerText="Lớn hơn";
+    }
+    else{
+        tb.innerText=
+            "Đúng rồi sau "+dem+" lượt";
+    }
+}
+
+function choiLai(){
+    biMat=Math.floor(Math.random()*10)+1;
+    dem=0;
+    tb.innerText="";
+    so.value="";
+}
+</script>
+
+</body>
+</html>

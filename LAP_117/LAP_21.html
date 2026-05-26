@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+
+<meta charset="UTF-8">
+
+<title>Lab 21</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#eee;
+}
+
+.container{
+    width:700px;
+    margin:auto;
+    background:white;
+    padding:20px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+td,th{
+    border:1px solid #ccc;
+    padding:10px;
+}
+
+input{
+    padding:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>CRUD sinh viên</h2>
+
+<input id="name">
+
+<button id="addBtn">
+Thêm
+</button>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>STT</th>
+
+<th>Tên</th>
+
+<th>Xóa</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tbody"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+let students=[];
+
+function render(){
+
+    let html="";
+
+    students.forEach(function(item,index){
+
+        html+=`
+
+        <tr>
+
+            <td>${index+1}</td>
+
+            <td>${item}</td>
+
+            <td>
+
+                <button
+                onclick="removeItem(${index})">
+
+                    Xóa
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+    $("#tbody").html(html);
+
+}
+
+$("#addBtn").click(function(){
+
+    let ten=$("#name").val();
+
+    if(ten==="") return;
+
+    students.push(ten);
+
+    $("#name").val("");
+
+    render();
+
+});
+
+function removeItem(i){
+
+    students.splice(i,1);
+
+    render();
+
+}
+
+</script>
+
+</body>
+</html>

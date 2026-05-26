@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 6</title>
+
+<style>
+body{
+    font-family:Arial;
+    text-align:center;
+    margin-top:40px;
+}
+
+.box{
+    width:500px;
+    margin:auto;
+    background:#fafafa;
+    padding:20px;
+    border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Tính đơn hàng bằng callback</h2>
+
+<button onclick="xuLy()">Tính</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+let donHang={
+    tong:1000000
+};
+
+function tinhTien(data,callback){
+
+    let tien=data.tong;
+
+    callback(tien);
+}
+
+function giamGia(tien,callback){
+
+    let giam=tien*0.1;
+
+    callback(tien-giam);
+}
+
+function phiShip(tien,callback){
+
+    let ship=30000;
+
+    callback(tien+ship);
+}
+
+function xuLy(){
+
+    tinhTien(donHang,function(a){
+
+        giamGia(a,function(b){
+
+            phiShip(b,function(c){
+
+                result.innerHTML=
+                    "Tiền gốc: "+a+"<br>"+
+                    "Sau giảm: "+b+"<br>"+
+                    "Sau ship: "+c;
+
+            });
+
+        });
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>

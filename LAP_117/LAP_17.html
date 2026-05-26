@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 17</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#eee;
+}
+
+.box{
+    width:600px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    margin-top:40px;
+}
+
+.product{
+    border:1px solid #ddd;
+    padding:20px;
+    border-radius:10px;
+}
+
+button{
+    padding:8px 15px;
+    margin:5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Giỏ hàng</h2>
+
+<div class="product">
+
+<h3>Laptop Dell</h3>
+
+<p>Đơn giá:
+    <span id="price">
+        15000000
+    </span>
+</p>
+
+<p>Số lượng:
+    <span id="qty">
+        1
+    </span>
+</p>
+
+<button id="minus">-</button>
+
+<button id="plus">+</button>
+
+<p>
+
+Thành tiền:
+
+<span id="total"></span>
+
+</p>
+
+</div>
+
+</div>
+
+<script>
+
+let gia=15000000;
+
+let sl=1;
+
+function render(){
+
+    $("#qty").text(sl);
+
+    $("#total").text(gia*sl);
+
+}
+
+$("#plus").click(function(){
+
+    sl++;
+
+    render();
+
+});
+
+$("#minus").click(function(){
+
+    if(sl>1){
+
+        sl--;
+
+        render();
+
+    }
+
+});
+
+render();
+
+</script>
+
+</body>
+</html>

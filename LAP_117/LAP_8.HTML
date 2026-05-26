@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 7</title>
+
+<style>
+body{
+    font-family:Arial;
+    text-align:center;
+    background:#f4f4f4;
+    margin-top:40px;
+}
+
+.box{
+    width:500px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 0 10px #ccc;
+}
+
+img{
+    width:180px;
+    border-radius:10px;
+    margin-top:15px;
+}
+
+button{
+    padding:10px 20px;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h1 id="title">Chào bạn</h1>
+
+<p id="desc">
+Đây là giao diện ban đầu
+</p>
+
+<img
+id="avatar"
+src="https://picsum.photos/200"
+>
+
+<br>
+
+<button onclick="doiNoiDung()">
+Thay đổi
+</button>
+
+</div>
+
+<script>
+
+function doiNoiDung(){
+
+    document.getElementById("title").innerText=
+        "DOM đã thay đổi";
+
+    document.getElementById("desc").innerText=
+        "Nội dung mới vừa cập nhật";
+
+    document.getElementById("avatar").src=
+        "https://picsum.photos/250";
+
+}
+
+</script>
+
+</body>
+</html>

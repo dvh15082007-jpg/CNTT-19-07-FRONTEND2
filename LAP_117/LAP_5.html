@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 5</title>
+
+<style>
+body{
+    font-family:Arial;
+    padding:30px;
+}
+
+input{
+    padding:8px;
+}
+
+button{
+    padding:8px;
+}
+
+.item{
+    border:1px solid #ccc;
+    margin:10px 0;
+    padding:10px;
+    border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Danh sách sản phẩm</h2>
+
+<input id="keyword" placeholder="Tìm tên">
+
+<button onclick="tim()">Tìm</button>
+
+<div id="list"></div>
+
+<script>
+
+let sanPham=[
+    {ten:"Laptop",gia:15000000,sl:3},
+    {ten:"Chuột",gia:200000,sl:10},
+    {ten:"Bàn phím",gia:500000,sl:7},
+    {ten:"Tai nghe",gia:800000,sl:5},
+    {ten:"Màn hình",gia:4000000,sl:2}
+];
+
+function render(ds){
+
+    let html="";
+
+    ds.forEach(function(sp){
+
+        html+=`
+        <div class="item">
+            <h3>${sp.ten}</h3>
+            <p>Giá: ${sp.gia}</p>
+            <p>Số lượng: ${sp.sl}</p>
+        </div>
+        `;
+    });
+
+    list.innerHTML=html;
+}
+
+function tim(){
+
+    let key=keyword.value.toLowerCase();
+
+    let kq=sanPham.filter(function(sp){
+
+        return sp.ten.toLowerCase().includes(key);
+
+    });
+
+    render(kq);
+}
+
+render(sanPham);
+
+</script>
+
+</body>
+</html>

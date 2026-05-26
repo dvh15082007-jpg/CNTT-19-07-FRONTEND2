@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 4</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#f5f5f5;
+    text-align:center;
+    margin-top:40px;
+}
+
+.container{
+    width:500px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px #ccc;
+}
+
+button{
+    padding:10px 20px;
+    margin-top:10px;
+}
+
+#result{
+    margin-top:20px;
+    text-align:left;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Xử lý điểm sinh viên</h2>
+
+<button onclick="xuLy()">Hiển thị</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+function xuLy(){
+
+    let diem=[8,9,7,6,10];
+
+    let tong=0;
+
+    diem.forEach(function(i){
+        tong+=i;
+    });
+
+    let tb=tong/diem.length;
+
+    let xepLoai="";
+
+    if(tb<5){
+        xepLoai="Yếu";
+    }
+    else if(tb<7){
+        xepLoai="Trung bình";
+    }
+    else if(tb<8.5){
+        xepLoai="Khá";
+    }
+    else{
+        xepLoai="Giỏi";
+    }
+
+    document.getElementById("result").innerHTML=
+        "Danh sách điểm: "+diem.join(", ")+"<br>"+
+        "Tổng: "+tong+"<br>"+
+        "Trung bình: "+tb.toFixed(2)+"<br>"+
+        "Xếp loại: "+xepLoai;
+}
+
+</script>
+
+</body>
+</html>

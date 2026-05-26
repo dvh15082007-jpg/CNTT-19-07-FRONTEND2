@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 16</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+body{
+    font-family:Arial;
+    text-align:center;
+    background:#f4f4f4;
+    margin-top:50px;
+}
+
+.box{
+    width:450px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:12px;
+}
+
+#number{
+    font-size:55px;
+    font-weight:bold;
+    margin:20px;
+}
+
+button{
+    padding:10px 20px;
+    margin:5px;
+    border:none;
+    border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Bộ đếm jQuery</h2>
+
+<div id="number">0</div>
+
+<button id="minus">-</button>
+
+<button id="reset">Reset</button>
+
+<button id="plus">+</button>
+
+</div>
+
+<script>
+
+let count=0;
+
+function render(){
+
+    $("#number").text(count);
+
+    if(count<0){
+        $("#number").css("color","red");
+    }
+    else if(count>0){
+        $("#number").css("color","green");
+    }
+    else{
+        $("#number").css("color","black");
+    }
+
+}
+
+$("#plus").click(function(){
+
+    count++;
+
+    render();
+
+});
+
+$("#minus").click(function(){
+
+    count--;
+
+    render();
+
+});
+
+$("#reset").click(function(){
+
+    count=0;
+
+    render();
+
+});
+
+</script>
+
+</body>
+</html>
