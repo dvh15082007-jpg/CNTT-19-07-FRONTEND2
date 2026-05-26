@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Bootstrap Animation</title>
+    
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==================== GLOBAL STYLES ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* ==================== BACKGROUND ANIMATION ==================== */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,144C960,149,1056,139,1152,128C1248,117,1344,107,1392,101.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: bottom;
+            animation: wave 15s ease-in-out infinite;
+            opacity: 0.5;
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* ==================== FLOATING PARTICLES ==================== */
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 15s infinite;
+        }
+        
+        .particle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .particle:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 70%;
+            left: 80%;
+            animation-delay: 2s;
+        }
+        
+        .particle:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            left: 5%;
+            animation-delay: 4s;
+        }
+        
+        .particle:nth-child(4) {
+            width: 50px;
+            height: 50px;
+            top: 80%;
+            left: 70%;
+            animation-delay: 6s;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-100px) rotate(180deg);
+                opacity: 0.6;
+            }
+        }
+        
+        /* ==================== CONTAINER ==================== */
+        .login-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            padding: 20px;
+        }
+        
+        /* ==================== CARD STYLES ==================== */
+        .login-card {
+            border-radius: 25px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 100px rgba(255, 255, 255, 0.1);
+            border: none;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            animation: cardEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-origin: center;
+        }
+        
+        @keyframes cardEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        /* ==================== HEADER ==================== */
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-header::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            top: -50%;
+            left: -50%;
+            animation: headerGlow 10s linear infinite;
+        }
+        
+        @keyframes headerGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .login-icon {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            position: relative;
+            animation: iconPulse 2s ease-in-out infinite;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 15px rgba(255, 255, 255, 0);
+            }
+        }
+        
+        .login-icon i {
+            font-size: 3rem;
+            animation: iconRotate 3s ease-in-out infinite;
+        }
+        
+        @keyframes iconRotate {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+        
+        .login-header h3 {
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            animation: slideInDown 0.6s ease-out 0.2s both;
+        }
+        
+        .login-header p {
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+            animation: slideInDown 0.6s ease-out 0.4s both;
+        }
+        
+        @keyframes slideInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* ==================== FORM STYLES ==================== */
+        .card-body {
+            padding: 40px 35px;
+            animation: slideInUp 0.6s ease-out 0.4s both;
+        }
+        
+        @keyframes slideInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .form-label i {
+            margin-right: 8px;
+            color: #667eea;
+        }
+        
+        /* ==================== INPUT GROUP ==================== */
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group-text {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #e0e0e0;
+            border-right: none;
+            color: #667eea;
+            transition: all 0.3s ease;
+            border-radius: 12px 0 0 12px;
+        }
+        
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-left: none;
+            padding: 12px 15px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .form-control:focus {
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-2px);
+        }
+        
+        .input-group:focus-within .input-group-text {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        }
+        
+        .form-control::placeholder {
+            color: #adb5bd;
+            font-size: 14px;
+        }
+        
+        /* ==================== PASSWORD TOGGLE ==================== */
+        .password-toggle {
+            background: transparent;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0 12px;
+            transition: all 0.3s ease;
+            border: 2px solid #e0e0e0;
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .password-toggle:hover {
+            color: #667eea;
+            background: #f8f9fa;
+        }
+        
+        .password-toggle i {
+            transition: transform 0.3s ease;
+        }
+        
+        .password-toggle:active i {
+            transform: scale(1.2);
+        }
+        
+        /* ==================== CHECKBOX ==================== */
+        .form-check {
+            padding-left: 0;
+        }
+        
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 8px;
+        }
+        
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+            animation: checkboxPop 0.3s ease;
+        }
+        
+        @keyframes checkboxPop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .form-check-label {
+            cursor: pointer;
+            user-select: none;
+            font-size: 14px;
+            color: #6c757d;
+            transition: color 0.3s ease;
+        }
+        
+        .form-check-input:checked + .form-check-label {
+            color: #667eea;
+        }
+        
+        /* ==================== LINKS ==================== */
+        a {
+            color: #667eea;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+        
+        a:hover {
+            color: #764ba2;
+        }
+        
+        a:hover::after {
+            width: 100%;
+        }
+        
+        /* ==================== BUTTONS ==================== */
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 14px 30px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn-login:hover::before {
+            left: 100%;
+        }
+        
+        .btn-login:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #6a3f8e 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-login:active {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-login i {
+            transition: transform 0.3s ease;
+        }
+        
+        .btn-login:hover i {
+            transform: translateX(5px);
+        }
+        
+        /* ==================== LOADING ANIMATION ==================== */
+        .btn-login.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        .btn-login.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ==================== DIVIDER ==================== */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .divider span {
+            padding: 0 15px;
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+            background: white;
+            position: relative;
+        }
+        
+        /* ==================== SOCIAL BUTTONS ==================== */
+        .social-login .btn {
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-weight: 500;
+            border: 2px solid;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .social-login .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+        
+        .social-login .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .social-login .btn i {
+            transition: transform 0.3s ease;
+        }
+        
+        .social-login .btn:hover i {
+            transform: scale(1.2) rotate(5deg);
+        }
+        
+        .btn-outline-danger {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+        
+        .btn-outline-danger:hover {
+            background: #dc3545;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+        }
+        
+        .btn-outline-primary {
+            color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        
+        .btn-outline-primary:hover {
+            background: #0d6efd;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+        }
+        
+        /* ==================== VALIDATION STYLES ==================== */
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            animation: shake 0.5s;
+        }
+        
+        .form-control.is-valid {
+            border-color: #28a745;
+            animation: successPulse 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .invalid-feedback,
+        .valid-feedback {
+            display: block;
+            margin-top: 5px;
+            font-size: 13px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ==================== FOOTER ==================== */
+        .footer-text {
+            animation: fadeIn 0.6s ease-out 1s both;
+        }
+        
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 576px) {
+            .login-header {
+                padding: 40px 20px;
+            }
+            
+            .login-icon {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .login-icon i {
+                font-size: 2.5rem;
+            }
+            
+            .card-body {
+                padding: 30px 25px;
+            }
+            
+            .login-header h3 {
+                font-size: 1.5rem;
+            }
+            
+            .social-login .btn {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+            
+            .particle {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .login-card {
+                margin: 20px 0;
+            }
+        }
+        
+        /* ==================== TOAST NOTIFICATION ==================== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .custom-toast {
+            min-width: 300px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideInRight 0.5s ease;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* ==================== LOADING OVERLAY ==================== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(102, 126, 234, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9998;
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        /* ==================== SCROLL ANIMATION ==================== */
+        .scroll-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Particles -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Main Content -->
+    <div class="container login-wrapper">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+                <div class="card login-card">
+                    <!-- Header -->
+                    <div class="login-header text-center">
+                        <div class="login-icon">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <h3 class="mb-2">Đăng Nhập Hệ Thống</h3>
+                        <p class="mb-0">Chào mừng bạn trở lại! 👋</p>
+                    </div>
+                    
+                    <!-- Body -->
+                    <div class="card-body">
+                        <form id="loginForm" novalidate>
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="bi bi-envelope-fill"></i>
+                                    Email <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-envelope"></i>
+                                    </span>
+                                    <input 
+                                        type="email" 
+                                        class="form-control" 
+                                        id="email" 
+                                        placeholder="example@email.com"
+                                        required
+                                    >
+                                </div>
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập email hợp lệ!
+                                </div>
+                                <div class="valid-feedback">
+                                    Email hợp lệ! ✓
+                                </div>
+                            </div>
+                            
+                            <!-- Password -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="bi bi-lock-fill"></i>
+                                    Mật khẩu <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-shield-lock"></i>
+                                    </span>
+                                    <input 
+                                        type="password" 
+                                        class="form-control" 
+                                        id="password" 
+                                        placeholder="Nhập mật khẩu của bạn"
+                                        required
+                                        minlength="6"
+                                    >
+                                    <button 
+                                        class="password-toggle" 
+                                        type="button"
+                                        onclick="togglePassword()"
+                                        tabindex="-1"
+                                    >
+                                        <i class="bi bi-eye" id="toggleIcon"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Mật khẩu phải có ít nhất 6 ký tự!
+                                </div>
+                                <div class="valid-feedback">
+                                    Mật khẩu mạnh! ✓
+                                </div>
+                            </div>
+                            
+                            <!-- Remember & Forgot -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input 
+                                        class="form-check-input" 
+                                        type="checkbox" 
+                                        id="rememberMe"
+                                    >
+                                    <label class="form-check-label" for="rememberMe">
+                                        Ghi nhớ đăng nhập
+                                    </label>
+                                </div>
+                                <a href="#" class="small" data-bs-toggle="modal" data-bs-target="#forgotModal">
+                                    Quên mật khẩu?
+                                </a>
+                            </div>
+                            
+                            <!-- Login Button -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-login" id="loginBtn">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                                    <span>Đăng Nhập Ngay</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Divider -->
+                            <div class="divider">
+                                <span>hoặc đăng nhập với</span>
+                            </div>
+                            
+                            <!-- Social Login -->
+                            <div class="row g-2 social-login">
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-outline-danger w-100" onclick="socialLogin('google')">
+                                        <i class="bi bi-google me-2"></i>Google
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-outline-primary w-100" onclick="socialLogin('facebook')">
+                                        <i class="bi bi-facebook me-2"></i>Facebook
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Register Link -->
+                            <div class="text-center mt-4">
+                                <p class="mb-0 text-muted">
+                                    Chưa có tài khoản? 
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal">
+                                        Đăng ký ngay
+                                    </a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <div class="text-center mt-4 footer-text">
+                    <p class="text-white small mb-1">
+                        <i class="bi bi-shield-check me-1"></i>
+                        Thông tin được bảo mật an toàn
+                    </p>
+                    <p class="text-white-50 small mb-0">
+                        © 2024 Your Company. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Forgot Password Modal -->
+    <div class="modal fade" id="forgotModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px;">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">
+                        <i class="bi bi-key me-2 text-primary"></i>
+                        Quên mật khẩu
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-3">Nhập email để nhận link đặt lại mật khẩu</p>
+                    <input type="email" class="form-control" placeholder="Email của bạn" style="border-radius: 10px;">
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Hủy</button>
+                    <button type="button" class="btn btn-primary" style="border-radius: 10px;">Gửi yêu cầu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px;">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">
+                        <i class="bi bi-person-plus me-2 text-success"></i>
+                        Đăng ký tài khoản
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-3">Tạo tài khoản mới để bắt đầu</p>
+                    <input type="text" class="form-control mb-3" placeholder="Họ và tên" style="border-radius: 10px;">
+                    <input type="email" class="form-control mb-3" placeholder="Email" style="border-radius: 10px;">
+                    <input type="password" class="form-control" placeholder="Mật khẩu" style="border-radius: 10px;">
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Hủy</button>
+                    <button type="button" class="btn btn-success" style="border-radius: 10px;">Đăng ký</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // ==================== TOGGLE PASSWORD ====================
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            }
+        }
+        
+        // ==================== FORM VALIDATION ====================
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        
+        // Real-time validation
+        emailInput.addEventListener('blur', function() {
+            validateEmail(this);
+        });
+        
+        emailInput.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid')) {
+                validateEmail(this);
+            }
+        });
+        
+        passwordInput.addEventListener('blur', function() {
+            validatePassword(this);
+        });
+        
+        passwordInput.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid')) {
+                validatePassword(this);
+            }
+        });
+        
+        function validateEmail(input) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!input.value) {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                return false;
+            } else if (!emailRegex.test(input.value)) {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                return false;
+            } else {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                return true;
+            }
+        }
+        
+        function validatePassword(input) {
+            if (!input.value) {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                return false;
+            } else if (input.value.length < 6) {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                return false;
+            } else {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                return true;
+            }
+        }
+        
+        // ==================== FORM SUBMIT ====================
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const isEmailValid = validateEmail(emailInput);
+            const isPasswordValid = validatePassword(passwordInput);
+            
+            if (isEmailValid && isPasswordValid) {
+                // Show loading
+                const loginBtn = document.getElementById('loginBtn');
+                const originalText = loginBtn.innerHTML;
+                loginBtn.classList.add('loading');
+                loginBtn.innerHTML = '';
+                
+                // Show loading overlay
+                document.getElementById('loadingOverlay').classList.add('active');
+                
+                // Simulate API call
+                setTimeout(() => {
+                    // Hide loading
+                    loginBtn.classList.remove('loading');
+                    loginBtn.innerHTML = originalText;
+                    document.getElementById('loadingOverlay').classList.remove('active');
+                    
+                    // Show success toast
+                    showToast('success', 'Đăng nhập thành công!', 'Chào mừng bạn trở lại hệ thống');
+                    
+                    // Store remember me
+                    if (document.getElementById('rememberMe').checked) {
+                        localStorage.setItem('rememberEmail', emailInput.value);
+                    }
+                    
+                    // Redirect after 2 seconds
+                    setTimeout(() => {
+                        // window.location.href = 'dashboard.html';
+                        console.log('Redirecting to dashboard...');
+                    }, 2000);
+                }, 2000);
+            } else {
+                showToast('error', 'Lỗi đăng nhập', 'Vui lòng kiểm tra lại thông tin!');
+            }
+        });
+        
+        // ==================== TOAST NOTIFICATION ====================
+        function showToast(type, title, message) {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastId = 'toast-' + Date.now();
+            
+            const bgColor = type === 'success' ? 'bg-success' : 'bg-danger';
+            const icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill';
+            
+            const toastHTML = `
+                <div id="${toastId}" class="toast custom-toast ${bgColor} text-white" role="alert">
+                    <div class="toast-header ${bgColor} text-white border-0">
+                        <i class="bi ${icon} me-2"></i>
+                        <strong class="me-auto">${title}</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, {
+                autohide: true,
+                delay: 3000
+            });
+            
+            toast.show();
+            
+            toastElement.addEventListener('hidden.bs.toast', function() {
+                this.remove();
+            });
+        }
+        
+        // ==================== SOCIAL LOGIN ====================
+        function socialLogin(platform) {
+            document.getElementById('loadingOverlay').classList.add('active');
+            
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.remove('active');
+                showToast('success', 'Đăng nhập ' + platform, 'Đăng nhập thành công qua ' + platform.toUpperCase());
+            }, 1500);
+        }
+        
+        // ==================== REMEMBER ME ====================
+        window.addEventListener('load', function() {
+            const rememberedEmail = localStorage.getItem('rememberEmail');
+            if (rememberedEmail) {
+                emailInput.value = rememberedEmail;
+                document.getElementById('rememberMe').checked = true;
+                validateEmail(emailInput);
+            }
+        });
+        
+        // ==================== KEYBOARD SHORTCUTS ====================
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K to focus email
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                emailInput.focus();
+            }
+        });
+        
+        // ==================== PREVENT DOUBLE SUBMIT ====================
+        let isSubmitting = false;
+        form.addEventListener('submit', function(e) {
+            if (isSubmitting) {
+                e.preventDefault();
+                return false;
+            }
+            isSubmitting = true;
+            setTimeout(() => isSubmitting = false, 3000);
+        });
+        
+        // ==================== CONSOLE MESSAGE ====================
+        console.log('%c🎨 Form đăng nhập với Bootstrap Animation', 'color: #667eea; font-size: 20px; font-weight: bold;');
+        console.log('%c✨ Bao gồm: Validation, Toast, Loading, Social Login, Remember Me', 'color: #764ba2; font-size: 14px;');
+    </script>
+</body>
+</html>

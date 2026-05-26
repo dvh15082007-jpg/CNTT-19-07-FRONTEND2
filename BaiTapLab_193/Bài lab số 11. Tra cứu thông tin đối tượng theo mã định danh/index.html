@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 11 - Tra cứu thông tin</title>
+</head>
+<body>
+    <h3>Hệ Thống Tra Cứu Sinh Viên Theo ID</h3>
+    <input type="text" id="searchId" placeholder="Nhập ID sinh viên (Ví dụ: 1, 2...)">
+    <button onclick="lookupUser()">Tra cứu</button>
+    <button onclick="clearSearch()">Xóa bộ lọc</button> <div id="detailResult" style="margin-top: 20px; padding: 15px; border: 1px solid #444; width:350px; display:none;"></div>
+
+    <script>
+        const BASE_ENDPOINT = "https://6638f2441ae7a915c4d44569.mockapi.io/users";
+
+        function lookupUser() {
+            const id = document.getElementById('searchId').value.trim();
+            const detailBox = document.getElementById('detailResult');
+            if(!id) { alert("Vui lòng nhập ID định danh!"); return; }
+
+            detailBox.style.display = "block";
+            detailBox.innerHTML = "Đang tìm kiếm thông tin...";
+
+            fetch(`${BASE_ENDPOINT}/${id}`)
+                .then(res => {
+                    if(!res.ok) throw new Error("Không tìm thấy dữ liệu ứng với mã ID này!");
+                    return res.json();
+                })
+                .then(user => {
+                    detailBox.innerHTML = `
+                        <h4>Thông tin chi tiết đối tượng:</h4>
+                        <p><strong>Mã ID:</strong> ${user.id}</p>
+                        <p><strong>Tên:</strong> ${user.name}</p>
+                        <p><strong>Địa chỉ Email:</strong> ${user.email}</p>
+                        <p><strong>Lớp học:</strong> ${user.class || 'Không xác định'}</p>
+                    `;
+                })
+                .catch(err => {
+                    detailBox.innerHTML = `<span style="color:red; font-weight:bold;">${err.message}</span>`;
+                });
+        }
+
+        function clearSearch() {
+            document.getElementById('searchId').value = "";
+            const detailBox = document.getElementById('detailResult');
+            detailBox.innerHTML = "";
+            detailBox.style.display = "none";
+        }
+    </script>
+</body>
+</html>

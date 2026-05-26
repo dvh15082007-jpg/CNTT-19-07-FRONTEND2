@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 21 - Full CRUD jQuery Ajax</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top:15px; }
+        th, td { border:1px solid #ccc; padding: 8px; text-align: left; }
+        form { margin-bottom: 20px; padding: 10px; background: #f9f9f9; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h3>Hệ Thống CRUD Quản Lý Toàn Diện (jQuery Ajax & MockAPI)</h3>
+    
+    <form id="crudForm">
+        <input type="hidden" id="recordId">
+        <input type="text" id="formName" placeholder="Tên sinh viên" required>
+        <input type="email" id="formEmail" placeholder="Hộp thư" required>
+        <button type="submit" id="btnSubmitForm">Lưu Thành Viên (POST)</button>
+        <button type="button" id="btnCancelEdit" style="display:none;">Hủy Chế Độ Sửa</button>
+    </form>
+
+    <input type="text" id="clientSearch" placeholder="Tìm kiếm nhanh theo tên ở phía client...">
+
+    <table>
+        <thead><tr><th>Mã ID</th><th>Họ Tên</th><th>Email</th><th>Thao Tác Hệ Thống</th></tr></thead>
+        <tbody id="crudTableBody"></tbody>
+    </table>
+
+    <script>
+        const ENDPOINT = "https://6638f2441ae7a915c4d44569.mockapi.io/users";
+
+        function fetchAll() {
+            $.ajax({
+                url: ENDPOINT,
+                type: "GET",
+                success: function(data) {
+                    let html = data.map(item => `
+                        <tr class="data-row">
+                            <td class="cell-id">${item.id}</td>
+                            <td class="cell-name">${item.name}</td>
+                            <td class="cell-email">${item.email}</td>
+                            <td>
+                                <button onclick="enterEditMode('${item.id}', '${item.name}', '${item.email}')">Sửa</button>
+                                <button onclick="triggerDelete('${item.id}')">Xóa</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    $("#crudTableBody").html(html);
+                }
+            });
+        }
+
+        $("#crudForm").submit(function(e){
+            e.preventDefault();
+            let id = $("#recordId").val();
+            let name = $.trim($("#formName").val());
+            let email = $.trim($("#formEmail").val());
+
+            let isUpdate = id !== "";
+            let urlDest = isUpdate ? `${ENDPOINT}/${id}` : ENDPOINT;
+            let methodType = isUpdate ? "PUT" : "POST";
+
+            $.ajax({
+                url: urlDest,
+                type: methodType,
+                contentType: "application/json",
+                data: JSON.stringify({ name, email }),
+                success: function() {
+                    alert("Đã cập nhật đồng bộ hệ thống dữ liệu thành công!");
+                    exitEditMode();
+                    fetchAll();
+                }
+            });
+        });
+
+        function enterEditMode(id, name, email) {
+            $("#recordId").val(id);
+            $("#formName").val(name);
+            $("#formEmail").val(email);
+            $("#btnSubmitForm").text("Cập nhật thông tin (PUT)");
+            $("#btnCancelEdit").show();
+        }
+
+        function exitEditMode() {
+            $("#recordId").val("");
+            $("#crudForm")[0].reset();
+            $("#btnSubmitForm").text("Lưu Thành Viên (POST)");
+            $("#btnCancelEdit").hide();
+        }
+
+        $("#btnCancelEdit").click(exitEditMode);
+
+        function triggerDelete(id) {
+            if(confirm("Xác nhận xóa vĩnh viễn bản ghi ID: " + id + "?")) {
+                $.ajax({
+                    url: `${ENDPOINT}/${id}`,
+                    type: "DELETE",
+                    success: function() {
+                        alert("Xóa thành công!");
+                        fetchAll();
+                    }
+                });
+            }
+        }
+
+        // Yêu cầu mở rộng: Tính năng ô lọc tìm kiếm nhanh ký tự theo tên phía client
+        $("#clientSearch").on("keyup", function() {
+            let val = $(this).val().toLowerCase();
+            $("#crudTableBody .data-row").filter(function() {
+                $(this).toggle($(this).find(".cell-name").text().toLowerCase().indexOf(val) > -1)
+            });
+        });
+
+        $(document).ready(function(){ fetchAll(); });
+    </script>
+</body>
+</html>

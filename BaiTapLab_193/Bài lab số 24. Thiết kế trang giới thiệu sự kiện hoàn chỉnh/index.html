@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 24 - Landing Page Sự Kiện</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://via.placeholder.com/1200x500/111/fff?text=DNU+IT+FESTIVAL') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 100px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-uppercase text-warning" href="#">DNU IT Club</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-shadow navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#hero">Giới Thiệu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#highlights">Điểm Nổi Bật</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#schedule">Lịch Trình</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#register">Đăng Ký</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header id="hero" class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold text-warning mb-3">HỘI NGHỊ CÔNG NGHỆ TRẺ 2026</h1>
+            <p class="lead mb-4">Nơi hội tụ các xu hướng lập trình Web đỉnh cao, AI đột phá và cơ hội kết nối việc làm Front-End chuyên nghiệp.</p>
+            <a href="#register" class="btn btn-warning btn-lg px-4 py-2 fw-bold text-uppercase">Đăng Ký Tham Gia Ngay</a>
+        </div>
+    </header>
+
+    <section id="highlights" class="container my-5 py-4">
+        <h2 class="text-center fw-bold mb-4 position-relative">Điểm Nhấn Sự Kiện</h2>
+        <div class="row g-4">
+            <div class="col-12 col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-3">
+                    <div class="card-body">
+                        <div class="fs-1 text-primary mb-2">🚀</div>
+                        <h5 class="card-title fw-bold">Công Nghệ Mới</h5>
+                        <p class="card-text text-muted">Tiếp cận các thư viện JavaScript hiện đại và mô hình lập trình bất đồng bộ tiên tiến.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-3">
+                    <div class="card-body">
+                        <div class="fs-1 text-success mb-2">💼</div>
+                        <h5 class="card-title fw-bold">Kết Nối Doanh Nghiệp</h5>
+                        <p class="card-text text-muted">Gặp gỡ trực tiếp các nhà tuyển dụng công nghệ hàng đầu tại khu vực Hà Nội.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-3">
+                    <div class="card-body">
+                        <div class="fs-1 text-warning mb-2">🏆</div>
+                        <h5 class="card-title fw-bold">Quà Tặng Khủng</h5>
+                        <p class="card-text text-muted">Cơ hội bốc thăm may mắn trúng các sản phẩm phần cứng công nghệ giá trị cao.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="schedule" class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-4">Lịch Trình Chương Trình</h2>
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="list-group shadow-sm">
+                        <div class="list-group-item p-3">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 fw-bold text-primary">08:00 - 08:30</h5>
+                                <small class="badge bg-secondary d-flex align-items-center">Check-in</small>
+                            </div>
+                            <p class="mb-1 text-muted">Đón tiếp đại biểu và phát tài liệu hướng dẫn thực hành.</p>
+                        </div>
+                        <div class="list-group-item p-3">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 fw-bold text-primary">08:30 - 10:30</h5>
+                                <small class="badge bg-success d-flex align-items-center">Keynote Session</small>
+                            </div>
+                            <p class="mb-1 text-muted">Báo cáo tham luận về kiến trúc ứng dụng Single Page và tối ưu hóa DOM bằng Bootstrap / jQuery.</p>
+                        </div>
+                        <div class="list-group-item p-3">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 fw-bold text-primary">10:30 - 11:30</h5>
+                                <small class="badge bg-danger d-flex align-items-center">Panel Discussion</small>
+                            </div>
+                            <p class="mb-1 text-muted">Tọa đàm trao đổi trực tiếp cùng các chuyên gia Front-End Developer.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="register" class="container my-5 py-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="border p-4 rounded shadow-sm bg-white">
+                    <h3 class="text-center fw-bold mb-3 text-uppercase text-dark">Form Đăng Ký Tham Gia</h3>
+                    <p class="text-center text-muted mb-4">Vui lòng điền đầy đủ các thông tin bên dưới để Ban tổ chức sắp xếp chỗ ngồi chu đáo.</p>
+                    
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Họ và tên sinh viên</label>
+                            <input type="text" class="form-control" placeholder="Ví dụ: Nguyễn Hữu Huân" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Mã số sinh viên (Lớp học)</label>
+                            <input type="text" class="form-control" placeholder="Ví dụ: CNTT 19-07" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Địa chỉ Email liên hệ</label>
+                            <input type="email" class="form-control" placeholder="username@dainam.edu.vn" required>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100 py-2 fs-5 fw-bold text-warning text-uppercase shadow-sm">Gửi Đăng Ký Chuyển Tiếp</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white text-center py-3">
+        <div class="container">
+            <small>&copy; 2026 Khoa Công nghệ thông tin - Đại học Đại Nam. All rights reserved.</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

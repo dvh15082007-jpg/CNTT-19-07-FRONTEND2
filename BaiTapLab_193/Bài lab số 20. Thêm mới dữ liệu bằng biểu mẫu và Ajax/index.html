@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 20 - jQuery Ajax POST</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <h3>Thêm Thành Viên Mới Qua Ajax POST</h3>
+    <form id="addMemberForm">
+        <input type="text" name="name" id="nameField" placeholder="Nhập họ và tên" required><br><br>
+        <input type="email" name="email" id="emailField" placeholder="Nhập thư điện tử" required><br><br>
+        <button type="submit">Gửi Lưu Lên Server</button>
+    </form>
+
+    <h4>Danh sách hiện thời:</h4>
+    <ul id="liveList"></ul>
+
+    <script>
+        const RESOURCE_API = "https://6638f2441ae7a915c4d44569.mockapi.io/users";
+
+        function refreshList() {
+            $.get(RESOURCE_API, function(data) {
+                let items = data.map(u => `<li>${u.name} (${u.email})</li>`);
+                $("#liveList").html(items.join(''));
+            });
+        }
+
+        $(document).ready(function(){
+            refreshList();
+
+            $("#addMemberForm").submit(function(e){
+                e.preventDefault();
+                
+                // Yêu cầu mở rộng: Kiểm tra dữ liệu trống cơ bản trước khi post gửi
+                let name = $.trim($("#nameField").val());
+                let email = $.trim($("#emailField").val());
+                if(!name || !email) return alert("Vui lòng không để trống dữ liệu form!");
+
+                $.ajax({
+                    url: RESOURCE_API,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ name: name, email: email }),
+                    success: function(newRecord) {
+                        alert("Thêm bản ghi mới thành công!");
+                        // Yêu cầu mở rộng: Xóa dữ liệu cũ trên form input sau khi gửi thành công
+                        $("#addMemberForm")[0].reset();
+                        refreshList(); // Cập nhật lại giao diện
+                    },
+                    error: function() { alert("Lỗi trong quá trình POST dữ liệu!"); }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

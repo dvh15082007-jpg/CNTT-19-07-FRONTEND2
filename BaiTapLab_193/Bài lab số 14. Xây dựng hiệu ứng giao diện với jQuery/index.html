@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 14 - jQuery Effects</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .highlight { border: 3px solid red !important; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h3>Hiệu Ứng Chuyển Động jQuery Giao Diện</h3>
+    <button id="btnFadeOut">Mờ Dần (FadeOut)</button>
+    <button id="btnFadeIn">Rõ Dần (FadeIn)</button>
+    <button id="btnSlideToggle">Trượt Lên/Xuống (SlideToggle)</button>
+    <button id="btnChain">Chaining Effect (Mở rộng)</button>
+
+    <div id="effectCard" style="width:300px; height:150px; background-color:orange; margin-top:15px; padding:10px;">
+        Cụm hộp thông báo tương tác chứa các hiệu ứng hoạt hình.
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $("#btnFadeOut").click(function(){ $("#effectCard").fadeOut(600); });
+            $("#btnFadeIn").click(function(){ $("#effectCard").fadeIn(600); });
+            $("#btnSlideToggle").click(function(){ $("#effectCard").slideToggle(400); });
+            
+            // Yêu cầu mở rộng: Kỹ thuật Chaining kết hợp thêm hiệu ứng Highlight bằng class CSS
+            $("#btnChain").click(function(){
+                $("#effectCard")
+                    .slideUp(300)
+                    .slideDown(300)
+                    .addClass('highlight')
+                    .delay(1000)
+                    .queue(function(next){
+                        $(this).removeClass('highlight');
+                        next();
+                    });
+            });
+        });
+    </script>
+</body>
+</html>

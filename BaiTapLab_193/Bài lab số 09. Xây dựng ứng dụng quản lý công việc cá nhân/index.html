@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 09 - To-Do List</title>
+    <style>
+        .completed { text-decoration: line-line-through; color: gray; font-style: italic; }
+        li { margin: 8px 0; }
+        button { margin-left: 10px; cursor: pointer; }
+        .filter-btn { margin-right: 5px; padding: 5px 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h3>Ứng Dụng Quản Lý Công Việc Cá Nhân</h3>
+    <input type="text" id="taskInput" placeholder="Nhập tên đầu việc cần xử lý...">
+    <button onclick="addTask()">Thêm việc</button>
+    
+    <div style="margin: 15px 0;">
+        <button class="filter-btn" onclick="setFilter('all')">Tất cả</button>
+        <button class="filter-btn" onclick="setFilter('active')">Chưa xong</button>
+        <button class="filter-btn" onclick="setFilter('done')">Đã xong</button>
+    </div>
+
+    <ul id="taskList"></ul>
+
+    <script>
+        // Yêu cầu mở rộng: Đồng bộ lưu và đọc dữ liệu từ LocalStorage
+        let todoList = JSON.parse(localStorage.getItem('todos')) || [];
+        let currentFilter = 'all';
+
+        function saveAndRender() {
+            localStorage.setItem('todos', JSON.stringify(todoList));
+            const listContainer = document.getElementById('taskList');
+            listContainer.innerHTML = "";
+
+            let filteredList = todoList.filter(item => {
+                if (currentFilter === 'active') return !item.isDone;
+                if (currentFilter === 'done') return item.isDone;
+                return true;
+            });
+
+            filteredList.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = task.isDone ? "completed" : "";
+                
+                const span = document.createElement('span');
+                span.innerText = task.text;
+                li.appendChild(span);
+
+                const doneBtn = document.createElement('button');
+                doneBtn.innerText = task.isDone ? "Hủy" : "Hoàn thành";
+                doneBtn.onclick = () => toggleTask(task.id);
+                li.appendChild(doneBtn);
+
+                const delBtn = document.createElement('button');
+                delBtn.innerText = "Xóa";
+                delBtn.onclick = () => deleteTask(task.id);
+                li.appendChild(delBtn);
+
+                listContainer.appendChild(li);
+            });
+        }
+
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            if(!input.value.trim()) return alert("Vui lòng không để rỗng nội dung!");
+            
+            todoList.push({
+                id: Date.now(),
+                text: input.value.trim(),
+                isDone: false
+            });
+            input.value = "";
+            saveAndRender();
+        }
+
+        function toggleTask(id) {
+            todoList = todoList.map(t => t.id === id ? { ...t, isDone: !t.isDone } : t);
+            saveAndRender();
+        }
+
+        function deleteTask(id) {
+            todoList = todoList.filter(t => t.id !== id);
+            saveAndRender();
+        }
+
+        function setFilter(filterType) {
+            currentFilter = filterType;
+            saveAndRender();
+        }
+
+        window.onload = saveAndRender;
+    </script>
+</body>
+</html>

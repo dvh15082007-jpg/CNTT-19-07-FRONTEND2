@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 18 - Quản Lý Thành Viên</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        h2 { text-align: center; color: #333; }
+        
+        /* Khung điều khiển và tìm kiếm */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .controls input {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .controls button {
+            padding: 8px 16px;
+            font-size: 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .controls button:hover { background-color: #0056b3; }
+        
+        /* Ô tìm kiếm riêng biệt (Yêu cầu mở rộng) */
+        .search-box {
+            margin-bottom: 20px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px;
+            box-sizing: border-box;
+            border: 1px solid #28a745;
+            border-radius: 4px;
+        }
+
+        /* Danh sách thành viên hiển thị dạng bảng */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: left;
+        }
+        th { background-color: #f8f9fa; text-align: center;}
+        td.stt { text-align: center; font-weight: bold; width: 50px; }
+        td.actions { text-align: center; width: 150px; }
+
+        /* Các nút hành động */
+        .btn-edit { background-color: #ffc107; color: #000; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-right: 5px;}
+        .btn-delete { background-color: #dc3545; color: #fff; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
+        .btn-edit:hover { background-color: #e0a800; }
+        .btn-delete:hover { background-color: #bd2130; }
+        
+        /* Hiệu ứng khi ẩn hàng lúc tìm kiếm */
+        .hidden-row { display: none; }
+    </style>
+</head>
+<body>
+
+    <h2>QUẢN LÝ DANH SÁCH THÀNH VIÊN</h2>
+
+    <div class="search-box">
+        <input type="text" id="search-input" placeholder="🔍 Nhập tên thành viên để tìm kiếm...">
+    </div>
+
+    <div class="controls">
+        <input type="text" id="member-name" placeholder="Nhập tên thành viên mới...">
+        <button id="btn-add">Thêm mới</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên thành viên</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="member-list">
+            <tr class="member-row">
+                <td class="stt"></td>
+                <td class="name-cell">Nguyễn Văn An</td>
+                <td class="actions">
+                    <button class="btn-edit">Sửa</button>
+                    <button class="btn-delete">Xóa</button>
+                </td>
+            </tr>
+            <tr class="member-row">
+                <td class="stt"></td>
+                <td class="name-cell">Trần Thị Bích</td>
+                <td class="actions">
+                    <button class="btn-edit">Sửa</button>
+                    <button class="btn-delete">Xóa</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        $(document).ready(function() {
+
+            // Hàm tự động đánh lại số thứ tự (STT) từ trên xuống dưới (Yêu cầu mở rộng)
+            function updateSTT() {
+                $(".member-row").each(function(index) {
+                    $(this).find(".stt").text(index + 1);
+                });
+            }
+
+            // Gọi hàm cập nhật STT lần đầu khi trang vừa tải xong
+            updateSTT();
+
+            // 1. CHỨC NĂNG THÊM THÀNH VIÊN (.append())
+            $("#btn-add").click(function() {
+                let name = $("#member-name").val().trim();
+
+                if (name === "") {
+                    alert("Vui lòng nhập tên thành viên!");
+                    return;
+                }
+
+                // Tạo chuỗi HTML chứa cấu trúc dòng mới
+                let newRow = `
+                    <tr class="member-row">
+                        <td class="stt"></td>
+                        <td class="name-cell">${name}</td>
+                        <td class="actions">
+                            <button class="btn-edit">Sửa</button>
+                            <button class="btn-delete">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+
+                // Chèn dòng mới vào cuối bảng
+                $("#member-list").append(newRow);
+                
+                // Reset lại ô input nhập liệu và cập nhật lại STT
+                $("#member-name").val("");
+                updateSTT();
+            });
+
+            // 2. CHỨC NĂNG XÓA THÀNH VIÊN (.remove() & .closest())
+            // Áp dụng Event Delegation vì các nút Xóa được tạo động sau này
+            $("#member-list").on("click", ".btn-delete", function() {
+                if (confirm("Bạn có chắc chắn muốn xóa thành viên này không?")) {
+                    // .closest() tìm ngược lên trên để chọn đúng thẻ tr chứa nút vừa bấm
+                    $(this).closest(".member-row").remove();
+                    // Cập nhật lại số thứ tự cho chính xác
+                    updateSTT();
+                }
+            });
+
+            // 3. CHỨC NĂNG SỬA THÀNH VIÊN TRỰC TIẾP TẠI CHỖ (Hàm prompt)
+            $("#member-list").on("click", ".btn-edit", function() {
+                // Đi tìm ô chứa tên nằm cùng hàng bằng cách định vị thẻ tr chứa nút
+                let nameCell = $(this).closest(".member-row").find(".name-cell");
+                let currentName = nameCell.text();
+
+                // Hiển thị hộp thoại prompt cho người dùng sửa nhanh trực tiếp tại chỗ
+                let newName = prompt("Chỉnh sửa tên thành viên:", currentName);
+
+                if (newName !== null) { // Người dùng không bấm nút "Hủy"
+                    newName = newName.trim();
+                    if (newName !== "") {
+                        nameCell.text(newName); // Cập nhật tên mới ngay trên giao diện
+                    } else {
+                        alert("Tên thành viên không được để trống!");
+                    }
+                }
+            });
+
+            // 4. CHỨC NĂNG TÌM KIẾM THEO TÊN REAL-TIME (Yêu cầu mở rộng)
+            $("#search-input").on("keyup", function() {
+                let keyword = $(this).val().toLowerCase().trim();
+
+                $(".member-row").each(function() {
+                    let memberName = $(this).find(".name-cell").text().toLowerCase();
+                    
+                    // Nếu tên thành viên chứa từ khóa tìm kiếm thì hiện, không thì ẩn đi
+                    if (memberName.indexOf(keyword) > -1) {
+                        $(this).removeClass("hidden-row");
+                    } else {
+                        $(this).addClass("hidden-row");
+                    }
+                });
+            });
+
+        });
+    </script>
+
+</body>
+</html>

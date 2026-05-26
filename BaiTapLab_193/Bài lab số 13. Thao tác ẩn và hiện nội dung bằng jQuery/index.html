@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 13 - jQuery Hide Show</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <h3>Điều Khiển Ẩn Hiện Nội Dung Bằng jQuery</h3>
+    <button id="btnHide">Ẩn Văn Bản</button>
+    <button id="btnShow">Hiện Văn Bản</button>
+    <button id="btnToggle">Chuyển Đổi (Toggle)</button>
+    <button id="btnCheck">Kiểm Tra Trạng Thái</button> <div id="targetBlock" style="padding:20px; background: #cef; margin-top:15px; width:300px;">
+        Chào mừng bạn đến với bài học thực hành jQuery đầu tiên!
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $("#btnHide").click(function(){
+                $("#targetBlock").hide();
+            });
+            $("#btnShow").click(function(){
+                $("#targetBlock").show();
+            });
+            $("#btnToggle").click(function(){
+                $("#targetBlock").toggle();
+            });
+            
+            // Yêu cầu mở rộng: Kiểm tra trạng thái đang hiển thị hay ẩn
+            $("#btnCheck").click(function(){
+                if($("#targetBlock").is(":visible")){
+                    alert("Khối nội dung hiện đang HIỂN THỊ trên màn hình.");
+                } else {
+                    alert("Khối nội dung hiện đang bị ẨN đi.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

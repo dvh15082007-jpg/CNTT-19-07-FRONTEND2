@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 15 - jQuery Validation</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .error-msg { color: red; font-size: 13px; display: block; margin-top: 3px; }
+        .is-invalid { border: 2px solid red; }
+        .is-valid { border: 2px solid green; }
+        .form-group { margin-bottom: 12px; }
+        input { padding: 6px; width: 250px; }
+    </style>
+</head>
+<body>
+    <h3>Form Đăng Ký Hệ Thống</h3>
+    <form id="registerForm" novalidate>
+        <div class="form-group">
+            <label>Họ và tên:</label><br>
+            <input type="text" id="fullName">
+            <span class="error-msg" id="errName"></span>
+        </div>
+        <div class="form-group">
+            <label>Địa chỉ Email:</label><br>
+            <input type="email" id="email">
+            <span class="error-msg" id="errEmail"></span>
+        </div>
+        <div class="form-group">
+            <label>Số điện thoại (Mở rộng):</label><br>
+            <input type="text" id="phone">
+            <span class="error-msg" id="errPhone"></span>
+        </div>
+        <div class="form-group">
+            <label>Mật khẩu:</label><br>
+            <input type="password" id="password">
+            <span class="error-msg" id="errPass"></span>
+        </div>
+        <div class="form-group">
+            <label>Xác nhận mật khẩu:</label><br>
+            <input type="password" id="confirmPassword">
+            <span class="error-msg" id="errConfirm"></span>
+        </div>
+        <button type="submit">Gửi thông tin đăng ký</button>
+    </form>
+
+    <script>
+        $(document).ready(function(){
+            $("#registerForm").submit(function(e){
+                e.preventDefault(); // Chặn hành vi submit load trang mặc định
+                let isValid = true;
+
+                // Reset trạng thái hiển thị lỗi cũ
+                $(".error-msg").text("");
+                $("input").removeClass("is-invalid is-valid");
+
+                // 1. Kiểm tra Họ Tên
+                let name = $.trim($("#fullName").val());
+                if(!name) {
+                    $("#errName").text("Họ tên không được phép để rỗng.");
+                    $("#fullName").addClass("is-invalid");
+                    isValid = false;
+                } else { $("#fullName").addClass("is-valid"); }
+
+                // 2. Kiểm tra Email qua biểu thức định dạng Regex
+                let email = $.trim($("#email").val());
+                let emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+                if(!email) {
+                    $("#errEmail").text("Địa chỉ email bắt buộc phải nhập.");
+                    $("#email").addClass("is-invalid");
+                    isValid = false;
+                } else if(!emailRegex.test(email)) {
+                    $("#errEmail").text("Cấu trúc email không đúng định dạng chuẩn.");
+                    $("#email").addClass("is-invalid");
+                    isValid = false;
+                } else { $("#email").addClass("is-valid"); }
+
+                // 3. Yêu cầu mở rộng: Kiểm tra định dạng số điện thoại Việt Nam
+                let phone = $.trim($("#phone").val());
+                let phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
+                if(!phone) {
+                    $("#errPhone").text("Vui lòng bổ sung số điện thoại.");
+                    $("#phone").addClass("is-invalid");
+                    isValid = false;
+                } else if(!phoneRegex.test(phone)) {
+                    $("#errPhone").text("Số điện thoại không hợp lệ (Phải bắt đầu từ số 0, đủ 10 số).");
+                    $("#phone").addClass("is-invalid");
+                    isValid = false;
+                } else { $("#phone").addClass("is-valid"); }
+
+                // 4. Kiểm tra độ dài Mật Khẩu
+                let pass = $("#password").val();
+                if(pass.length < 6) {
+                    $("#errPass").text("Mật khẩu bắt buộc phải từ 6 ký tự trở lên.");
+                    $("#password").addClass("is-invalid");
+                    isValid = false;
+                } else { $("#password").addClass("is-valid"); }
+
+                // 5. Kiểm tra tính trùng khớp của mật khẩu xác nhận
+                let confirmPass = $("#confirmPassword").val();
+                if(!confirmPass) {
+                    $("#errConfirm").text("Vui lòng nhập lại trường mật khẩu xác nhận.");
+                    $("#confirmPassword").addClass("is-invalid");
+                    isValid = false;
+                } else if(pass !== confirmPass) {
+                    $("#errConfirm").text("Dữ liệu xác nhận không trùng khớp với mật khẩu.");
+                    $("#confirmPassword").addClass("is-invalid");
+                    isValid = false;
+                } else { $("#confirmPassword").addClass("is-valid"); }
+
+                if(isValid) {
+                    alert("Chúc mừng! Toàn bộ biểu mẫu hợp lệ, đăng ký thành công.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 12 - CRUD MockAPI PureJS</title>
+    <style>table { width:100%; border-collapse:collapse; } th, td { padding:8px; border:1px solid #ddd; }</style>
+</head>
+<body>
+    <h3>Trình Quản Lý Sinh Viên Cơ Bản (CRUD Server Giả Lập)</h3>
+    
+    <form id="studentForm" onsubmit="createNewStudent(event)">
+        <input type="text" id="stdName" placeholder="Tên sinh viên" required>
+        <input type="email" id="stdEmail" placeholder="Địa chỉ email" required>
+        <button type="submit">Thêm Mới Sinh Viên</button>
+    </form>
+    <hr>
+    <table>
+        <thead><tr><th>ID</th><th>Họ Tên</th><th>Email</th><th>Hành Động</th></tr></thead>
+        <tbody id="studentGrid"></tbody>
+    </table>
+
+    <script>
+        const MOCK_API = "https://6638f2441ae7a915c4d44569.mockapi.io/users";
+
+        async function loadStudents() {
+            const res = await fetch(MOCK_API);
+            const data = await res.json();
+            const grid = document.getElementById('studentGrid');
+            grid.innerHTML = data.map(s => `
+                <tr>
+                    <td>${s.id}</td>
+                    <td>${s.name}</td>
+                    <td>${s.email}</td>
+                    <td>
+                        <button onclick="deleteStudent('${s.id}')">Xóa</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function createNewStudent(e) {
+            e.preventDefault();
+            const name = document.getElementById('stdName').value;
+            const email = document.getElementById('stdEmail').value;
+
+            await fetch(MOCK_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email })
+            });
+
+            document.getElementById('studentForm').reset();
+            loadStudents();
+        }
+
+        async function deleteStudent(id) {
+            if(!confirm("Xác nhận xóa sinh viên mang mã số id: " + id + "?")) return;
+            await fetch(`${MOCK_API}/${id}`, { method: 'DELETE' });
+            loadStudents();
+        }
+
+        window.onload = loadStudents;
+    </script>
+</body>
+</html>

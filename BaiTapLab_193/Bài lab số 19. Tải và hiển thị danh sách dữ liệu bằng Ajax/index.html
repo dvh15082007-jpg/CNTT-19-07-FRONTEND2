@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 19 - jQuery Ajax GET</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>table { width:100%; border-collapse:collapse; } th, td { padding:8px; border:1px solid #ccc; }</style>
+</head>
+<body>
+    <h3>Bảng Đồng Bộ Dữ Liệu Thành Viên (Ajax)</h3>
+    <div id="statusIndicator" style="display:none; color:blue; font-weight:bold;">Đang gọi kết nối Ajax...</div>
+    
+    <table>
+        <thead><tr><th>ID Định Danh</th><th>Tên Gọi</th><th>Hộp Thư Email</th></tr></thead>
+        <tbody id="memberGridBody"></tbody>
+    </table>
+
+    <script>
+        const ENDPOINT_URL = "https://6638f2441ae7a915c4d44569.mockapi.io/users";
+
+        function loadDataViaAjax() {
+            $("#statusIndicator").show();
+            $.ajax({
+                url: ENDPOINT_URL,
+                type: "GET",
+                dataType: "json",
+                success: function(response) {
+                    let rowsHtml = "";
+                    // Duyệt hiển thị ít nhất 3 cột dữ liệu
+                    $.each(response, function(index, item) {
+                        rowsHtml += `<tr>
+                            <td>${item.id}</td>
+                            <td>${item.name}</td>
+                            <td>${item.email}</td>
+                        </tr>`;
+                    });
+                    $("#memberGridBody").html(rowsHtml);
+                },
+                error: function(xhr, status, error) {
+                    // Yêu cầu mở rộng: Thông báo lỗi API
+                    alert("Gặp sự cố lỗi tải dữ liệu từ API: " + error);
+                },
+                complete: function() {
+                    $("#statusIndicator").hide();
+                }
+            });
+        }
+
+        $(document).ready(function(){
+            loadDataViaAjax();
+        });
+    </script>
+</body>
+</html>

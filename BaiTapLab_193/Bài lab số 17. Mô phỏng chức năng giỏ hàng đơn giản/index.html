@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 17 - Mô Phỏng Giỏ Hàng</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px auto;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        /* Bảng giỏ hàng */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+        /* Khu vực nút tăng giảm số lượng */
+        .quantity-controls button {
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #bbb;
+            background-color: #fff;
+            border-radius: 3px;
+        }
+        .quantity-controls button:hover {
+            background-color: #eee;
+        }
+        .qty-val {
+            display: inline-block;
+            width: 30px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        /* Khu vực tổng hóa đơn */
+        .cart-summary {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ee4d2d; /* Màu cam nổi bật kiểu Shopee */
+        }
+    </style>
+</head>
+<body>
+
+    <h2>GIỎ HÀNG CỦA BẠN</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Đơn giá (đ)</th>
+                <th>Số lượng</th>
+                <th>Thành tiền (đ)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="cart-item">
+                <td>Chuột Gaming Logitech</td>
+                <td class="price" data-price="500000">500.000</td>
+                <td class="quantity-controls">
+                    <button class="btn-minus">-</button>
+                    <span class="qty-val">1</span>
+                    <button class="btn-plus">+</button>
+                </td>
+                <td class="subtotal">500.000</td>
+            </tr>
+            
+            <tr class="cart-item">
+                <td>Bàn phím cơ AKKO</td>
+                <td class="price" data-price="1200000">1.200.000</td>
+                <td class="quantity-controls">
+                    <button class="btn-minus">-</button>
+                    <span class="qty-val">1</span>
+                    <button class="btn-plus">+</button>
+                </td>
+                <td class="subtotal">1.200.000</td>
+            </tr>
+
+            <tr class="cart-item">
+                <td>Tai nghe chụp tai Sony</td>
+                <td class="price" data-price="2500000">2.500.000</td>
+                <td class="quantity-controls">
+                    <button class="btn-minus">-</button>
+                    <span class="qty-val">1</span>
+                    <button class="btn-plus">+</button>
+                </td>
+                <td class="subtotal">2.500.000</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="cart-summary">
+        Tổng tiền hóa đơn: <span id="total-cart">4.200.000</span> đ
+    </div>
+
+    <script>
+        $(document).ready(function() {
+
+            // Hàm định dạng số thành chuỗi tiền tệ có dấu chấm phân cách (Ví dụ: 1500000 -> 1.500.000)
+            function formatMoney(amount) {
+                return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            // Hàm cốt lõi: Tính toán lại thành tiền từng dòng và tổng tiền cả giỏ hàng
+            function calculateCart() {
+                let totalCart = 0;
+
+                // Duyệt qua từng dòng sản phẩm (.cart-item) trong bảng
+                $(".cart-item").each(function() {
+                    // Lấy đơn giá gốc từ thuộc tính data-price (ép kiểu về số nguyên)
+                    let price = parseInt($(this).find(".price").attr("data-price"));
+                    // Lấy số lượng hiện tại đang hiển thị
+                    let qty = parseInt($(this).find(".qty-val").text());
+                    
+                    // Tính thành tiền của sản phẩm này: Thành tiền = Số lượng x Đơn giá
+                    let subtotal = price * qty;
+                    totalCart += subtotal; // Cộng dồn vào tổng giỏ hàng
+
+                    // Cập nhật lại cột "Thành tiền" của dòng hiện tại sau khi định dạng tiền tệ
+                    $(this).find(".subtotal").text(formatMoney(subtotal));
+                });
+
+                // Cập nhật "Tổng tiền hóa đơn" phía dưới bảng
+                $("#total-cart").text(formatMoney(totalCart));
+            }
+
+            // Xử lý sự kiện khi bấm nút TĂNG (+)
+            $(".btn-plus").click(function() {
+                // Tìm đến thẻ span chứa số lượng cùng dòng và tăng giá trị lên 1
+                let qtySpan = $(this).siblings(".qty-val");
+                let currentQty = parseInt(qtySpan.text());
+                
+                qtySpan.text(currentQty + 1);
+                
+                // Gọi hàm tính toán lại toàn bộ giỏ hàng và cập nhật giao diện
+                calculateCart();
+            });
+
+            // Xử lý sự kiện khi bấm nút GIẢM (-)
+            $(".btn-minus").click(function() {
+                let qtySpan = $(this).siblings(".qty-val");
+                let currentQty = parseInt(qtySpan.text());
+
+                // Quy ước quy định: Không cho phép số lượng nhỏ hơn 1
+                if (currentQty <= 1) {
+                    alert("Số lượng sản phẩm trong giỏ hàng phải ít nhất bằng 1!");
+                    return; // Dừng lại không trừ nữa
+                }
+
+                qtySpan.text(currentQty - 1);
+                
+                // Gọi hàm tính toán lại toàn bộ giỏ hàng và cập nhật giao diện
+                calculateCart();
+            });
+
+        });
+    </script>
+
+</body>
+</html>
