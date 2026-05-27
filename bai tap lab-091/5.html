@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Danh Sách Sản Phẩm - Bài Lab 05</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .dashboard {
+            max-width: 1100px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+        
+        h2 {
+            color: #1a202c;
+            border-bottom: 2px solid #3182ce;
+            padding-bottom: 12px;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 25px;
+        }
+        
+        .sidebar {
+            background-color: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            box-sizing: border-box;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .sidebar h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #2d3748;
+            border-bottom: 1px solid #edf2f7;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 6px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #3182ce;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2b6cb0;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            flex-grow: 1;
+        }
+        
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+        
+        .product-table th,
+        .product-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #edf2f7;
+        }
+        
+        .product-table th {
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            font-weight: 600;
+        }
+        
+        .product-table tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .no-data {
+            text-align: center;
+            color: #718096;
+            padding: 30px;
+            font-style: italic;
+        }
+        
+        .summary-card {
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+            color: #2d3748;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+        }
+        
+        .summary-card strong {
+            font-size: 20px;
+            color: #2b6cb0;
+        }
+        
+        .single-result-box {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 6px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            font-size: 13.5px;
+            line-height: 1.5;
+        }
+        
+        .found-success {
+            color: #2f855a;
+        }
+        
+        .text-danger {
+            color: #c53030;
+        }
+        /* Hiệu ứng nháy vàng khi tìm kiếm đích xác bằng find */
+        
+        .highlight-row {
+            animation: blinkEffect 2s ease-in-out;
+        }
+        
+        @keyframes blinkEffect {
+            0% {
+                background-color: #fffbeb;
+            }
+            50% {
+                background-color: #fef3c7;
+            }
+            100% {
+                background-color: transparent;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard">
+        <h2>Hệ Thống Quản Lý Sản Phẩm Đơn Giản</h2>
+
+        <div class="grid-container">
+
+            <!-- Bảng điều khiển (Sidebar) -->
+            <div class="sidebar">
+
+                <!-- Phần 1: Bộ lọc & Sắp xếp đa chức năng (Dùng filter/sort) -->
+                <div class="sidebar-section">
+                    <h3>Bộ Lọc & Sắp Xếp</h3>
+
+                    <div class="form-group">
+                        <label for="search-name">Tìm theo tên sản phẩm:</label>
+                        <input type="text" id="search-name" placeholder="Nhập từ khóa tìm kiếm..." oninput="xuLyLocVaHienThi()">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price-filter">Khoảng giá:</label>
+                        <select id="price-filter" onchange="xuLyLocVaHienThi()">
+                        <option value="all">Tất cả khoảng giá</option>
+                        <option value="under-5m">Dưới 5 triệu VND</option>
+                        <option value="5m-20m">Từ 5 triệu đến dưới 20 triệu</option>
+                        <option value="above-20m">Từ 20 triệu VND trở lên</option>
+                    </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price-sort">Sắp xếp giá (Yêu cầu mở rộng):</label>
+                        <select id="price-sort" onchange="xuLyLocVaHienThi()">
+                        <option value="default">Mặc định (Theo mã ID)</option>
+                        <option value="asc">Giá tăng dần ↑</option>
+                        <option value="desc">Giá giảm dần ↓</option>
+                    </select>
+                    </div>
+                </div>
+
+                <!-- Phần 2: Chức năng tìm kiếm đơn đích xác (Dùng find) -->
+                <div class="sidebar-section">
+                    <h3>Tìm Kiếm Đơn Đích Xác</h3>
+                    <div class="form-group">
+                        <label for="single-search-input">Tên chính xác hoặc tương đối:</label>
+                        <input type="text" id="single-search-input" placeholder="Ví dụ: Laptop Asus G16...">
+                    </div>
+                    <button class="btn btn-primary" onclick="timKiemDonLe()">Tìm Đơn</button>
+
+                    <div id="single-search-result" class="single-result-box" style="display: none;"></div>
+                </div>
+
+            </div>
+
+            <!-- Khu vực hiển thị bảng sản phẩm (Main Content) -->
+            <div class="main-content">
+                <div class="table-responsive">
+                    <table class="product-table">
+                        <thead>
+                            <tr>
+                                <th>Mã SP</th>
+                                <th>Tên Sản Phẩm</th>
+                                <th>Đơn Giá</th>
+                                <th>Số Lượng Tồn</th>
+                                <th>Trị Giá Tồn</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product-table-body">
+                            <!-- Danh sách sản phẩm được kết xuất từ JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Thống kê tổng kho hàng (Yêu cầu mở rộng) -->
+                <div class="summary-card">
+                    <span>Tổng giá trị tồn kho của danh sách hiển thị:</span>
+                    <strong id="display-total-value">0đ</strong>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 1. Khai báo mảng đối tượng chứa ít nhất 5 sản phẩm (Yêu cầu cơ bản)
+        const danhSachGoc = [{
+            id: 1,
+            name: 'Điện thoại iPhone 15 Pro Max',
+            price: 29990000,
+            quantity: 15
+        }, {
+            id: 2,
+            name: 'Laptop Asus ROG Strix G16',
+            price: 34990000,
+            quantity: 8
+        }, {
+            id: 3,
+            name: 'Tai nghe Bluetooth Sony WH-1000XM5',
+            price: 6490000,
+            quantity: 25
+        }, {
+            id: 4,
+            name: 'Chuột Logitech G Pro X Superlight',
+            price: 2890000,
+            quantity: 40
+        }, {
+            id: 5,
+            name: 'Bàn phím cơ Keychron K2',
+            price: 1850000,
+            quantity: 18
+        }, {
+            id: 6,
+            name: 'Màn hình Dell UltraSharp 27 inch',
+            price: 8990000,
+            quantity: 12
+        }];
+
+        // Tạo bản sao mảng gốc để thao tác
+        let danhSachSanPham = [...danhSachGoc];
+
+        // Định dạng số thành tiền tệ VND
+        function dinhDangVND(money) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(money);
+        }
+
+        // 2. Viết hàm render danh sách để tái sử dụng nhiều lần (Yêu cầu cơ bản)
+        function renderDanhSach(mangSanhPham) {
+            const tbody = document.getElementById('product-table-body');
+            tbody.innerHTML = '';
+
+            if (mangSanhPham.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="no-data">Không có sản phẩm nào khớp với bộ lọc.</td></tr>`;
+                document.getElementById('display-total-value').textContent = dinhDangVND(0);
+                return;
+            }
+
+            // Sử dụng map() để tạo các chuỗi HTML tương ứng và chèn vào bảng
+            const htmlRows = mangSanhPham.map(sp => `
+            <tr id="product-row-${sp.id}">
+                <td><strong>#${sp.id}</strong></td>
+                <td>${sp.name}</td>
+                <td>${dinhDangVND(sp.price)}</td>
+                <td>${sp.quantity}</td>
+                <td><strong>${dinhDangVND(sp.price * sp.quantity)}</strong></td>
+            </tr>
+        `).join('');
+
+            tbody.innerHTML = htmlRows;
+
+            // Tính tổng giá trị tồn kho bằng phương thức reduce() (Yêu cầu mở rộng)
+            const tongTriGia = mangSanhPham.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
+            document.getElementById('display-total-value').textContent = dinhDangVND(tongTriGia);
+        }
+
+        // 3. Hàm xử lý chức năng lọc danh sách bằng filter() (Yêu cầu cơ bản)
+        function xuLyLocVaHienThi() {
+            const keyword = document.getElementById('search-name').value.trim().toLowerCase();
+            const priceFilter = document.getElementById('price-filter').value;
+            const priceSort = document.getElementById('price-sort').value;
+
+            // Lọc theo tên sản phẩm
+            let ketQuaLoc = danhSachSanPham.filter(sp => sp.name.toLowerCase().includes(keyword));
+
+            // Lọc theo khoảng giá
+            if (priceFilter === 'under-5m') {
+                ketQuaLoc = ketQuaLoc.filter(sp => sp.price < 5000000);
+            } else if (priceFilter === '5m-20m') {
+                ketQuaLoc = ketQuaLoc.filter(sp => sp.price >= 5000000 && sp.price < 20000000);
+            } else if (priceFilter === 'above-20m') {
+                ketQuaLoc = ketQuaLoc.filter(sp => sp.price >= 20000000);
+            }
+
+            // Sắp xếp sản phẩm theo giá (Yêu cầu mở rộng)
+            if (priceSort === 'asc') {
+                ketQuaLoc.sort((a, b) => a.price - b.price);
+            } else if (priceSort === 'desc') {
+                ketQuaLoc.sort((a, b) => b.price - a.price);
+            }
+
+            renderDanhSach(ketQuaLoc);
+        }
+
+        // 4. Hàm xử lý chức năng tìm kiếm đơn lẻ bằng find() (Yêu cầu cơ bản)
+        function timKiemDonLe() {
+            const inputVal = document.getElementById('single-search-input').value.trim();
+            const resultBox = document.getElementById('single-search-result');
+
+            if (inputVal === '') {
+                resultBox.style.display = 'block';
+                resultBox.innerHTML = `<span class="text-danger">Vui lòng nhập tên sản phẩm cần tìm.</span>`;
+                return;
+            }
+
+            // Sử dụng find() để tìm kiếm một đối tượng đầu tiên thỏa mãn điều kiện
+            const spTimThay = danhSachSanPham.find(sp =>
+                sp.name.toLowerCase().includes(inputVal.toLowerCase())
+            );
+
+            if (spTimThay) {
+                resultBox.style.display = 'block';
+                resultBox.innerHTML = `
+                <div class="found-success">
+                    <strong>Đã tìm thấy sản phẩm đơn lẻ:</strong><br>
+                    🏷️ Tên: ${spTimThay.name}<br>
+                    💵 Giá: ${dinhDangVND(spTimThay.price)}<br>
+                    📦 Tồn kho: ${spTimThay.quantity} cái
+                </div>
+            `;
+
+                // Đồng thời làm nổi bật dòng sản phẩm đó trong bảng kết quả nếu đang hiển thị
+                lamNoiBatDongTrongBang(spTimThay.id);
+            } else {
+                resultBox.style.display = 'block';
+                resultBox.innerHTML = `<span class="text-danger">Không tìm thấy sản phẩm nào khớp với tên này.</span>`;
+            }
+        }
+
+        // Hàm phụ trợ tạo hiệu ứng nháy sáng dòng trong bảng khi tìm thấy bằng find()
+        function lamNoiBatDongTrongBang(id) {
+            const row = document.getElementById(`product-row-${id}`);
+            if (row) {
+                row.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                row.classList.remove('highlight-row');
+                void row.offsetWidth; // Buộc trình duyệt vẽ lại cấu trúc (reflow) để restart animation
+                row.classList.add('highlight-row');
+            }
+        }
+
+        // Khởi tạo hiển thị ban đầu khi tải trang
+        window.onload = () => {
+            renderDanhSach(danhSachSanPham);
+        };
+    </script>
+
+</body>
+
+</html>

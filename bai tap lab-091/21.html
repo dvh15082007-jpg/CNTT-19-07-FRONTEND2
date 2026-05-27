@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống CRUD Hoàn Chỉnh Với jQuery Ajax - Bài Lab 21</title>
+    <!-- Nhúng thư viện jQuery ổn định qua CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        h2.main-title {
+            text-align: center;
+            color: #111827;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 12px;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+        
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 850px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            box-sizing: border-box;
+        }
+        
+        .panel h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #2d3748;
+            border-bottom: 1px solid #edf2f7;
+            padding-bottom: 8px;
+        }
+        /* Biểu mẫu Form nhập liệu */
+        
+        .form-group {
+            margin-bottom: 14px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        
+        .error-text {
+            color: #ef4444;
+            font-size: 11.5px;
+            margin-top: 4px;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-sizing: border-box;
+        }
+        
+        .btn:active {
+            transform: scale(0.96);
+        }
+        
+        .btn-submit {
+            background-color: #2563eb;
+            color: white;
+            flex-grow: 2;
+        }
+        
+        .btn-submit:hover {
+            background-color: #1d4ed8;
+        }
+        
+        .btn-cancel {
+            background-color: #e2e8f0;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
+            flex-grow: 1;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #cbd5e0;
+        }
+        /* Thanh tìm kiếm phía trên bảng */
+        
+        .search-bar {
+            margin-bottom: 15px;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        /* Bảng danh sách sinh viên */
+        
+        .table-responsive {
+            overflow-x: auto;
+            min-height: 220px;
+        }
+        
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .student-table th,
+        .student-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #edf2f7;
+        }
+        
+        .student-table th {
+            background-color: #f8fafc;
+            color: #4a5568;
+            font-weight: 600;
+        }
+        
+        .student-table tr:hover {
+            background-color: #f8fafc;
+        }
+        /* Nút hành động sửa/xóa */
+        
+        .btn-action {
+            padding: 5px 9px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            margin-right: 4px;
+        }
+        
+        .btn-edit {
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            border: 1px solid #bee3f8;
+        }
+        
+        .btn-edit:hover {
+            background-color: #bee3f8;
+        }
+        
+        .btn-delete {
+            background-color: #fff5f5;
+            color: #c53030;
+            border: 1px solid #fed7d7;
+        }
+        
+        .btn-delete:hover {
+            background-color: #fed7d7;
+        }
+        /* Bộ điều khiển phân trang đơn giản (Yêu cầu mở rộng) */
+        
+        .pagination-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #edf2f7;
+        }
+        
+        .btn-page {
+            background-color: #ffffff;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        
+        .btn-page:hover:not(:disabled) {
+            background-color: #edf2f7;
+        }
+        
+        .btn-page:disabled {
+            color: #cbd5e0;
+            cursor: not-allowed;
+            background-color: #f7fafc;
+        }
+        
+        .page-info {
+            font-size: 13px;
+            color: #718096;
+            font-weight: 500;
+        }
+        /* Hộp cảnh báo / Thông báo */
+        
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .success-alert {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .error-alert {
+            background-color: #fff5f5;
+            color: #c53030;
+            border: 1px solid #fed7d7;
+        }
+        
+        .status-cell {
+            text-align: center;
+            padding: 40px !important;
+            color: #718096;
+            font-style: italic;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 8px;
+        }
+        
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2 class="main-title">Hệ Thống CRUD Hoàn Chỉnh - jQuery Ajax</h2>
+
+        <!-- Hộp thông báo phản hồi động -->
+        <div id="alert-box" class="alert"></div>
+
+        <div class="layout-grid">
+
+            <!-- BÊN TRÁI: Biểu mẫu nhập liệu (Thêm mới / Cập nhật) -->
+            <div class="panel">
+                <h3 id="form-title">Thêm Sinh Viên Mới</h3>
+                <form id="student-form" onsubmit="xuLyLuuForm(event)">
+                    <!-- Input ẩn lưu trữ ID phục vụ chỉnh sửa dữ liệu -->
+                    <input type="hidden" id="student-id">
+
+                    <div class="form-group">
+                        <label for="student-name">Họ và tên:</label>
+                        <input type="text" id="student-name" class="form-control" placeholder="Ví dụ: Nguyễn Văn A">
+                        <small class="error-text" id="error-name"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="student-class">Mã lớp học:</label>
+                        <input type="text" id="student-class" class="form-control" placeholder="Ví dụ: WD18301">
+                        <small class="error-text" id="error-class"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="student-email">Địa chỉ Email:</label>
+                        <input type="text" id="student-email" class="form-control" placeholder="Ví dụ: email@gmail.com">
+                        <small class="error-text" id="error-email"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="student-phone">Số điện thoại:</label>
+                        <input type="text" id="student-phone" class="form-control" placeholder="Ví dụ: 0901234567">
+                        <small class="error-text" id="error-phone"></small>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-submit" id="btn-submit">Lưu dữ liệu</button>
+                        <button type="button" class="btn btn-cancel" id="btn-cancel" onclick="datLaiForm()" style="display: none;">Hủy</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- BÊN PHẢI: Bộ lọc tra cứu, Bảng hiển thị và Thanh phân trang -->
+            <div class="panel">
+                <h3>Danh Sách Sinh Viên</h3>
+
+                <!-- Ô tìm kiếm theo tên (Yêu cầu mở rộng) -->
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Tìm kiếm sinh viên theo họ tên..." oninput="xuLyLocDuLieu()">
+                </div>
+
+                <!-- Bảng kết xuất danh sách sinh viên -->
+                <div class="table-responsive">
+                    <table class="student-table">
+                        <thead>
+                            <tr>
+                                <th>Mã số (ID)</th>
+                                <th>Họ Tên</th>
+                                <th>Lớp Học</th>
+                                <th>Email</th>
+                                <th>Điện Thoại</th>
+                                <th>Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-tbody">
+                            <!-- Danh sách sinh viên cập nhật tự động -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Phân trang đơn giản ở phía Client (Yêu cầu mở rộng) -->
+                <div class="pagination-bar" id="pagination-controls">
+                    <button class="btn btn-page" id="btn-prev" onclick="chuyenTrang(-1)">◀ Trước</button>
+                    <span class="page-info" id="page-info">Trang 1 / 1</span>
+                    <button class="btn btn-page" id="btn-next" onclick="chuyenTrang(1)">Sau ▶</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 1. Cấu hình địa chỉ Endpoint MockAPI của bạn
+        // Ví dụ: 'https://65xxxxxxxx.mockapi.io/api/v1' [1]
+        const BASE_URL = 'https://65xxxxxx.mockapi.io/api/v1';
+
+        // CƠ SỞ DỮ LIỆU GIẢ LẬP ĐỂ TEST OFFLINE (Sử dụng nếu giữ nguyên BASE_URL mặc định)
+        let dbGiaLap = [{
+            id: "1",
+            name: "Nguyễn Văn Trỗi",
+            class: "WD18301",
+            email: "troi.nguyen@gmail.com",
+            phone: "0901234567"
+        }, {
+            id: "2",
+            name: "Trần Thị Mai",
+            class: "WD18301",
+            email: "mai.tran@yahoo.com",
+            phone: "0912345678"
+        }, {
+            id: "3",
+            name: "Lê Hoàng Nam",
+            class: "WD18302",
+            email: "nam.le@hotmail.com",
+            phone: "0983456789"
+        }, {
+            id: "4",
+            name: "Phạm Minh Tuấn",
+            class: "WD18302",
+            email: "tuan.pham@outlook.com",
+            phone: "0974567890"
+        }, {
+            id: "5",
+            name: "Vũ Thu Thảo",
+            class: "WD18303",
+            email: "thao.vu@gmail.com",
+            phone: "0965678901"
+        }, {
+            id: "6",
+            name: "Hoàng Anh Đức",
+            class: "WD18303",
+            email: "duc.hoang@student.edu.vn",
+            phone: "0936789012"
+        }];
+
+        // Hàm điều phối trung gian gọi các yêu cầu $.ajax thực tế hoặc giả lập
+        function thucHienAjax(options) {
+            if (options.url.includes('65xxxxxx')) {
+                return giaLapResponseMockApi(options);
+            }
+            return $.ajax(options);
+        }
+
+        // Giả lập hành vi của MockAPI cho các phương thức GET, POST, PUT, DELETE [1]
+        function giaLapResponseMockApi(options) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const method = options.method || options.type || 'GET';
+                    const url = options.url;
+
+                    if (method === 'GET') {
+                        // Lấy thông tin một sinh viên chi tiết: /students/1 [1]
+                        const idMatch = url.match(/\/students\/([a-zA-Z0-9]+)$/);
+                        if (idMatch) {
+                            const sId = idMatch[1];
+                            const found = dbGiaLap.find(s => s.id === sId);
+                            if (found) {
+                                resolve(found);
+                                if (options.success) options.success(found);
+                            } else {
+                                if (options.error) options.error(null, 'error', 'Not Found');
+                            }
+                            return;
+                        }
+                        // Lấy tất cả danh sách: /students [1]
+                        resolve(dbGiaLap);
+                        if (options.success) options.success(dbGiaLap);
+                        return;
+                    }
+
+                    if (method === 'POST') {
+                        const payload = JSON.parse(options.data);
+                        const newItem = {
+                            id: (Date.now() % 1000).toString(),
+                            ...payload
+                        };
+                        dbGiaLap.push(newItem);
+                        resolve(newItem);
+                        if (options.success) options.success(newItem);
+                        return;
+                    }
+
+                    if (method === 'PUT') {
+                        const idMatch = url.match(/\/students\/([a-zA-Z0-9]+)$/);
+                        if (idMatch) {
+                            const sId = idMatch[1];
+                            const payload = JSON.parse(options.data);
+                            const index = dbGiaLap.findIndex(s => s.id === sId);
+                            if (index !== -1) {
+                                dbGiaLap[index] = {
+                                    id: sId,
+                                    ...payload
+                                };
+                                resolve(dbGiaLap[index]);
+                                if (options.success) options.success(dbGiaLap[index]);
+                            } else {
+                                if (options.error) options.error(null, 'error', 'Not Found');
+                            }
+                        }
+                        return;
+                    }
+
+                    if (method === 'DELETE') {
+                        const idMatch = url.match(/\/students\/([a-zA-Z0-9]+)$/);
+                        if (idMatch) {
+                            const sId = idMatch[1];
+                            const index = dbGiaLap.findIndex(s => s.id === sId);
+                            if (index !== -1) {
+                                const deletedItem = dbGiaLap.splice(index, 1)[0];
+                                resolve(deletedItem);
+                                if (options.success) options.success(deletedItem);
+                            } else {
+                                if (options.error) options.error(null, 'error', 'Not Found');
+                            }
+                        }
+                        return;
+                    }
+
+                    if (options.error) options.error(null, 'error', 'Method not supported');
+                }, 300); // Mô phỏng độ trễ mạng thực tế [1]
+            });
+        }
+
+        // ==========================================
+        // LOGIC ĐỒNG BỘ DỮ LIỆU & PHÂN TRANG CLIENT
+        // ==========================================
+
+        let rawStudentsData = []; // Mảng gốc lưu trữ toàn bộ dữ liệu tải về từ API
+        let filteredStudentsData = []; // Mảng lưu trữ sau khi đã lọc tìm kiếm
+        let isEditMode = false;
+
+        // Các biến trạng thái quản lý việc phân trang ở Client (Yêu cầu mở rộng)
+        const itemsPerPage = 4; // Số lượng sinh viên tối đa hiển thị trên 1 trang
+        let currentPage = 1;
+
+        // A. Hàm lấy danh sách sinh viên ban đầu bằng Ajax GET (Hướng dẫn triển khai 2)
+        function taiDanhSachSinhVien() {
+            const tbody = $('#student-tbody');
+            tbody.html('<tr><td colspan="6" class="status-cell"><div class="spinner"></div><br>Đang đồng bộ cơ sở dữ liệu...</td></tr>');
+
+            thucHienAjax({
+                url: `${BASE_URL}/students`,
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    rawStudentsData = data;
+                    // Khởi chạy đồng bộ hóa bộ lọc và hiển thị danh sách ban đầu
+                    xuLyLocDuLieu();
+                },
+                error: function(xhr, status, error) {
+                    console.error("Lỗi GET danh sách:", error);
+                    hienThiThongBaoChung('Lỗi kết nối máy chủ khi tải danh sách sinh viên.', 'error');
+                }
+            });
+        }
+
+        // Hàm kết xuất bảng danh sách kết hợp phân trang (Yêu cầu cơ bản & mở rộng)
+        function renderTable() {
+            const tbody = $('#student-tbody');
+            tbody.empty();
+
+            if (filteredStudentsData.length === 0) {
+                tbody.html('<tr><td colspan="6" class="status-cell">Không tìm thấy sinh viên phù hợp.</td></tr>');
+                $('#pagination-controls').hide();
+                return;
+            }
+
+            // Tính toán chỉ mục phân trang phía Client
+            const totalPages = Math.ceil(filteredStudentsData.length / itemsPerPage);
+
+            // Ngăn chặn trạng thái trang hiện tại vượt quá tổng số trang sau khi lọc
+            if (currentPage > totalPages) {
+                currentPage = totalPages || 1;
+            }
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pagedItems = filteredStudentsData.slice(startIndex, endIndex);
+
+            // Render dòng sinh viên lên giao diện (Yêu cầu cơ bản)
+            tbody.html(pagedItems.map(sv => `
+            <tr>
+                <td><strong>#${sv.id}</strong></td>
+                <td>${sv.name}</td>
+                <td>${sv.class}</td>
+                <td>${sv.email}</td>
+                <td>${sv.phone}</td>
+                <td>
+                    <!-- Cho phép sửa bản ghi (Yêu cầu cơ bản) -->
+                    <button class="btn-action btn-edit" onclick="taiDuLieuSua('${sv.id}')">Sửa</button>
+                    <!-- Cho phép xóa bản ghi khỏi hệ thống (Yêu cầu cơ bản) -->
+                    <button class="btn-action btn-delete" onclick="xoaSinhVien('${sv.id}')">Xóa</button>
+                </td>
+            </tr>
+        `).join(''));
+
+            // Cập nhật bảng phân trang hiển thị (Yêu cầu mở rộng)
+            if (filteredStudentsData.length > itemsPerPage) {
+                $('#pagination-controls').css('display', 'flex');
+                $('#page-info').text(`Trang ${currentPage} / ${totalPages}`);
+                $('#btn-prev').prop('disabled', currentPage === 1);
+                $('#btn-next').prop('disabled', currentPage === totalPages);
+            } else {
+                $('#pagination-controls').hide();
+            }
+        }
+
+        // B. Hàm thực hiện tìm kiếm lọc động theo tên ở Client (Yêu cầu mở rộng)
+        function xuLyLocDuLieu() {
+            const keyword = $('#search-input').val().trim().toLowerCase();
+
+            // Sàng lọc mảng dữ liệu gốc ra mảng hiển thị phụ
+            filteredStudentsData = rawStudentsData.filter(sv =>
+                sv.name.toLowerCase().includes(keyword)
+            );
+
+            // Đưa trang hiển thị về trang 1 khi lọc
+            currentPage = 1;
+            renderTable();
+        }
+
+        // Hàm chuyển đổi trang phân trang (Yêu cầu mở rộng)
+        function chuyenTrang(huong) {
+            currentPage += huong;
+            renderTable();
+        }
+
+        // C. Hàm xử lý gửi Form (Thêm mới POST / Cập nhật PUT - Hướng dẫn triển khai 3)
+        function xuLyLuuForm(event) {
+            event.preventDefault(); // Ngăn hành vi tải lại trang
+
+            const id = $('#student-id').val();
+            const name = $('#student-name').val().trim();
+            const className = $('#student-class').val().trim();
+            const email = $('#student-email').val().trim();
+            const phone = $('#student-phone').val().trim();
+
+            // Rà soát kiểm tra lỗi rỗng trước khi gửi
+            $('.error-text').hide().text('');
+            let hopLe = true;
+
+            if (name === '') {
+                $('#error-name').text('Vui lòng điền họ và tên.').show();
+                hopLe = false;
+            }
+            if (className === '') {
+                $('#error-class').text('Vui lòng điền mã lớp học.').show();
+                hopLe = false;
+            }
+            // Biểu thức kiểm tra email và số điện thoại di động cơ bản
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email === '') {
+                $('#error-email').text('Vui lòng điền địa chỉ email.').show();
+                hopLe = false;
+            } else if (!emailRegex.test(email)) {
+                $('#error-email').text('Định dạng địa chỉ email không hợp lệ.').show();
+                hopLe = false;
+            }
+            const phoneRegex = /^[0-9]{10}$/;
+            if (phone === '') {
+                $('#error-phone').text('Vui lòng điền số điện thoại.').show();
+                hopLe = false;
+            } else if (!phoneRegex.test(phone)) {
+                $('#error-phone').text('Số điện thoại phải chứa đúng 10 số.').show();
+                hopLe = false;
+            }
+
+            if (!hopLe) return;
+
+            const payload = {
+                name,
+                class: className,
+                email,
+                phone
+            };
+
+            let url = `${BASE_URL}/students`;
+            let method = 'POST';
+
+            if (isEditMode) {
+                url += `/${id}`; // Gửi tới /students/:id nếu sửa [1]
+                method = 'PUT'; // Phương thức PUT [1]
+            }
+
+            const btnSubmit = $('#btn-submit');
+            btnSubmit.prop('disabled', true).text('Đang xử lý...');
+
+            // Thực hiện lệnh Ajax POST hoặc PUT đồng bộ dữ liệu (Yêu cầu cơ bản)
+            thucHienAjax({
+                url: url,
+                method: method,
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function(response) {
+                    btnSubmit.prop('disabled', false).text('Lưu dữ liệu');
+                    hienThiThongBaoChung(isEditMode ? 'Cập nhật sinh viên thành công!' : 'Thêm sinh viên mới thành công!', 'success');
+
+                    datLaiForm();
+                    // Tải lại danh sách để đảm bảo dữ liệu hiển thị đồng bộ (Hướng dẫn triển khai 4)
+                    taiDanhSachSinhVien();
+                },
+                error: function(xhr, status, error) {
+                    btnSubmit.prop('disabled', false).text('Lưu dữ liệu');
+                    console.error("Lỗi lưu biểu mẫu:", error);
+                    hienThiThongBaoChung('Lỗi khi lưu dữ liệu lên máy chủ API.', 'error');
+                }
+            });
+        }
+
+        // D. Hàm tải thông tin một sinh viên chi tiết đưa lên Form để cập nhật (Yêu cầu cơ bản)
+        function taiDuLieuSua(id) {
+            thucHienAjax({
+                url: `${BASE_URL}/students/${id}`, // [1]
+                method: 'GET', // [1]
+                dataType: 'json',
+                success: function(sv) {
+                    // Đổ dữ liệu chi tiết vào các trường nhập của Form
+                    $('#student-id').value = sv.id;
+                    $('#student-id').val(sv.id);
+                    $('#student-name').val(sv.name);
+                    $('#student-class').val(sv.class);
+                    $('#student-email').val(sv.email);
+                    $('#student-phone').val(sv.phone);
+
+                    // Chuyển Form sang trạng thái chỉnh sửa
+                    isEditMode = true;
+                    $('#form-title').text(`Chỉnh Sửa Sinh Viên (#${sv.id})`);
+                    $('#btn-submit').text('Cập nhật thông tin');
+                    $('#btn-cancel').css('display', 'inline-block');
+                },
+                error: function(xhr, status, error) {
+                    console.error("Lỗi tải chi tiết sửa:", error);
+                    hienThiThongBaoChung('Không thể kết nối máy chủ để tải thông tin sửa.', 'error');
+                }
+            });
+        }
+
+        // E. Hàm gửi yêu cầu DELETE theo id để xóa bản ghi khỏi hệ thống (Yêu cầu cơ bản)
+        function xoaSinhVien(id) {
+            if (!confirm(`Bạn có chắc chắn muốn xóa sinh viên #${id} này khỏi hệ thống không?`)) {
+                return;
+            }
+
+            thucHienAjax({
+                url: `${BASE_URL}/students/${id}`, // [1]
+                method: 'DELETE', // [1]
+                success: function(response) {
+                    hienThiThongBaoChung('Đã xóa sinh viên khỏi hệ thống thành công.', 'success');
+                    // Tải lại danh sách sau khi xóa để cập nhật giao diện hiển thị đồng bộ (Hướng dẫn triển khai 4)
+                    taiDanhSachSinhVien();
+                },
+                error: function(xhr, status, error) {
+                    console.error("Lỗi xóa dữ liệu:", error);
+                    hienThiThongBaoChung('Không thể kết nối đến máy chủ để thực hiện lệnh xóa.', 'error');
+                }
+            });
+        }
+
+        // Trả Form nhập liệu về trạng thái trống ban đầu
+        function datLaiForm() {
+            $('#student-form')[0].reset();
+            $('#student-id').val('');
+            $('.error-text').hide().text('');
+
+            isEditMode = false;
+            $('#form-title').text('Thêm Sinh Viên Mới');
+            $('#btn-submit').text('Lưu dữ liệu');
+            $('#btn-cancel').hide();
+        }
+
+        // Hiển thị thông báo phản hồi của hệ thống
+        function hienThiThongBaoChung(message, type) {
+            const alertBox = $('#alert-msg');
+            alertBox.removeClass('success-alert error-alert');
+
+            if (type === 'success') {
+                alertBox.addClass('success-alert');
+            } else {
+                alertBox.addClass('error-alert');
+            }
+
+            alertBox.text(message).fadeIn('fast').delay(3500).fadeOut('slow');
+        }
+
+        // Tự động tải danh sách sinh viên lần đầu khi nạp xong trang web
+        window.onload = function() {
+            taiDanhSachSinhVien();
+        };
+    </script>
+
+</body>
+
+</html>

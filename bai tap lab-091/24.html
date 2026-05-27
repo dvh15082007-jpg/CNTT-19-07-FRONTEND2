@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEON SUMMIT 2026 • Sự Kiện Công Nghệ Lớn Nhất</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(240, 83, 107, 0.95)), url('https://picsum.photos/1920/1080?random=10') center/cover no-repeat;
+            height: 100vh;
+            min-height: 650px;
+            display: flex;
+            align-items: center;
+            color: white;
+            position: relative;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+        }
+        
+        .highlight-card {
+            transition: all 0.4s ease;
+        }
+        
+        .highlight-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .schedule-item {
+            border-left: 4px solid #ff6b6b;
+            padding-left: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .speaker-card {
+            overflow: hidden;
+        }
+        
+        .speaker-card img {
+            transition: transform 0.5s ease;
+        }
+        
+        .speaker-card:hover img {
+            transform: scale(1.1);
+        }
+        
+        .btn-register {
+            background: linear-gradient(90deg, #ff6b6b, #feca57);
+            border: none;
+            padding: 14px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3 text-primary" href="#">CHIDAT<span class="text-danger">SUMMIT</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link fw-medium" href="#about">Giới thiệu</a></li>
+                    <li class="nav-item"><a class="nav-link fw-medium" href="#schedule">Lịch trình</a></li>
+                    <li class="nav-item"><a class="nav-link fw-medium" href="#speakers">Diễn giả</a></li>
+                    <li class="nav-item"><a class="nav-link fw-medium" href="#register">Đăng ký</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container position-relative z-3">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-10">
+                    <h1 class="display-3 fw-bold mb-4">CHIDAT SUMMIT 2026</h1>
+                    <p class="lead fs-3 mb-4">Nơi hội tụ những tâm hồn đam mê công nghệ &amp; sáng tạo</p>
+                    <div class="d-flex justify-content-center gap-4 flex-wrap mb-5">
+                        <div><i class="fas fa-calendar-alt me-2"></i> 15 - 17 Tháng 8, 2026</div>
+                        <div><i class="fas fa-map-marker-alt me-2"></i> Hà Nội, Việt Nam</div>
+                    </div>
+                    <a href="#register" class="btn btn-light btn-lg px-5 py-3 fs-5 fw-semibold">
+                        ĐĂNG KÝ NGAY <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title text-primary">Về Sự Kiện</h2>
+                <p class="lead text-muted">Hội nghị công nghệ lớn nhất năm 2026</p>
+            </div>
+            <div class="row g-5">
+                <div class="col-lg-6">
+                    <div class="highlight-card card h-100 border-0 shadow p-4">
+                        <h4><i class="fas fa-bolt text-warning"></i> Điểm nổi bật</h4>
+                        <ul class="mt-3">
+                            <li class="mb-2">• Hơn 50 diễn giả quốc tế &amp; trong nước</li>
+                            <li class="mb-2">• 12 workshop thực hành</li>
+                            <li class="mb-2">• Triển lãm công nghệ tương lai</li>
+                            <li class="mb-2">• Networking Night đặc biệt</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="highlight-card card h-100 border-0 shadow p-4">
+                        <h4><i class="fas fa-users text-info"></i> Đối tượng tham gia</h4>
+                        <p class="mt-3">Sinh viên, lập trình viên, startup founder, designer, marketer và những người đam mê công nghệ.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schedule -->
+    <section id="schedule" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Lịch Trình</h2>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="schedule-item">
+                        <h5>Ngày 1 - 15/08/2026</h5>
+                        <p><strong>09:00 - 12:00:</strong> Khai mạc &amp; Keynote từ các CEO lớn</p>
+                    </div>
+                    <div class="schedule-item">
+                        <h5>Ngày 2 - 16/08/2026</h5>
+                        <p><strong>08:30 - 17:00:</strong> Các track chuyên sâu (AI, Web3, UX/UI, Startup)</p>
+                    </div>
+                    <div class="schedule-item">
+                        <h5>Ngày 3 - 17/08/2026</h5>
+                        <p><strong>14:00 - 20:00:</strong> Workshop + Gala Dinner &amp; Networking</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Speakers -->
+    <section id="speakers" class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Diễn Giả Nổi Bật</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4 col-lg-3">
+                    <div class="speaker-card card h-100 text-center border-0 shadow">
+                        <img src="data:image/jpeg;base64,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"
+                            class="card-img-top" alt="Speaker 1">
+                        <div class="card-body">
+                            <h5>Elon Musk</h5>
+                            <p class="text-muted">Lãnh đạo - Tesla và SpaceX </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    <div class="speaker-card card h-100 text-center border-0 shadow">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHFfeMYAm_2B2SR_4kqTaY97S7azRG7PzUjoN4ZmFKTtt3LRWfR1GaZWR1ZJX_rVmR0XlVLsj-iGsOlPWGf4DFmtIWB3dVHhgv2ry8CAZ1RA&s=10" class="card-img-top" alt="Speaker 2">
+                        <div class="card-body">
+                            <h5>Jeffrey Preston Bezos</h5>
+                            <p class="text-muted">Doanh nhân · Trùm truyền thông · Chủ đầu tư · Kỹ sư máy tính.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    <div class="speaker-card card h-100 text-center border-0 shadow">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRO74XONgYrSTUTperopDxto7_elMsc7F2gbPxDYnIlyPH040XW80xA3Gxuxw9U3w_f2G7SkWcrCwqgHNXN-m2jaP2a7Rdfjk1AsU-YauxVQ&s=10" class="card-img-top" alt="Speaker 3">
+                        <div class="card-body">
+                            <h5>Bill Gates</h5>
+                            <p class="text-muted">Nhà sáng lập Microsoft</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Form -->
+    <section id="register" class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body p-5">
+                            <h2 class="text-center mb-4">Đăng Ký Tham Gia Ngay</h2>
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Họ và tên</label>
+                                        <input type="text" class="form-control form-control-lg" placeholder="Nguyễn Văn A" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control form-control-lg" placeholder="example@email.com" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Số điện thoại</label>
+                                    <input type="tel" class="form-control form-control-lg" placeholder="09xxxxxxxx" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Bạn quan tâm lĩnh vực nào?</label>
+                                    <div class="row g-2">
+                                        <div class="col-6 col-md-3">
+                                            <div class="form-check"><input class="form-check-input" type="checkbox"> AI &amp; Machine Learning</div>
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <div class="form-check"><input class="form-check-input" type="checkbox"> Web Development</div>
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <div class="form-check"><input class="form-check-input" type="checkbox"> Startup &amp; Business</div>
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <div class="form-check"><input class="form-check-input" type="checkbox"> Design &amp; UX</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-register w-100 text-white">XÁC NHẬN ĐĂNG KÝ</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-5 text-center">
+        <p>&copy; 2026 NEON SUMMIT - Made with ❤️ for Bootstrap Lab</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tải Dữ Liệu Bằng Ajax - Bài Lab 19</title>
+    <!-- Nhúng thư viện jQuery ổn định qua CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 800px;
+            padding: 25px;
+            border: 1px solid #e5e7eb;
+            box-sizing: border-box;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #111827;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 12px;
+        }
+        
+        .toolbar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+        /* Nút bấm điều khiển */
+        
+        .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+        
+        .btn-retry {
+            background-color: #ef4444;
+            color: white;
+            margin-top: 12px;
+        }
+        
+        .btn-retry:hover {
+            background-color: #dc2626;
+        }
+        /* Bảng dữ liệu HTML (Yêu cầu hiển thị tối thiểu 3 cột thông tin) */
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #edf2f7;
+        }
+        
+        .data-table th {
+            background-color: #f8fafc;
+            color: #4b5563;
+            font-weight: 600;
+        }
+        
+        .data-table tr:hover {
+            background-color: #f8fafc;
+        }
+        /* Trạng thái hiển thị tin nhắn trung gian */
+        
+        .status-cell {
+            text-align: center;
+            padding: 40px !important;
+            color: #6b7280;
+            font-style: italic;
+        }
+        
+        .error-text {
+            color: #ef4444;
+        }
+        /* Tạo vòng xoay hoạt họa CSS (Spinner) */
+        
+        .spinner {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border: 3px solid #e5e7eb;
+            border-top: 3px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Danh Sách Thành Viên (Kết Nối jQuery Ajax)</h2>
+
+        <!-- Thanh điều khiển nạp lại dữ liệu mà không cần tải lại trang -->
+        <div class="toolbar">
+            <button id="btn-reload" class="btn btn-primary">Làm mới dữ liệu</button>
+        </div>
+
+        <!-- Bảng HTML hiển thị kết quả (Thể hiện ít nhất 3 cột thông tin) -->
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Mã số (ID)</th>
+                    <th>Họ và Tên</th>
+                    <th>Địa chỉ Email</th>
+                    <th>Số điện thoại</th>
+                </tr>
+            </thead>
+            <tbody id="data-tbody">
+                <!-- Dữ liệu được kết xuất tự động từ hàm render -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // 1. Cấu hình địa chỉ API giả lập (JSONPlaceholder dùng làm mặc định có độ sẵn sàng cao)
+            // GHI CHÚ: Bạn có thể thay thế bằng đường dẫn MockAPI của bạn (ví dụ: 'https://65xxxx.mockapi.io/students') [1]
+            const API_URL = 'https://jsonplaceholder.typicode.com/users';
+
+            // 2. Viết lệnh Ajax GET để lấy dữ liệu từ API (Hướng dẫn triển khai 2)
+            function taiDuLieuAjax() {
+                const tbody = $('#data-tbody');
+
+                $.ajax({
+                    url: API_URL,
+                    method: 'GET',
+                    dataType: 'json',
+                    beforeSend: function() {
+                        // Hiển thị thông báo "đang tải dữ liệu" trước khi yêu cầu mạng gửi đi (Yêu cầu mở rộng)
+                        tbody.empty();
+                        tbody.html(`
+                        <tr>
+                            <td colspan="4" class="status-cell">
+                                <div class="spinner"></div> Đang kết nối tới máy chủ và tải dữ liệu, vui lòng đợi...
+                            </td>
+                        </tr>
+                    `);
+                    },
+                    success: function(danhSachTaiVe) {
+                        // Gọi hàm render để cập nhật bảng HTML khi thành công (Hướng dẫn triển khai 3)
+                        renderBangDuLieu(danhSachTaiVe);
+                    },
+                    error: function(xhr, status, error) {
+                        // Xử lý trường hợp API xảy ra lỗi hoặc mất kết nối mạng (Yêu cầu mở rộng)
+                        console.error("Lỗi gọi Ajax:", error);
+                        tbody.empty();
+                        tbody.html(`
+                        <tr>
+                            <td colspan="4" class="status-cell error-text">
+                                <strong>Đã xảy ra sự cố tải dữ liệu!</strong><br>
+                                Không thể đồng bộ dữ liệu từ máy chủ API.<br>
+                                <button id="btn-retry" class="btn btn-retry">Thử lại</button>
+                            </td>
+                        </tr>
+                    `);
+
+                        // Gắn sự kiện click cho nút "Thử lại" vừa được sinh ra động
+                        $('#btn-retry').click(function() {
+                            taiDuLieuAjax();
+                        });
+                    }
+                });
+            }
+
+            // 3. Hàm render để hiển thị dữ liệu ra HTML (Hướng dẫn triển khai 3)
+            function renderBangDuLieu(data) {
+                const tbody = $('#data-tbody');
+                tbody.empty(); // Làm sạch nội dung cũ trong bảng
+
+                if (!data || data.length === 0) {
+                    tbody.html(`<tr><td colspan="4" class="status-cell">Không có dữ liệu thành viên để hiển thị.</td></tr>`);
+                    return;
+                }
+
+                // Duyệt mảng hiển thị ít nhất 3 cột thông tin (Mã số, Họ tên, Email, Số điện thoại)
+                let rowsHTML = '';
+                $.each(data, function(index, thanhVien) {
+                    rowsHTML += `
+                    <tr>
+                        <td><strong>#${thanhVien.id}</strong></td>
+                        <td>${thanhVien.name}</td>
+                        <td>${thanhVien.email}</td>
+                        <td>${thanhVien.phone || 'Chưa cập nhật'}</td>
+                    </tr>
+                `;
+                });
+
+                tbody.html(rowsHTML);
+            }
+
+            // Sự kiện click nút tải lại dữ liệu mà không cần tải lại toàn bộ trang
+            $('#btn-reload').click(function() {
+                taiDuLieuAjax();
+            });
+
+            // 4. Kiểm tra kết quả tải dữ liệu khi trang được mở lần đầu (Hướng dẫn triển khai 4)
+            taiDuLieuAjax();
+        });
+    </script>
+
+</body>
+
+</html>

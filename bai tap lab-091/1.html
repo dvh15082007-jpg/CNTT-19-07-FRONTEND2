@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính Chỉ Số BMI - Bài Lab 01</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .container {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        .error {
+            color: #e53e3e;
+            background-color: #fff5f5;
+            border: 1px solid #feb2b2;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .result-container {
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        .bmi-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .status-box {
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 18px;
+            display: inline-block;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        /* Màu sắc cho từng mức phân loại (Yêu cầu mở rộng) */
+        
+        .thin {
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            border: 1px solid #bee3f8;
+        }
+        
+        .normal {
+            background-color: #f0fff4;
+            color: #2f855a;
+            border: 1px solid #c6f6d5;
+        }
+        
+        .overweight {
+            background-color: #fffaf0;
+            color: #dd6b20;
+            border: 1px solid #feebc8;
+        }
+        
+        .obese {
+            background-color: #fff5f5;
+            color: #c53030;
+            border: 1px solid #fed7d7;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Tính Chỉ Số BMI</h2>
+
+        <div class="input-group">
+            <label for="height">Chiều cao (m):</label>
+            <input type="number" id="height" placeholder="Ví dụ: 1.70" step="0.01">
+        </div>
+
+        <div class="input-group">
+            <label for="weight">Cân nặng (kg):</label>
+            <input type="number" id="weight" placeholder="Ví dụ: 65" step="0.1">
+        </div>
+
+        <button onclick="tinhBMI()">Tính toán</button>
+
+        <!-- Hiển thị lỗi nếu dữ liệu không hợp lệ -->
+        <div id="error-message" class="error"></div>
+
+        <!-- Hiển thị kết quả -->
+        <div id="result-area" class="result-container">
+            <div class="bmi-value" id="bmi-display"></div>
+            <div id="status-display" class="status-box"></div>
+        </div>
+    </div>
+
+    <script>
+        function tinhBMI() {
+            // 1. Lấy giá trị từ các ô nhập
+            const heightInput = document.getElementById('height').value;
+            const weightInput = document.getElementById('weight').value;
+
+            const errorDiv = document.getElementById('error-message');
+            const resultArea = document.getElementById('result-area');
+            const bmiDisplay = document.getElementById('bmi-display');
+            const statusDisplay = document.getElementById('status-display');
+
+            // Ẩn các khu vực hiển thị trước khi tính toán
+            errorDiv.style.display = 'none';
+            resultArea.style.display = 'none';
+            statusDisplay.className = 'status-box'; // Reset class màu
+
+            // 2. Kiểm tra dữ liệu (Yêu cầu mở rộng)
+            if (heightInput.trim() === '' || weightInput.trim() === '') {
+                errorDiv.textContent = 'Vui lòng nhập đầy đủ cả chiều cao và cân nặng.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Ép kiểu dữ liệu sang số thực
+            const height = Number(heightInput);
+            const weight = Number(weightInput);
+
+            if (isNaN(height) || isNaN(weight)) {
+                errorDiv.textContent = 'Dữ liệu nhập vào phải là số hợp lệ.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (height <= 0 || weight <= 0) {
+                errorDiv.textContent = 'Chiều cao và cân nặng phải là số lớn hơn 0.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // 3. Tính toán chỉ số BMI và làm tròn đến 2 chữ số thập phân
+            const bmi = (weight / (height * height)).toFixed(2);
+
+            // 4. Phân loại và gán class màu sắc tương ứng
+            let classification = '';
+            let colorClass = '';
+
+            if (bmi < 18.5) {
+                classification = 'Gầy';
+                colorClass = 'thin';
+            } else if (bmi >= 18.5 && bmi < 25) {
+                classification = 'Bình thường';
+                colorClass = 'normal';
+            } else if (bmi >= 25 && bmi < 30) {
+                classification = 'Thừa cân';
+                colorClass = 'overweight';
+            } else {
+                classification = 'Béo phì';
+                colorClass = 'obese';
+            }
+
+            // 5. Hiển thị kết quả trực tiếp lên giao diện
+            bmiDisplay.textContent = `Chỉ số BMI của bạn: ${bmi}`;
+            statusDisplay.textContent = `Thể trạng: ${classification}`;
+            statusDisplay.classList.add(colorClass);
+            resultArea.style.display = 'block';
+        }
+    </script>
+
+</body>
+
+</html>

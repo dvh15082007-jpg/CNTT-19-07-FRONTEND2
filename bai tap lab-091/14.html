@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hiệu Ứng Giao Diện Với jQuery - Bài Lab 14</title>
+    <!-- Nhúng thư viện jQuery ổn định qua CDN (Hướng dẫn triển khai 2) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            box-sizing: border-box;
+        }
+        
+        h2 {
+            margin-top: 0;
+            color: #1a202c;
+            border-bottom: 2px solid #3182ce;
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+        }
+        /* Khối thông báo/nội dung cần điều khiển (Yêu cầu cơ bản) */
+        
+        .alert-box {
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+            color: #2b6cb0;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-weight: 500;
+            box-sizing: border-box;
+            /* Thêm transition giúp hiệu ứng highlight CSS mượt mà hơn */
+            transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, color 0.4s ease, transform 0.3s ease;
+        }
+        /* Hiệu ứng nổi bật Highlight bằng class CSS (Yêu cầu mở rộng) */
+        
+        .highlight-box {
+            background-color: #fef3c7 !important;
+            /* Màu vàng cam nhạt */
+            border-color: #f59e0b !important;
+            /* Viền màu hổ phách */
+            color: #b45309 !important;
+            /* Màu chữ tương thích */
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+            transform: scale(1.02);
+        }
+        /* Bảng điều khiển nút bấm */
+        
+        .btn-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .row-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13.5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            flex: 1;
+            box-sizing: border-box;
+        }
+        
+        .btn:active {
+            transform: scale(0.96);
+        }
+        /* Phân loại màu sắc các nút theo chức năng */
+        
+        .btn-fade {
+            background-color: #e2e8f0;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
+        }
+        
+        .btn-fade:hover {
+            background-color: #cbd5e0;
+        }
+        
+        .btn-slide {
+            background-color: #3182ce;
+            color: white;
+        }
+        
+        .btn-slide:hover {
+            background-color: #2b6cb0;
+        }
+        
+        .btn-chain {
+            background-color: #805ad5;
+            /* Màu tím */
+            color: white;
+        }
+        
+        .btn-chain:hover {
+            background-color: #6b46c1;
+        }
+        
+        .btn-highlight {
+            background-color: #dd6b20;
+            /* Màu cam */
+            color: white;
+        }
+        
+        .btn-highlight:hover {
+            background-color: #c05621;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>jQuery - Hiệu Ứng Giao Diện</h2>
+
+        <!-- Khối thẻ thông báo nội dung (Yêu cầu cơ bản) -->
+        <div id="alert-box" class="alert-box">
+            Hệ thống phát hiện hoạt động đăng nhập mới từ thiết bị lạ. Vui lòng kiểm tra lại lịch sử bảo mật tài khoản của bạn.
+        </div>
+
+        <!-- Hệ thống nút bấm điều khiển -->
+        <div class="btn-panel">
+
+            <!-- Hàng 1: Các hiệu ứng mờ dần (Fade Effects) -->
+            <div class="row-buttons">
+                <button class="btn btn-fade" id="btn-fade-out">Fade Out (Ẩn)</button>
+                <button class="btn btn-fade" id="btn-fade-in">Fade In (Hiện)</button>
+            </div>
+
+            <!-- Hàng 2: Các hiệu ứng trượt (Slide Effects) -->
+            <div class="row-buttons">
+                <button class="btn btn-slide" id="btn-slide-up">Slide Up</button>
+                <button class="btn btn-slide" id="btn-slide-down">Slide Down</button>
+                <button class="btn btn-slide" id="btn-slide-toggle">Slide Toggle</button>
+            </div>
+
+            <!-- Hàng 3: Các hiệu ứng mở rộng liên hoàn (Chaining & Highlight) -->
+            <div class="row-buttons">
+                <!-- Yêu cầu mở rộng 1: Chuỗi hiệu ứng liên tiếp -->
+                <button class="btn btn-chain" id="btn-chain">Chaining (Liên Tiếp)</button>
+                <!-- Yêu cầu mở rộng 2: Highlight CSS class -->
+                <button class="btn btn-highlight" id="btn-highlight">Toggle Highlight</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Đảm bảo cấu trúc trang được tải xong hoàn toàn trước khi gán sự kiện
+        $(document).ready(function() {
+            const hopThongBao = $('#alert-box');
+
+            // ==========================================
+            // 1. NHÓM HIỆU ỨNG MỜ DẦN (FADE EFFECTS)
+            // ==========================================
+            $('#btn-fade-out').click(function() {
+                // Ẩn dần trong 500 mili giây (Hướng dẫn triển khai 4)
+                hopThongBao.fadeOut(500);
+            });
+
+            $('#btn-fade-in').click(function() {
+                // Hiện dần trong 500 mili giây
+                hopThongBao.fadeIn(500);
+            });
+
+            // ==========================================
+            // 2. NHÓM HIỆU ỨNG TRƯỢT (SLIDE EFFECTS)
+            // ==========================================
+            $('#btn-slide-up').click(function() {
+                // Trượt khép gọn mờ lên trên
+                hopThongBao.slideUp(500);
+            });
+
+            $('#btn-slide-down').click(function() {
+                // Trượt mở dần xuống dưới
+                hopThongBao.slideDown(500);
+            });
+
+            $('#btn-slide-toggle').click(function() {
+                // Tự động chuyển đổi giữa trượt lên và trượt xuống
+                hopThongBao.slideToggle(500);
+            });
+
+            // ==========================================
+            // 3. YÊU CẦU MỞ RỘNG (CHAINING & CSS HIGHLIGHT)
+            // ==========================================
+
+            // Trải nghiệm chuỗi hiệu ứng liên tục không ngắt quãng (Chaining)
+            $('#btn-chain').click(function() {
+                // Quy trình: Ẩn mờ -> Chờ 150ms -> Trượt hiển thị lại -> Nháy mờ nhẹ để nhấn mạnh
+                hopThongBao.fadeOut(400)
+                    .delay(150)
+                    .slideDown(500)
+                    .animate({
+                        opacity: 0.4
+                    }, 200)
+                    .animate({
+                        opacity: 1.0
+                    }, 200);
+            });
+
+            // Áp dụng lớp highlight của CSS kết hợp hoạt họa
+            $('#btn-highlight').click(function() {
+                // Giao thức toggleClass giúp thêm/bớt lớp CSS an toàn mà không làm ảnh hưởng hoạt họa ẩn hiện
+                hopThongBao.toggleClass('highlight-box');
+            });
+        });
+    </script>
+
+</body>
+
+</html>

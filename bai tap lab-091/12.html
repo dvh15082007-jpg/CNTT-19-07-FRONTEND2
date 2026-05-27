@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Sinh Viên Với API Giả Lập - Bài Lab 12</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        h2.main-title {
+            text-align: center;
+            color: #1a202c;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 12px;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+        
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 850px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            box-sizing: border-box;
+        }
+        
+        .panel h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #2d3748;
+            border-bottom: 1px solid #edf2f7;
+            padding-bottom: 8px;
+        }
+        /* Biểu mẫu Form nhập liệu */
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 6px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            box-sizing: border-box;
+        }
+        
+        .btn-submit {
+            background-color: #2563eb;
+            color: white;
+            flex-grow: 2;
+        }
+        
+        .btn-submit:hover {
+            background-color: #1d4ed8;
+        }
+        
+        .btn-cancel {
+            background-color: #e2e8f0;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
+            flex-grow: 1;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #cbd5e0;
+        }
+        /* Thanh tìm kiếm bên bảng danh sách */
+        
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .search-bar input {
+            flex-grow: 1;
+            padding: 9px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .btn-search {
+            background-color: #4b5563;
+            color: white;
+        }
+        
+        .btn-search:hover {
+            background-color: #374151;
+        }
+        /* Bảng danh sách sinh viên */
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .student-table th,
+        .student-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #edf2f7;
+        }
+        
+        .student-table th {
+            background-color: #f7fafc;
+            color: #4a5568;
+            font-weight: 600;
+        }
+        
+        .student-table tr:hover {
+            background-color: #f8fafc;
+        }
+        /* Các nút hành động sửa/xóa */
+        
+        .btn-action {
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-edit {
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            border: 1px solid #bee3f8;
+        }
+        
+        .btn-edit:hover {
+            background-color: #bee3f8;
+        }
+        
+        .btn-delete {
+            background-color: #fff5f5;
+            color: #c53030;
+            border: 1px solid #fed7d7;
+        }
+        
+        .btn-delete:hover {
+            background-color: #fed7d7;
+        }
+        /* Trạng thái Spinner tải */
+        
+        .status-box {
+            text-align: center;
+            padding: 30px;
+            color: #718096;
+            font-style: italic;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 10px;
+        }
+        
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .error-alert {
+            background-color: #fff5f5;
+            color: #c53030;
+            border: 1px solid #fed7d7;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2 class="main-title">Hệ Thống Quản Lý Sinh Viên (CRUD & API)</h2>
+
+        <div class="layout-grid">
+
+            <!-- BÊN TRÁI: Biểu mẫu nhập liệu (Form Thêm / Sửa) -->
+            <div class="panel">
+                <h3 id="form-title">Thêm Sinh Viên Mới</h3>
+                <form id="student-form" onsubmit="xuLyGuiForm(event)">
+                    <!-- Input ẩn lưu ID dùng khi sửa dữ liệu -->
+                    <input type="hidden" id="student-id">
+
+                    <div class="form-group">
+                        <label for="student-name">Họ và tên:</label>
+                        <input type="text" id="student-name" required placeholder="Ví dụ: Nguyễn Văn A">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="student-class">Mã lớp học:</label>
+                        <input type="text" id="student-class" required placeholder="Ví dụ: WD18301">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="student-email">Địa chỉ Email:</label>
+                        <input type="email" id="student-email" required placeholder="Ví dụ: email@gmail.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="student-phone">Số điện thoại:</label>
+                        <input type="tel" id="student-phone" required placeholder="Ví dụ: 0901234567">
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-submit" id="btn-submit">Lưu dữ liệu</button>
+                        <button type="button" class="btn btn-cancel" id="btn-cancel" onclick="datLaiForm()" style="display: none;">Hủy</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- BÊN PHẢI: Bảng danh sách và Tìm kiếm -->
+            <div class="panel">
+                <h3>Danh Sách Sinh Viên</h3>
+
+                <!-- Bộ lọc tra cứu theo tên (Yêu cầu mở rộng) -->
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Tìm kiếm sinh viên theo tên..." oninput="xuLyTimKiem()">
+                    <button class="btn btn-search" onclick="xuLyTimKiem()">Tìm kiếm</button>
+                </div>
+
+                <!-- Báo lỗi hệ thống nếu gọi API thất bại -->
+                <div id="error-message" class="error-alert" style="display: none;"></div>
+
+                <!-- Vùng hiển thị kết quả hoặc spinner -->
+                <div id="table-area">
+                    <div class="table-responsive">
+                        <table class="student-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Họ Tên</th>
+                                    <th>Lớp Học</th>
+                                    <th>Email</th>
+                                    <th>Điện Thoại</th>
+                                    <th>Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-tbody">
+                                <!-- Kết xuất danh sách sinh viên tự động -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 1. Cấu hình địa chỉ MockAPI (Thay thế bằng đường dẫn MockAPI thật của bạn)
+        // Ví dụ: 'https://65xxxxxxxx.mockapi.io/api/v1' [1]
+        const BASE_URL = 'https://65xxxxxx.mockapi.io/api/v1';
+
+        // DATABASE GIẢ LẬP ĐỂ TEST OFFLINE (Sử dụng nếu giữ nguyên BASE_URL mặc định)
+        let dbGiaLap = [{
+            id: "1",
+            name: "Nguyễn Văn Trỗi",
+            class: "WD18301",
+            email: "troi.nguyen@gmail.com",
+            phone: "0901234567"
+        }, {
+            id: "2",
+            name: "Trần Thị Mai",
+            class: "WD18301",
+            email: "mai.tran@yahoo.com",
+            phone: "0912345678"
+        }, {
+            id: "3",
+            name: "Lê Hoàng Nam",
+            class: "WD18302",
+            email: "nam.le@hotmail.com",
+            phone: "0983456789"
+        }];
+
+        // Hàm gọi mạng trung gian điều phối giữa Giả lập cục bộ và API thật
+        async function goiApiFetch(url, options = {}) {
+            if (url.includes('65xxxxxx')) {
+                return giaLapResponseMockApi(url, options);
+            }
+            return fetch(url, options);
+        }
+
+        // Bộ xử lý logic mô phỏng đúng đặc thù của server mockapi.io [1]
+        function giaLapResponseMockApi(url, options) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const method = options.method || 'GET';
+
+                    // Thao tác GET lọc danh sách hoặc tra cứu tên: /students?name=xxx [1]
+                    if (method === 'GET') {
+                        const queryMatch = url.match(/\/students\?name=(.+)$/);
+                        if (queryMatch) {
+                            const tuKhoa = decodeURIComponent(queryMatch[1]).toLowerCase();
+                            const locDiem = dbGiaLap.filter(s => s.name.toLowerCase().includes(tuKhoa));
+                            resolve({
+                                ok: true,
+                                status: 200,
+                                json: async() => locDiem
+                            });
+                            return;
+                        }
+                        // GET một sinh viên cụ thể: /students/1 [1]
+                        const idMatch = url.match(/\/students\/([a-zA-Z0-9]+)$/);
+                        if (idMatch) {
+                            const sId = idMatch[1];
+                            const sFound = dbGiaLap.find(s => s.id === sId);
+                            if (sFound) {
+                                resolve({
+                                    ok: true,
+                                    status: 200,
+                                    json: async() => sFound
+                                });
+                            } else {
+                                resolve({
+                                    ok: false,
+                                    status: 404
+                                });
+                            }
+                            return;
+                        }
+                        // GET tất cả danh sách: /students [1]
+                        resolve({
+                            ok: true,
+                            status: 200,
+                            json: async() => dbGiaLap
+                        });
+                        return;
+                    }
+
+                    // Thao tác POST tạo mới dữ liệu: /students [1]
+                    if (method === 'POST') {
+                        const payload = JSON.parse(options.body);
+                        const itemMoi = {
+                            id: (Date.now() % 1000).toString(), // Tạo mã ID giả lập tự động
+                            ...payload
+                        };
+                        dbGiaLap.push(itemMoi);
+                        resolve({
+                            ok: true,
+                            status: 201,
+                            json: async() => itemMoi
+                        });
+                        return;
+                    }
+
+                    // Thao tác PUT cập nhật dữ liệu: /students/1 [1]
+                    if (method === 'PUT') {
+                        const idMatch = url.match(/\/students\/([a-zA-Z0-9]+)$/);
+                        if (idMatch) {
+                            const sId = idMatch[1];
+                            const payload = JSON.parse(options.body);
+                            const chiSo = dbGiaLap.findIndex(s => s.id === sId);
+                            if (chiSo !== -1) {
+                                dbGiaLap[chiSo] = {
+                                    id: sId,
+                                    ...payload
+                                };
+                                resolve({
+                                    ok: true,
+                                    status: 200,
+                                    json: async() => dbGiaLap[chiSo]
+                                });
+                            } else {
+                                resolve({
+                                    ok: false,
+                                    status: 404
+                                });
+                            }
+                        }
+                        return;
+                    }
+
+                    // Thao tác DELETE xóa dữ liệu: /students/1 [1]
+                    if (method === 'DELETE') {
+                        const idMatch = url.match(/\/students\/([a-zA-Z0-9]+)$/);
+                        if (idMatch) {
+                            const sId = idMatch[1];
+                            const chiSo = dbGiaLap.findIndex(s => s.id === sId);
+                            if (chiSo !== -1) {
+                                const deletedItem = dbGiaLap.splice(chiSo, 1)[0];
+                                resolve({
+                                    ok: true,
+                                    status: 200,
+                                    json: async() => deletedItem
+                                });
+                            } else {
+                                resolve({
+                                    ok: false,
+                                    status: 404
+                                });
+                            }
+                        }
+                        return;
+                    }
+
+                    resolve({
+                        ok: false,
+                        status: 400
+                    });
+                }, 300); // Trễ 300ms mô phỏng phản hồi từ máy chủ [1]
+            });
+        }
+
+        // ==========================================
+        // LOGIC CRUD VÀ KHỚP NỐI GIAO DIỆN
+        // ==========================================
+
+        let isEditMode = false;
+
+        // A. Hàm lấy và kết xuất danh sách sinh viên từ API (Yêu cầu cơ bản)
+        async function taiDanhSachSinhVien(tenTimKiem = '') {
+            const tbody = document.getElementById('student-tbody');
+            const errMessage = document.getElementById('error-message');
+            errMessage.style.display = 'none';
+
+            // Hiển thị vòng xoay đang tải dữ liệu
+            tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 25px;">
+                    <div class="spinner"></div>
+                    <div style="color: #718096; font-size: 13px;">Đang đồng bộ dữ liệu với máy chủ...</div>
+                </td>
+            </tr>
+        `;
+
+            // Tạo URL động tùy biến có tham số lọc theo tên hoặc lấy tất cả danh sách [1]
+            let url = `${BASE_URL}/students`;
+            if (tenTimKiem.trim() !== '') {
+                url += `?name=${encodeURIComponent(tenTimKiem)}`; // [1]
+            }
+
+            try {
+                const phanHoi = await goiApiFetch(url);
+                if (!phanHoi.ok) {
+                    throw new Error(`Mã lỗi HTTP: ${phanHoi.status}`);
+                }
+
+                const danhSach = await phanHoi.json();
+                renderBangSinhVien(danhSach);
+
+            } catch (error) {
+                console.error("Lỗi đồng bộ danh sách:", error);
+                tbody.innerHTML = '';
+                errMessage.textContent = 'Lỗi kết nối máy chủ API! Không thể tải danh sách sinh viên.';
+                errMessage.style.display = 'block';
+            }
+        }
+
+        // Hàm render dữ liệu ra bảng HTML (Kiến thức sử dụng)
+        function renderBangSinhVien(students) {
+            const tbody = document.getElementById('student-tbody');
+            tbody.innerHTML = '';
+
+            if (students.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="status-box">Danh sách sinh viên trống.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = students.map(sv => `
+            <tr>
+                <td><strong>#${sv.id}</strong></td>
+                <td>${sv.name}</td>
+                <td>${sv.class}</td>
+                <td>${sv.email}</td>
+                <td>${sv.phone}</td>
+                <td>
+                    <!-- Yêu cầu mở rộng: Sửa thông tin sinh viên -->
+                    <button class="btn-action btn-edit" onclick="taiThongTinSua('${sv.id}')">Sửa</button>
+                    <!-- Yêu cầu cơ bản: Xóa sinh viên -->
+                    <button class="btn-action btn-delete" onclick="xoaSinhVien('${sv.id}')">Xóa</button>
+                </td>
+            </tr>
+        `).join('');
+        }
+
+        // B. Hàm xử lý gửi form (Thêm mới sinh viên hoặc Sửa thông tin sinh viên)
+        async function xuLyGuiForm(event) {
+            event.preventDefault(); // Ngăn hành vi tải lại trang của form
+
+            const id = document.getElementById('student-id').value;
+            const name = document.getElementById('student-name').value.trim();
+            const className = document.getElementById('student-class').value.trim();
+            const email = document.getElementById('student-email').value.trim();
+            const phone = document.getElementById('student-phone').value.trim();
+
+            // Tạo gói dữ liệu sinh viên
+            const payload = {
+                name,
+                class: className,
+                email,
+                phone
+            };
+
+            let url = `${BASE_URL}/students`;
+            let options = {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            };
+
+            try {
+                if (isEditMode) {
+                    // Sửa: Gửi yêu cầu PUT tới mockapi.io (Yêu cầu mở rộng) [1]
+                    url += `/${id}`; // [1]
+                    options.method = 'PUT';
+                } else {
+                    // Thêm: Gửi yêu cầu POST tới mockapi.io (Yêu cầu cơ bản) [1]
+                    options.method = 'POST';
+                }
+
+                const phanHoi = await goiApiFetch(url, options);
+                if (!phanHoi.ok) {
+                    throw new Error(`Giao dịch lỗi HTTP: ${phanHoi.status}`);
+                }
+
+                // Hoàn tất giao dịch, đưa form về mặc định và cập nhật lại bảng dữ liệu
+                datLaiForm();
+                taiDanhSachSinhVien();
+
+            } catch (error) {
+                console.error("Lỗi cập nhật dữ liệu:", error);
+                alert('Đã xảy ra lỗi kết nối khi lưu dữ liệu sinh viên.');
+            }
+        }
+
+        // C. Hàm Sửa - Đưa thông tin của sinh viên được chọn lên Form để chỉnh sửa (Yêu cầu mở rộng)
+        async function taiThongTinSua(id) {
+            try {
+                // Gọi GET theo id chi tiết sinh viên lên MockAPI [1]
+                const phanHoi = await goiApiFetch(`${BASE_URL}/students/${id}`);
+                if (!phanHoi.ok) throw new Error('Không thể lấy chi tiết sinh viên');
+
+                const sv = await phanHoi.json();
+
+                // Đưa dữ liệu sinh viên vào các ô nhập
+                document.getElementById('student-id').value = sv.id;
+                document.getElementById('student-name').value = sv.name;
+                document.getElementById('student-class').value = sv.class;
+                document.getElementById('student-email').value = sv.email;
+                document.getElementById('student-phone').value = sv.phone;
+
+                // Chuyển biểu mẫu sang trạng thái Cập nhật thông tin
+                isEditMode = true;
+                document.getElementById('form-title').textContent = `Chỉnh Sửa Sinh Viên (#${sv.id})`;
+                document.getElementById('btn-submit').textContent = 'Cập nhật thông tin';
+                document.getElementById('btn-cancel').style.display = 'inline-block';
+
+            } catch (error) {
+                console.error("Lỗi tải thông tin sinh viên:", error);
+                alert('Không thể tải chi tiết sinh viên từ API để sửa.');
+            }
+        }
+
+        // D. Hàm Xóa - Gửi yêu cầu DELETE theo id tới mockapi.io (Yêu cầu cơ bản) [1]
+        async function xoaSinhVien(id) {
+            if (!confirm(`Bạn có chắc chắn muốn xóa sinh viên #${id} này khỏi danh sách không?`)) {
+                return;
+            }
+
+            try {
+                const phanHoi = await goiApiFetch(`${BASE_URL}/students/${id}`, { // [1]
+                    method: 'DELETE' // [1]
+                });
+
+                if (!phanHoi.ok) {
+                    throw new Error(`Xóa lỗi HTTP: ${phanHoi.status}`);
+                }
+
+                // Đồng bộ tải lại danh sách sau khi xóa thành công
+                taiDanhSachSinhVien();
+
+            } catch (error) {
+                console.error("Lỗi xóa dữ liệu:", error);
+                alert('Đã xảy ra sự cố trong quá trình xóa dữ liệu trên API.');
+            }
+        }
+
+        // E. Hàm Tra cứu - Tìm kiếm sinh viên theo tên (Yêu cầu mở rộng)
+        function xuLyTimKiem() {
+            const tuKhoa = document.getElementById('search-input').value;
+            taiDanhSachSinhVien(tuKhoa);
+        }
+
+        // Hàm dọn dẹp các trường nhập liệu về mặc định (Add mode)
+        function datLaiForm() {
+            document.getElementById('student-form').reset();
+            document.getElementById('student-id').value = '';
+
+            isEditMode = false;
+            document.getElementById('form-title').textContent = 'Thêm Sinh Viên Mới';
+            document.getElementById('btn-submit').textContent = 'Lưu dữ liệu';
+            document.getElementById('btn-cancel').style.display = 'none';
+        }
+
+        // Chạy tải danh sách tự động ngay khi trang web nạp lần đầu
+        window.onload = () => {
+            taiDanhSachSinhVien();
+        };
+    </script>
+
+</body>
+
+</html>

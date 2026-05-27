@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiểm Tra Biểu Mẫu Đăng Ký Bằng jQuery - Bài Lab 15</title>
+    <!-- Nhúng thư viện jQuery ổn định qua CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .register-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+            box-sizing: border-box;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #1a202c;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 6px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        /* Đổi màu viền input khi hợp lệ/không hợp lệ (Yêu cầu mở rộng) */
+        
+        .is-valid {
+            border-color: #10b981 !important;
+            /* Xanh lá */
+            background-color: #f0fff4;
+        }
+        
+        .is-invalid {
+            border-color: #ef4444 !important;
+            /* Đỏ */
+            background-color: #fff5f5;
+        }
+        /* Hiển thị lỗi ngay bên dưới trường dữ liệu (Yêu cầu cơ bản) */
+        
+        .error-text {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .btn-register {
+            width: 100%;
+            padding: 12px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 15px;
+        }
+        
+        .btn-register:hover {
+            background-color: #1d4ed8;
+        }
+        /* Thông báo đăng ký thành công */
+        
+        .success-alert {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14.5px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="register-card">
+        <h2>Đăng Ký Tài Khoản</h2>
+
+        <!-- Thông báo đăng ký thành công dạng Alert ở đầu thẻ -->
+        <div id="success-alert" class="success-alert"></div>
+
+        <!-- Biểu mẫu form đăng ký (Yêu cầu có ít nhất 4 trường thông tin) -->
+        <form id="register-form">
+            <!-- Trường 1: Họ và tên -->
+            <div class="form-group">
+                <label for="fullname">Họ và tên:</label>
+                <input type="text" id="fullname" class="form-control" placeholder="Nhập họ và tên...">
+                <small class="error-text" id="error-fullname"></small>
+            </div>
+
+            <!-- Trường 2: Địa chỉ Email -->
+            <div class="form-group">
+                <label for="email">Địa chỉ Email:</label>
+                <input type="text" id="email" class="form-control" placeholder="Nhập địa chỉ email...">
+                <small class="error-text" id="error-email"></small>
+            </div>
+
+            <!-- Trường 3: Số điện thoại (Yêu cầu mở rộng) -->
+            <div class="form-group">
+                <label for="phone">Số điện thoại:</label>
+                <input type="text" id="phone" class="form-control" placeholder="Nhập số điện thoại di động...">
+                <small class="error-text" id="error-phone"></small>
+            </div>
+
+            <!-- Trường 4: Mật khẩu -->
+            <div class="form-group">
+                <label for="password">Mật khẩu:</label>
+                <input type="password" id="password" class="form-control" placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)...">
+                <small class="error-text" id="error-password"></small>
+            </div>
+
+            <!-- Trường 5: Xác nhận mật khẩu -->
+            <div class="form-group">
+                <label for="confirm_password">Xác nhận mật khẩu:</label>
+                <input type="password" id="confirm_password" class="form-control" placeholder="Nhập lại mật khẩu để xác nhận...">
+                <small class="error-text" id="error-confirm_password"></small>
+            </div>
+
+            <button type="submit" class="btn-register">Đăng ký ngay</button>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+
+            // Định nghĩa biểu thức chính quy để kiểm tra định dạng email và số điện thoại di động Việt Nam
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            // Kiểm tra SĐT: 10 chữ số, bắt đầu bằng đầu số 03, 05, 07, 08, 09 (Yêu cầu mở rộng)
+            const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
+
+            // Hàm chung dùng để hiển thị thông báo lỗi và đổi màu viền sang đỏ (Kiến thức sử dụng)
+            function hienThiLoi(inputId, errorId, message) {
+                $(errorId).text(message).show();
+                $(inputId).removeClass('is-valid').addClass('is-invalid');
+            }
+
+            // Hàm chung dùng để ẩn thông báo lỗi và đổi màu viền sang xanh lá
+            function xoaLoi(inputId, errorId) {
+                $(errorId).hide().text('');
+                $(inputId).removeClass('is-invalid').addClass('is-valid');
+            }
+
+            // Hàm độc lập kiểm tra từng trường dữ liệu một (Sử dụng cho cả sự kiện submit và gõ phím)
+            function kiemTraTruongDuLieu(id) {
+                const val = $(`#${id}`).val().trim(); // Lấy giá trị và cắt khoảng trắng thừa ở hai đầu bằng trim()
+                const errorId = `#error-${id}`;
+                const inputId = `#${id}`;
+
+                if (id === 'fullname') {
+                    if (val === '') {
+                        hienThiLoi(inputId, errorId, 'Họ và tên không được bỏ trống.');
+                        return false;
+                    } else if (val.length < 3) {
+                        hienThiLoi(inputId, errorId, 'Họ và tên phải có độ dài ít nhất 3 ký tự.');
+                        return false;
+                    } else {
+                        xoaLoi(inputId, errorId);
+                        return true;
+                    }
+                }
+
+                if (id === 'email') {
+                    if (val === '') {
+                        hienThiLoi(inputId, errorId, 'Địa chỉ Email không được bỏ trống.');
+                        return false;
+                    } else if (!emailRegex.test(val)) {
+                        hienThiLoi(inputId, errorId, 'Định dạng Email không hợp lệ (Ví dụ: email@gmail.com).');
+                        return false;
+                    } else {
+                        xoaLoi(inputId, errorId);
+                        return true;
+                    }
+                }
+
+                if (id === 'phone') {
+                    if (val === '') {
+                        hienThiLoi(inputId, errorId, 'Số điện thoại không được bỏ trống.');
+                        return false;
+                    } else if (!phoneRegex.test(val)) {
+                        hienThiLoi(inputId, errorId, 'Số điện thoại Việt Nam không hợp lệ (Yêu cầu 10 số, bắt đầu từ đầu số 03/05/07/08/09).');
+                        return false;
+                    } else {
+                        xoaLoi(inputId, errorId);
+                        return true;
+                    }
+                }
+
+                if (id === 'password') {
+                    const rawVal = $(inputId).val(); // Mật khẩu không dùng trim() để tránh mất mật khẩu có khoảng trắng có ý đồ
+                    if (rawVal === '') {
+                        hienThiLoi(inputId, errorId, 'Mật khẩu không được bỏ trống.');
+                        return false;
+                    } else if (rawVal.length < 6) {
+                        hienThiLoi(inputId, errorId, 'Độ dài mật khẩu phải đạt tối thiểu từ 6 ký tự.');
+                        return false;
+                    } else {
+                        xoaLoi(inputId, errorId);
+                        return true;
+                    }
+                }
+
+                if (id === 'confirm_password') {
+                    const rawVal = $(inputId).val();
+                    const passwordVal = $('#password').val();
+                    if (rawVal === '') {
+                        hienThiLoi(inputId, errorId, 'Vui lòng xác nhận lại mật khẩu.');
+                        return false;
+                    } else if (rawVal !== passwordVal) {
+                        hienThiLoi(inputId, errorId, 'Mật khẩu xác nhận không khớp với mật khẩu đã nhập.');
+                        return false;
+                    } else {
+                        xoaLoi(inputId, errorId);
+                        return true;
+                    }
+                }
+                return true;
+            }
+
+            // ==========================================================
+            // 1. Kiểm tra lỗi thời gian thực (Real-time Validation) khi gõ phím/rời ô nhập
+            // Thao tác này nâng cao đáng kể trải nghiệm của người dùng
+            // ==========================================================
+            $('.form-control').on('input blur', function() {
+                const id = $(this).attr('id');
+                kiemTraTruongDuLieu(id);
+
+                // Trường hợp đặc biệt: Nếu người dùng thay đổi mật khẩu chính, tự động kiểm tra lại khớp của ô Xác nhận
+                if (id === 'password' && $('#confirm_password').val() !== '') {
+                    kiemTraTruongDuLieu('confirm_password');
+                }
+            });
+
+            // ==========================================================
+            // 2. Kiểm tra tính hợp lệ toàn biểu mẫu khi người dùng gửi Form (Submit)
+            // ==========================================================
+            $('#register-form').on('submit', function(event) {
+                // Chặn hành vi gửi biểu mẫu mặc định để kiểm tra lỗi (Hướng dẫn triển khai 2)
+                event.preventDefault();
+
+                // Ẩn thông báo thành công trước đó
+                $('#success-alert').hide();
+
+                let toanBoHopLe = true;
+
+                // Chạy kiểm tra lỗi cho toàn bộ các trường dữ liệu
+                const cacIdTruong = ['fullname', 'email', 'phone', 'password', 'confirm_password'];
+                cacIdTruong.forEach(id => {
+                    const ketQuaXacMinh = kiemTraTruongDuLieu(id);
+                    if (!ketQuaXacMinh) {
+                        toanBoHopLe = false;
+                    }
+                });
+
+                // Nếu toàn bộ biểu mẫu hợp lệ, hiển thị thông báo thành công lên giao diện
+                if (toanBoHopLe) {
+                    $('#success-alert').text('Đăng ký tài khoản mới thành công!').fadeIn('fast');
+
+                    // Reset toàn bộ form đăng ký
+                    $('#register-form')[0].reset();
+
+                    // Loại bỏ các class trang trí hợp lệ (xanh/đỏ) khỏi ô nhập
+                    $('.form-control').removeClass('is-valid is-invalid');
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

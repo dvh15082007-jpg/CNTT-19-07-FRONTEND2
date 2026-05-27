@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xử Lý Điểm Sinh Viên - Bài Lab 04</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 500px;
+            padding: 25px;
+            box-sizing: border-box;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #111827;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 10px;
+        }
+        
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 8px;
+        }
+        
+        .grades-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            min-height: 34px;
+        }
+        
+        .grade-badge {
+            background-color: #e5e7eb;
+            color: #1f2937;
+            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .grade-badge .btn-remove {
+            color: #ef4444;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            background: none;
+            padding: 0;
+            font-size: 12px;
+        }
+        
+        .form-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-add {
+            background-color: #2563eb;
+            color: white;
+        }
+        
+        .btn-add:hover {
+            background-color: #1d4ed8;
+        }
+        
+        .btn-reset {
+            background-color: #9ca3af;
+            color: white;
+        }
+        
+        .btn-reset:hover {
+            background-color: #7b808a;
+        }
+        /* Yêu cầu mở rộng: Option loại bỏ điểm thấp nhất */
+        
+        .option-group {
+            background-color: #f9fafb;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #374151;
+        }
+        
+        .option-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        
+        .result-box {
+            border-top: 2px dashed #e5e7eb;
+            padding-top: 15px;
+        }
+        
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: #374151;
+        }
+        
+        .result-row strong {
+            color: #111827;
+        }
+        
+        .performance-tag {
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        /* Màu sắc phân loại học lực */
+        
+        .weak {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .average {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .good {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .excellent {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .note-text {
+            font-size: 12px;
+            color: #dc2626;
+            margin-top: 2px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Xử Lý Điểm Sinh Viên</h2>
+
+        <!-- Hiển thị danh sách điểm hiện tại -->
+        <div class="section-title">Danh sách điểm hiện tại:</div>
+        <div id="grades-container" class="grades-list"></div>
+
+        <!-- Yêu cầu mở rộng 1: Cho phép nhập thêm điểm mới -->
+        <div class="section-title">Thêm điểm mới (từ 0 đến 10):</div>
+        <div class="form-group">
+            <input type="number" id="new-grade" min="0" max="10" step="0.1" placeholder="Nhập điểm số...">
+            <button class="btn btn-add" onclick="themDiem()">Thêm</button>
+            <button class="btn btn-reset" onclick="khoiPhucMacDinh()">Đặt lại</button>
+        </div>
+
+        <!-- Yêu cầu mở rộng 2: Loại bỏ điểm thấp nhất trước khi tính trung bình -->
+        <div class="option-group">
+            <input type="checkbox" id="exclude-lowest" onchange="capNhatGiaoDien()">
+            <label for="exclude-lowest" style="cursor: pointer; font-weight: 500;">
+            Loại bỏ 1 điểm thấp nhất khi tính trung bình
+        </label>
+        </div>
+
+        <!-- Kết quả thống kê và phân loại học lực -->
+        <div class="result-box">
+            <div class="result-row">
+                <span>Danh sách điểm tính toán:</span>
+                <span id="calc-list" style="font-weight: 500;">-</span>
+            </div>
+
+            <div class="result-row">
+                <span>Tổng số cột điểm tính:</span>
+                <strong id="calc-count">0</strong>
+            </div>
+
+            <div class="result-row">
+                <span>Tổng số điểm:</span>
+                <strong id="calc-sum">0</strong>
+            </div>
+
+            <div class="result-row">
+                <span>Điểm trung bình học phần:</span>
+                <strong id="calc-average" style="font-size: 18px; color: #2563eb;">0.00</strong>
+            </div>
+
+            <div class="result-row">
+                <span>Phân loại học lực:</span>
+                <span id="performance" class="performance-tag">-</span>
+            </div>
+
+            <div id="exclude-note" class="note-text"></div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Tạo mảng điểm khởi tạo gồm ít nhất 5 giá trị số (Yêu cầu cơ bản)
+        let danhSachDiem = [8.5, 7.2, 5.0, 9.1, 4.5];
+
+        // Hàm hiển thị danh sách điểm hiện tại dưới dạng các badge nhãn số
+        function hienThiBadge() {
+            const container = document.getElementById('grades-container');
+            container.innerHTML = '';
+
+            danhSachDiem.forEach((diem, chiSo) => {
+                container.innerHTML += `
+                <span class="grade-badge">
+                    ${diem}
+                    <button class="btn-remove" onclick="xoaDiem(${chiSo})" title="Xóa điểm này">×</button>
+                </span>
+            `;
+            });
+        }
+
+        // Yêu cầu mở rộng: Thêm điểm mới
+        function themDiem() {
+            const input = document.getElementById('new-grade');
+            const giaTri = parseFloat(input.value);
+
+            if (isNaN(giaTri) || giaTri < 0 || giaTri > 10) {
+                alert('Vui lòng nhập điểm số hợp lệ từ 0 đến 10.');
+                return;
+            }
+
+            danhSachDiem.push(giaTri);
+            input.value = '';
+            capNhatGiaoDien();
+        }
+
+        // Cho phép xóa từng điểm cụ thể trong danh sách
+        function xoaDiem(chiSo) {
+            if (danhSachDiem.length <= 1) {
+                alert('Mảng cần duy trì ít nhất 1 giá trị để tính toán.');
+                return;
+            }
+            danhSachDiem.splice(chiSo, 1);
+            capNhatGiaoDien();
+        }
+
+        // Trở về trạng thái danh sách mẫu ban đầu
+        function khoiPhucMacDinh() {
+            danhSachDiem = [8.5, 7.2, 5.0, 9.1, 4.5];
+            document.getElementById('exclude-lowest').checked = false;
+            capNhatGiaoDien();
+        }
+
+        // Hàm chính xử lý tính toán và hiển thị (Yêu cầu cơ bản & mở rộng)
+        function capNhatGiaoDien() {
+            hienThiBadge();
+
+            // Sao chép mảng điểm để tránh biến đổi mảng gốc khi tính toán
+            let mangTinhToan = [...danhSachDiem];
+            let thongBaoLoaiBo = '';
+
+            const coLoaiBoThapNhat = document.getElementById('exclude-lowest').checked;
+
+            // Yêu cầu mở rộng: Loại bỏ điểm thấp nhất trước khi tính điểm trung bình
+            if (coLoaiBoThapNhat && danhSachDiem.length > 1) {
+                const diemThapNhat = Math.min(...mangTinhToan);
+                const chiSoThapNhat = mangTinhToan.indexOf(diemThapNhat);
+                mangTinhToan.splice(chiSoThapNhat, 1); // Loại bỏ phần tử thấp nhất ra khỏi mảng tính toán
+                thongBaoLoaiBo = `* Đã loại bỏ điểm thấp nhất là ${diemThapNhat} khỏi điểm trung bình.`;
+            }
+
+            // 2. Sử dụng reduce để tính tổng điểm (Yêu cầu cơ bản)
+            const tongDiem = mangTinhToan.reduce((tichLuy, hienTai) => tichLuy + hienTai, 0);
+
+            // Tính điểm trung bình (làm tròn 2 chữ số thập phân)
+            const diemTrungBinh = mangTinhToan.length > 0 ? (tongDiem / mangTinhToan.length) : 0;
+
+            // 3. Viết điều kiện phân loại học lực theo ngưỡng điểm (Yêu cầu cơ bản)
+            let hocLuc = '';
+            let lopMauSac = '';
+
+            if (diemTrungBinh < 5.0) {
+                hocLuc = 'Yếu';
+                lopMauSac = 'weak';
+            } else if (diemTrungBinh >= 5.0 && diemTrungBinh < 6.5) {
+                hocLuc = 'Trung bình';
+                lopMauSac = 'average';
+            } else if (diemTrungBinh >= 6.5 && diemTrungBinh < 8.0) {
+                hocLuc = 'Khá';
+                lopMauSac = 'good';
+            } else {
+                hocLuc = 'Giỏi';
+                lopMauSac = 'excellent';
+            }
+
+            // 4. Trình bày kết quả ra màn hình
+            document.getElementById('calc-list').textContent = mangTinhToan.join(', ') || 'Trống';
+            document.getElementById('calc-count').textContent = mangTinhToan.length;
+            document.getElementById('calc-sum').textContent = tongDiem.toFixed(2);
+            document.getElementById('calc-average').textContent = diemTrungBinh.toFixed(2);
+
+            const theHocLuc = document.getElementById('performance');
+            theHocLuc.textContent = hocLuc;
+            theHocLuc.className = `performance-tag ${lopMauSac}`;
+
+            document.getElementById('exclude-note').textContent = thongBaoLoaiBo;
+        }
+
+        // Tải giao diện ban đầu khi mở trang
+        window.onload = capNhatGiaoDien;
+    </script>
+
+</body>
+
+</html>

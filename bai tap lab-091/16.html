@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bộ Đếm Lượt Tương Tác - jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        
+        .counter-container {
+            background: white;
+            padding: 40px 60px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        
+        #count {
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: #333;
+            margin: 20px 0;
+            min-width: 150px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        #increment {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        #decrement {
+            background: #f44336;
+            color: white;
+        }
+        
+        #reset {
+            background: #2196F3;
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .value-positive {
+            color: #4CAF50;
+        }
+        
+        .value-negative {
+            color: #f44336;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="counter-container">
+        <h1>Bộ Đếm Lượt Tương Tác</h1>
+        <div id="count">0</div>
+
+        <div class="buttons">
+            <button id="increment">Tăng (+)</button>
+            <button id="decrement">Giảm (-)</button>
+            <button id="reset">Đặt lại</button>
+        </div>
+
+        <p style="margin-top: 60px; color: #666;">
+            Giá trị hiện tại: <strong id="current-value">0</strong>
+        </p>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let count = 0;
+            const $countDisplay = $('#count');
+            const $currentValue = $('#current-value');
+
+            // Hàm cập nhật giao diện
+            function updateDisplay() {
+                $countDisplay.text(count);
+                $currentValue.text(count);
+
+                // Đổi màu theo giá trị
+                $countDisplay.removeClass('value-positive value-negative');
+                if (count > 0) {
+                    $countDisplay.addClass('value-positive');
+                } else if (count < 0) {
+                    $countDisplay.addClass('value-negative');
+                }
+            }
+
+            // Nút Tăng
+            $('#increment').on('click', function() {
+                count++;
+                updateDisplay();
+            });
+
+            // Nút Giảm
+            $('#decrement').on('click', function() {
+                count--;
+                updateDisplay();
+            });
+
+            // Nút Đặt lại
+            $('#reset').on('click', function() {
+                count = 0;
+                updateDisplay();
+            });
+
+            // Khởi tạo ban đầu
+            updateDisplay();
+        });
+    </script>
+</body>
+
+</html>

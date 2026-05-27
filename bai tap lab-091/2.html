@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính toán khuyến mãi đơn hàng - Bài Lab 02</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 25px;
+            box-sizing: border-box;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #1a1a1a;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #3182ce;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+        }
+        
+        .btn-calc {
+            width: 100%;
+            padding: 12px;
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-calc:hover {
+            background-color: #2b6cb0;
+        }
+        
+        .error-box {
+            background-color: #fff5f5;
+            color: #c53030;
+            border: 1px solid #fed7d7;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .result-box {
+            margin-top: 20px;
+            border-top: 2px dashed #e2e8f0;
+            padding-top: 15px;
+            display: none;
+        }
+        
+        .result-box h3 {
+            margin-top: 0;
+            color: #2d3748;
+            font-size: 18px;
+        }
+        
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: #4a5568;
+        }
+        
+        .result-row.highlight {
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .result-row.final {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2b6cb0;
+        }
+        
+        .text-green {
+            color: #38a169;
+            font-weight: bold;
+        }
+        
+        .info-note {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>Tính Khuyến Mãi Đơn Hàng</h2>
+
+        <!-- Form nhập liệu -->
+        <div class="form-group">
+            <label for="order-value">Giá trị đơn hàng gốc (VND):</label>
+            <input type="number" id="order-value" min="0" placeholder="Nhập số tiền đơn hàng...">
+        </div>
+
+        <div class="form-group">
+            <label for="member-rank">Hạng thành viên:</label>
+            <select id="member-rank">
+            <option value="bronze">Đồng (Khuyến mãi thêm 0%)</option>
+            <option value="silver">Bạc (Khuyến mãi thêm 2%)</option>
+            <option value="gold">Vàng (Khuyến mãi thêm 5%)</option>
+        </select>
+        </div>
+
+        <div class="form-group">
+            <label for="coupon-code">Mã giảm giá (Nếu có):</label>
+            <input type="text" id="coupon-code" placeholder="Ví dụ: GIAM30K">
+            <div class="info-note">* Nhập GIAM30K để được giảm 30.000đ cho đơn từ 300.000đ trở lên.</div>
+        </div>
+
+        <button class="btn-calc" onclick="xuLyTinhToan()">Tính Khuyến Mãi</button>
+
+        <!-- Hiển thị thông báo lỗi -->
+        <div id="error-message" class="error-box"></div>
+
+        <!-- Khu vực hiển thị kết quả -->
+        <div id="result-area" class="result-box">
+            <h3>Chi Tiết Thanh Toán</h3>
+
+            <div class="result-row">
+                <span>Tiền gốc đơn hàng:</span>
+                <span id="res-original">0đ</span>
+            </div>
+
+            <div class="result-row">
+                <span>Tỷ lệ giảm giá:</span>
+                <span id="res-discount-rate">0%</span>
+            </div>
+
+            <div class="result-row">
+                <span>Số tiền giảm theo tỷ lệ:</span>
+                <span id="res-discount-value" class="text-green">-0đ</span>
+            </div>
+
+            <div class="result-row" id="coupon-row" style="display: none;">
+                <span>Mã giảm giá cố định:</span>
+                <span id="res-coupon-value" class="text-green">-0đ</span>
+            </div>
+
+            <div class="result-row">
+                <span>Phí vận chuyển:</span>
+                <span id="res-shipping">30.000đ</span>
+            </div>
+
+            <div class="result-row final">
+                <span>Tổng thanh toán cuối:</span>
+                <span id="res-final">0đ</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Hàm định dạng số sang đơn vị tiền tệ VND (Yêu cầu định dạng số)
+        function dinhDangVND(money) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(money);
+        }
+
+        // Hàm riêng biệt tính tỷ lệ phần trăm giảm giá theo khoảng tiền (Tối thiểu 3 mức)
+        function layTyLeTheoTien(orderValue) {
+            if (orderValue >= 1500000) {
+                return 10; // Giảm 10% cho đơn hàng từ 1.5 triệu trở lên
+            } else if (orderValue >= 500000) {
+                return 5; // Giảm 5% cho đơn hàng từ 500k đến dưới 1.5 triệu
+            } else {
+                return 0; // Dưới 500k không giảm giá phần trăm theo tiền
+            }
+        }
+
+        // Hàm riêng biệt xác định tỷ lệ phần trăm giảm giá theo hạng thành viên
+        function layTyLeTheoHang(rank) {
+            switch (rank) {
+                case 'silver':
+                    return 2; // Hạng Bạc giảm 2%
+                case 'gold':
+                    return 5; // Hạng Vàng giảm 5%
+                default:
+                    return 0; // Hạng Đồng hoặc mặc định không giảm thêm
+            }
+        }
+
+        // Hàm chính xử lý tính toán và hiển thị
+        function xuLyTinhToan() {
+            const orderValueInput = document.getElementById('order-value').value;
+            const memberRank = document.getElementById('member-rank').value;
+            const couponCode = document.getElementById('coupon-code').value.trim().toUpperCase();
+
+            const errorDiv = document.getElementById('error-message');
+            const resultArea = document.getElementById('result-area');
+
+            // Ẩn các khu vực hiển thị trước đó khi người dùng nhấn lại nút
+            errorDiv.style.display = 'none';
+            resultArea.style.display = 'none';
+
+            // 1. Kiểm tra và xử lý dữ liệu nhập vào (Validation)
+            if (orderValueInput.trim() === '') {
+                errorDiv.textContent = 'Vui lòng nhập giá trị đơn hàng.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            const originalValue = Number(orderValueInput);
+            if (isNaN(originalValue) || originalValue < 0) {
+                errorDiv.textContent = 'Giá trị đơn hàng phải là số hợp lệ và lớn hơn hoặc bằng 0.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // 2. Tính tỷ lệ giảm giá từ tiền gốc và hạng thành viên bằng các hàm phụ trợ
+            const baseRate = layTyLeTheoTien(originalValue);
+            const memberRate = layTyLeTheoHang(memberRank);
+            const totalRate = baseRate + memberRate;
+
+            // Tính số tiền giảm dựa trên tổng tỷ lệ % thu được
+            const discountFromRate = originalValue * (totalRate / 100);
+
+            // 3. Xử lý yêu cầu mở rộng 1: Mã giảm giá cố định
+            let fixedDiscount = 0;
+            let isCouponApplied = false;
+
+            if (couponCode === 'GIAM30K') {
+                if (originalValue >= 300000) {
+                    fixedDiscount = 30000;
+                    isCouponApplied = true;
+                } else {
+                    // Đơn hàng chưa đạt ngưỡng tối thiểu 300k
+                    isCouponApplied = false;
+                }
+            }
+
+            // 4. Xử lý yêu cầu mở rộng 2: Miễn phí vận chuyển dựa trên ngưỡng quy định
+            let shippingFee = 30000; // Phí vận chuyển tiêu chuẩn
+            let isFreeShip = false;
+
+            if (originalValue >= 1000000) {
+                shippingFee = 0; // Đơn hàng >= 1.000.000đ được miễn phí vận chuyển
+                isFreeShip = true;
+            }
+
+            // 5. Tính toán tổng số tiền giảm và tổng số tiền thanh toán cuối cùng
+            let totalDiscount = discountFromRate + fixedDiscount;
+            if (totalDiscount > originalValue) {
+                totalDiscount = originalValue; // Tiền giảm giá không vượt quá giá trị đơn gốc
+            }
+
+            let finalPayment = originalValue - totalDiscount + shippingFee;
+            if (finalPayment < 0) {
+                finalPayment = 0;
+            }
+
+            // 6. Hiển thị thông tin lên giao diện thành từng dòng rõ ràng
+            document.getElementById('res-original').textContent = dinhDangVND(originalValue);
+
+            // Trình bày rõ ràng thành phần của tỷ lệ giảm
+            let rankLabel = memberRank === 'gold' ? 'Vàng' : memberRank === 'silver' ? 'Bạc' : 'Đồng';
+            document.getElementById('res-discount-rate').textContent = `${totalRate}% (Khoảng tiền: ${baseRate}% + Hạng ${rankLabel}: ${memberRate}%)`;
+
+            document.getElementById('res-discount-value').textContent = `-${dinhDangVND(discountFromRate)}`;
+
+            // Hiển thị/Ẩn dòng mã giảm giá
+            const couponRow = document.getElementById('coupon-row');
+            if (isCouponApplied) {
+                document.getElementById('res-coupon-value').textContent = `-${dinhDangVND(fixedDiscount)} (Đã áp dụng GIAM30K)`;
+                couponRow.style.display = 'flex';
+            } else if (couponCode !== '' && !isCouponApplied) {
+                document.getElementById('res-coupon-value').textContent = `0đ (Mã không hợp lệ hoặc đơn hàng chưa đạt từ 300k)`;
+                couponRow.style.display = 'flex';
+            } else {
+                couponRow.style.display = 'none';
+            }
+
+            // Hiển thị trạng thái phí vận chuyển
+            const shippingDisplay = document.getElementById('res-shipping');
+            if (isFreeShip) {
+                shippingDisplay.textContent = 'Miễn phí (Đơn hàng từ 1.000.000đ)';
+                shippingDisplay.style.color = '#38a169';
+                shippingDisplay.style.fontWeight = 'bold';
+            } else {
+                shippingDisplay.textContent = dinhDangVND(shippingFee);
+                shippingDisplay.style.color = '#4a5568';
+                shippingDisplay.style.fontWeight = 'normal';
+            }
+
+            document.getElementById('res-final').textContent = dinhDangVND(finalPayment);
+
+            // Hiển thị khu vực kết quả sau khi đã tính xong
+            resultArea.style.display = 'block';
+        }
+    </script>
+
+</body>
+
+</html>

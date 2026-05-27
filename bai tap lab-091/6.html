@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quy Trình Tính Toán Đơn Hàng Bằng Callback - Bài Lab 06</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+        
+        h2 {
+            color: #1a202c;
+            border-bottom: 2px solid #3182ce;
+            padding-bottom: 12px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .scenarios-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .btn-scenario {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #2b6cb0;
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-scenario:hover {
+            background-color: #bee3f8;
+            color: #2c5282;
+        }
+        
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background-color: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .panel h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #2d3748;
+            border-bottom: 1px solid #edf2f7;
+            padding-bottom: 8px;
+        }
+        
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            background: #ffffff;
+        }
+        
+        .cart-table th,
+        .cart-table td {
+            padding: 10px;
+            border: 1px solid #edf2f7;
+            font-size: 14px;
+            text-align: left;
+        }
+        
+        .cart-table th {
+            background-color: #edf2f7;
+            color: #4a5568;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 6px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        
+        .btn-run {
+            width: 100%;
+            padding: 12px;
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-run:hover {
+            background-color: #2b6cb0;
+        }
+        
+        .log-box {
+            background-color: #1a202c;
+            color: #cbd5e0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            min-height: 150px;
+            margin-bottom: 20px;
+        }
+        
+        .log-item {
+            margin-bottom: 8px;
+            border-bottom: 1px dashed #2d3748;
+            padding-bottom: 6px;
+        }
+        
+        .log-step-title {
+            color: #38a169;
+            font-weight: bold;
+        }
+        
+        .bill-card {
+            background-color: #f0fff4;
+            border: 1px solid #c6f6d5;
+            border-radius: 8px;
+            padding: 15px;
+            color: #2d3748;
+        }
+        
+        .bill-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .bill-row.total {
+            border-top: 1px solid #c6f6d5;
+            padding-top: 8px;
+            margin-top: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #22543d;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Quy Trình Tính Toán Đơn Hàng Bằng Callback</h2>
+
+        <!-- Lựa chọn nhanh 2 tình huống thử nghiệm (Yêu cầu kiểm thử ít nhất 2 tình huống khác nhau) -->
+        <div class="scenarios-group">
+            <button class="btn-scenario" onclick="napTinhHuongThửNghiem(1)">Tình huống 1 (Đơn hàng nhỏ dưới 300k)</button>
+            <button class="btn-scenario" onclick="napTinhHuongThửNghiem(2)">Tình huống 2 (Đơn hàng lớn trên 1.5 triệu)</button>
+        </div>
+
+        <div class="grid-layout">
+
+            <!-- BÊN TRÁI: Dữ liệu giỏ hàng và điều khiển -->
+            <div class="panel">
+                <h3>Chi Tiết Sản Phẩm Trong Đơn</h3>
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-tbody">
+                        <!-- Danh sách sản phẩm được sinh tự động -->
+                    </tbody>
+                </table>
+
+                <div class="form-group">
+                    <label for="voucher-input">Mã giảm giá (Nhập "SALE50K" để được áp dụng giảm giá cố định - Yêu cầu mở rộng):</label>
+                    <input type="text" id="voucher-input" value="SALE50K" placeholder="Nhập mã voucher...">
+                </div>
+
+                <button class="btn-run" onclick="chayQuyTrinhCallback()">Bắt Đầu Tính Toán (Callback Chain)</button>
+            </div>
+
+            <!-- BÊN PHẢI: Nhật ký quá trình xử lý Callback và Hóa đơn cuối cùng -->
+            <div class="panel">
+                <h3>Quy Trình Xử Lý Callback (Theo thời gian thực)</h3>
+                <div id="log-container" class="log-box">
+                    <p style="color: #718096; text-align: center; margin-top: 50px;">Chưa thực hiện quy trình tính toán.</p>
+                </div>
+
+                <!-- Hóa đơn thanh toán cuối cùng -->
+                <div id="bill-card" class="bill-card" style="display: none;">
+                    <h4 style="margin-top: 0; margin-bottom: 12px; color: #22543d; text-align: center;">Hóa Đơn Cuối Cùng</h4>
+                    <div class="bill-row">
+                        <span>Tổng tiền hàng gốc:</span>
+                        <span id="bill-base">0đ</span>
+                    </div>
+                    <div class="bill-row">
+                        <span>Chiết khấu tự động (theo %):</span>
+                        <span id="bill-discount" style="color: #38a169;">0đ</span>
+                    </div>
+                    <div class="bill-row">
+                        <span>Giảm giá Voucher (SALE50K):</span>
+                        <span id="bill-voucher" style="color: #38a169;">0đ</span>
+                    </div>
+                    <div class="bill-row">
+                        <span>Thuế VAT (8%):</span>
+                        <span id="bill-vat" style="color: #c53030;">0đ</span>
+                    </div>
+                    <div class="bill-row">
+                        <span>Phí vận chuyển:</span>
+                        <span id="bill-shipping">0đ</span>
+                    </div>
+                    <div class="bill-row total">
+                        <span>TỔNG THANH TOÁN:</span>
+                        <span id="bill-total">0đ</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Khai báo danh mục sản phẩm của hệ thống
+        const danhMucSanPham = {
+            'p1': {
+                name: 'Chuột không dây Gaming',
+                price: 250000
+            },
+            'p2': {
+                name: 'Lót chuột cỡ lớn RGB',
+                price: 80000
+            },
+            'p3': {
+                name: 'Bàn phím cơ không dây',
+                price: 1200000
+            },
+            'p4': {
+                name: 'Tai nghe chụp tai chống ồn',
+                price: 600000
+            }
+        };
+
+        // Dữ liệu giỏ hàng động hiện tại
+        let gioHangHienTai = [{
+            id: 'p1',
+            quantity: 1
+        }, {
+            id: 'p2',
+            quantity: 1
+        }];
+
+        // Định dạng tiền tệ VND
+        function dinhDangVND(money) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(money);
+        }
+
+        // Nạp nhanh các tình huống dữ liệu mẫu để kiểm thử
+        function napTinhHuongThửNghiem(number) {
+            if (number === 1) {
+                gioHangHienTai = [{
+                        id: 'p1',
+                        quantity: 1
+                    }, // 250k
+                    {
+                        id: 'p2',
+                        quantity: 1
+                    } // 80k -> Tiền gốc: 330k
+                ];
+                document.getElementById('voucher-input').value = 'SALE50K';
+            } else if (number === 2) {
+                gioHangHienTai = [{
+                        id: 'p3',
+                        quantity: 1
+                    }, // 1.2M
+                    {
+                        id: 'p4',
+                        quantity: 1
+                    } // 600k -> Tiền gốc: 1.8M
+                ];
+                document.getElementById('voucher-input').value = 'SALE50K';
+            }
+            renderGioHang();
+        }
+
+        // Render danh sách sản phẩm giỏ hàng lên giao diện
+        function renderGioHang() {
+            const tbody = document.getElementById('cart-tbody');
+            tbody.innerHTML = '';
+
+            gioHangHienTai.forEach((item, index) => {
+                const detail = danhMucSanPham[item.id];
+                tbody.innerHTML += `
+                <tr>
+                    <td>${detail.name}</td>
+                    <td>${dinhDangVND(detail.price)}</td>
+                    <td>
+                        <input type="number" min="0" value="${item.quantity}" style="width: 50px; padding: 4px;" 
+                               onchange="capNhatSoLuong(${index}, this.value)">
+                    </td>
+                    <td>${dinhDangVND(detail.price * item.quantity)}</td>
+                </tr>
+            `;
+            });
+
+            // Reset vùng kết quả khi thay đổi giỏ hàng
+            document.getElementById('log-container').innerHTML = `<p style="color: #718096; text-align: center; margin-top: 50px;">Dữ liệu giỏ hàng đã thay đổi. Hãy bấm nút tính toán.</p>`;
+            document.getElementById('bill-card').style.display = 'none';
+        }
+
+        // Cập nhật số lượng sản phẩm từ ô nhập
+        function capNhatSoLuong(index, val) {
+            const quantity = parseInt(val);
+            gioHangHienTai[index].quantity = isNaN(quantity) || quantity < 0 ? 0 : quantity;
+            renderGioHang();
+        }
+
+        // Hàm tiện ích ghi nhật ký các bước xử lý ra hộp log mô phỏng terminal
+        function ghiLogBuoc(buoc, noiDung) {
+            const container = document.getElementById('log-container');
+            container.innerHTML += `
+            <div class="log-item">
+                <span class="log-step-title">[${buoc}]</span> ${noiDung}
+            </div>
+        `;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // ==========================================
+        // CHUỖI XỬ LÝ QUY TRÌNH BẰNG CALLBACK
+        // ==========================================
+
+        // Bước 1: Tính tiền gốc của đơn hàng
+        function tinhTienGoc(donHang, callback) {
+            let base = donHang.items.reduce((tong, item) => {
+                const thongTin = danhMucSanPham[item.id];
+                return tong + (thongTin.price * item.quantity);
+            }, 0);
+
+            donHang.tienGoc = base;
+            ghiLogBuoc("Bước 1 - Tiền hàng gốc", `Tính toán thành công tiền gốc: <strong>${dinhDangVND(base)}</strong>`);
+            callback(donHang);
+        }
+
+        // Bước 2: Áp dụng chiết khấu tự động theo phần trăm (%)
+        function apDungChietKhauPhanTram(donHang, callback) {
+            let discountRate = 0;
+            let lyDo = "Không đủ điều kiện áp dụng";
+
+            if (donHang.tienGoc >= 1000000) {
+                discountRate = 10; // Giảm 10% cho đơn hàng từ 1 triệu
+                lyDo = "Giảm 10% tự động (Đơn hàng ≥ 1 triệu)";
+            } else if (donHang.tienGoc >= 500000) {
+                discountRate = 5; // Giảm 5% cho đơn hàng từ 500k
+                lyDo = "Giảm 5% tự động (Đơn hàng ≥ 500k)";
+            }
+
+            let chietKhau = donHang.tienGoc * (discountRate / 100);
+            donHang.tienChietKhau = chietKhau;
+            ghiLogBuoc("Bước 2 - Chiết khấu %", `Áp dụng ${lyDo}: <strong>-${dinhDangVND(chietKhau)}</strong>`);
+            callback(donHang);
+        }
+
+        // Bước 3: Áp dụng mã Voucher giảm giá cố định (Yêu cầu mở rộng)
+        function apDungVoucherKhuyenMai(donHang, callback) {
+            let giamGiaVoucher = 0;
+            let chiTiet = "Không có mã hợp lệ";
+
+            if (donHang.maVoucher === 'SALE50K') {
+                if (donHang.tienGoc >= 300000) {
+                    giamGiaVoucher = 50000;
+                    chiTiet = "Áp dụng thành công mã SALE50K (Giảm 50k cho đơn từ 300k)";
+                } else {
+                    chiTiet = "Mã SALE50K không được kích hoạt (Đơn hàng tối thiểu 300k)";
+                }
+            }
+
+            donHang.tienVoucher = giamGiaVoucher;
+            ghiLogBuoc("Bước 3 - Áp dụng Voucher", `${chiTiet}: <strong>-${dinhDangVND(giamGiaVoucher)}</strong>`);
+            callback(donHang);
+        }
+
+        // Bước 4: Tính thuế VAT 8% dựa trên số tiền sau giảm giá (Yêu cầu mở rộng)
+        function tinhThueVAT(donHang, callback) {
+            let soTienChiuThue = donHang.tienGoc - donHang.tienChietKhau - donHang.tienVoucher;
+            if (soTienChiuThue < 0) soTienChiuThue = 0;
+
+            let thueVAT = soTienChiuThue * 0.08; // Thuế 8%
+            donHang.tienThue = thueVAT;
+            ghiLogBuoc("Bước 4 - Tính thuế VAT", `Thuế 8% áp dụng trên số tiền chịu thuế (${dinhDangVND(soTienChiuThue)}): <strong>+${dinhDangVND(thueVAT)}</strong>`);
+            callback(donHang);
+        }
+
+        // Bước 5: Tính toán phí vận chuyển (Shipping)
+        function tinhPhiVanChuyen(donHang, callback) {
+            let phiShip = 30000; // Phí ship chuẩn
+            let thongTinShip = "Phí vận chuyển tiêu chuẩn";
+
+            if (donHang.tienGoc >= 1000000) {
+                phiShip = 0; // Đơn hàng >= 1 triệu được miễn phí vận chuyển
+                thongTinShip = "Miễn phí vận chuyển (Đơn hàng từ 1.000.000đ)";
+            }
+
+            donHang.tienVanChuyen = phiShip;
+            ghiLogBuoc("Bước 5 - Phí vận chuyển", `${thongTinShip}: <strong>+${dinhDangVND(phiShip)}</strong>`);
+            callback(donHang);
+        }
+
+        // Bước 6: Tổng hợp và tính ra tổng tiền thanh toán cuối cùng
+        function tongHopThanhToan(donHang) {
+            let tongCuoi = donHang.tienGoc -
+                donHang.tienChietKhau -
+                donHang.tienVoucher +
+                donHang.tienThue +
+                donHang.tienVanChuyen;
+
+            if (tongCuoi < 0) tongCuoi = 0;
+            donHang.tongThanhToan = tongCuoi;
+
+            ghiLogBuoc("Bước 6 - Hoàn tất", `Quy trình tính toán hoàn tất! Tổng giá trị cuối cùng: <strong>${dinhDangVND(tongCuoi)}</strong>`);
+
+            // Đưa dữ liệu cuối cùng lên giao diện hoá đơn
+            hienThiHoaDonCuoi(donHang);
+        }
+
+        // ==========================================
+        // KHỞI CHẠY CHUỖI PIPELINE BẰNG CALLBACK
+        // ==========================================
+
+        function chayQuyTrinhCallback() {
+            const container = document.getElementById('log-container');
+            container.innerHTML = ''; // Làm sạch nhật ký cũ
+            document.getElementById('bill-card').style.display = 'none';
+
+            // Khởi tạo đối tượng dữ liệu đơn hàng (order object)
+            const donHang = {
+                items: [...gioHangHienTai],
+                maVoucher: document.getElementById('voucher-input').value.trim().toUpperCase(),
+                tienGoc: 0,
+                tienChietKhau: 0,
+                tienVoucher: 0,
+                tienThue: 0,
+                tienVanChuyen: 0,
+                tongThanhToan: 0
+            };
+
+            // Để chứng minh trực quan thứ tự thực thi của callback, chúng ta thiết lập 
+            // độ trễ nhỏ (setTimeout) giữa các bước tính toán để nhật ký hiển thị tuần tự.
+            ghiLogBuoc("Khởi tạo", "Bắt đầu chạy quy trình tính toán đơn hàng...");
+
+            tinhTienGoc(donHang, function(donHangSauGoc) {
+                setTimeout(() => {
+                    apDungChietKhauPhanTram(donHangSauGoc, function(donHangSauChietKhau) {
+                        setTimeout(() => {
+                            apDungVoucherKhuyenMai(donHangSauChietKhau, function(donHangSauVoucher) {
+                                setTimeout(() => {
+                                    tinhThueVAT(donHangSauVoucher, function(donHangSauThue) {
+                                        setTimeout(() => {
+                                            tinhPhiVanChuyen(donHangSauThue, function(donHangSauVanChuyen) {
+                                                setTimeout(() => {
+                                                    tongHopThanhToan(donHangSauVanChuyen);
+                                                }, 400);
+                                            });
+                                        }, 400);
+                                    });
+                                }, 400);
+                            });
+                        }, 400);
+                    });
+                }, 400);
+            });
+        }
+
+        // Hiển thị hóa đơn thanh toán lên giao diện
+        function hienThiHoaDonCuoi(donHang) {
+            const billCard = document.getElementById('bill-card');
+            billCard.style.display = 'block';
+
+            document.getElementById('bill-base').textContent = dinhDangVND(donHang.tienGoc);
+            document.getElementById('bill-discount').textContent = `-${dinhDangVND(donHang.tienChietKhau)}`;
+            document.getElementById('bill-voucher').textContent = `-${dinhDangVND(donHang.tienVoucher)}`;
+            document.getElementById('bill-vat').textContent = `+${dinhDangVND(donHang.tienThue)}`;
+            document.getElementById('bill-shipping').textContent = `+${dinhDangVND(donHang.tienVanChuyen)}`;
+            document.getElementById('bill-total').textContent = dinhDangVND(donHang.tongThanhToan);
+        }
+
+        // Khởi chạy khi nạp trang
+        window.onload = () => {
+            napTinhHuongThửNghiem(1);
+        };
+    </script>
+
+</body>
+
+</html>

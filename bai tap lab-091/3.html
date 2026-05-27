@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trò Chơi Dự Đoán Số - Bài Lab 03 Hiệu Chỉnh</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        
+        .game-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 480px;
+            box-sizing: border-box;
+            border: 1px solid #e2e8f0;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #1a202c;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #3182ce;
+            padding-bottom: 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+        }
+        
+        select,
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+        
+        select:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
+        }
+        /* Bảng thông báo lượt chơi */
+        
+        .status-badge {
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid #bee3f8;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        
+        .btn:active {
+            transform: scale(0.97);
+        }
+        
+        .btn-submit {
+            background-color: #3182ce;
+            color: white;
+        }
+        
+        .btn-submit:hover:not(:disabled) {
+            background-color: #2b6cb0;
+        }
+        
+        .btn-submit:disabled {
+            background-color: #cbd5e0;
+            cursor: not-allowed;
+        }
+        
+        .btn-reset {
+            background-color: #e2e8f0;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
+        }
+        
+        .btn-reset:hover {
+            background-color: #cbd5e0;
+        }
+        /* Khối hiển thị phản hồi của trò chơi */
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+        
+        .feedback-info {
+            background-color: #edf2f7;
+            color: #4a5568;
+            border-color: #cbd5e0;
+        }
+        
+        .feedback-success {
+            background-color: #f0fff4;
+            color: #2f855a;
+            border-color: #c6f6d5;
+        }
+        
+        .feedback-warning {
+            background-color: #fffaf0;
+            color: #dd6b20;
+            border-color: #feebc8;
+        }
+        
+        .feedback-danger {
+            background-color: #fff5f5;
+            color: #c53030;
+            border-color: #fed7d7;
+        }
+        /* Danh sách lịch sử các lần đoán (Yêu cầu mở rộng) */
+        
+        .history-section {
+            margin-top: 20px;
+            border-top: 2px dashed #e2e8f0;
+            padding-top: 15px;
+            display: none;
+        }
+        
+        .history-section h4 {
+            margin: 0 0 10px 0;
+            color: #4a5568;
+            font-size: 14px;
+        }
+        
+        .history-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 14px;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .tag {
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        .tag-high {
+            background-color: #feebc8;
+            color: #c05621;
+        }
+        
+        .tag-low {
+            background-color: #e2e8f0;
+            color: #4a5568;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-card">
+        <h2>Trò Chơi Đoán Số</h2>
+
+        <!-- Bộ chọn mức độ khó (Yêu cầu mở rộng) -->
+        <div class="form-group">
+            <label for="difficulty">Chọn mức độ chơi:</label>
+            <select id="difficulty" onchange="khoiTaoVanMoi()">
+            <option value="easy">Dễ (Từ 1 - 10 | Tối đa 3 lượt đoán)</option>
+            <option value="medium" selected>Trung bình (Từ 1 - 100 | Tối đa 10 lượt đoán)</option>
+            <option value="hard">Khó (Từ 1 - 100 | Tối đa 5 lượt đoán)</option>
+        </select>
+        </div>
+
+        <!-- Thanh trạng thái lượt chơi (Yêu cầu mở rộng) -->
+        <div id="status-badge" class="status-badge">
+            Đoán số từ 1 đến 100 | Lượt chơi còn lại: 10
+        </div>
+
+        <!-- Ô nhập dự đoán -->
+        <div class="form-group">
+            <label for="guess-input">Nhập con số bạn đoán:</label>
+            <input type="number" id="guess-input" placeholder="Nhập một số nguyên...">
+        </div>
+
+        <!-- Các nút thao tác (Yêu cầu cơ bản) -->
+        <div class="btn-group">
+            <button class="btn btn-submit" id="btn-submit" onclick="xuLyDuDoan()">Đoán số</button>
+            <button class="btn btn-reset" onclick="khoiTaoVanMoi()">Chơi lại</button>
+        </div>
+
+        <!-- Vùng hiển thị thông báo phản hồi (Yêu cầu cơ bản) -->
+        <div id="feedback-area" class="feedback feedback-info">
+            Hãy bắt đầu dự đoán con số bí mật!
+        </div>
+
+        <!-- Bảng lịch sử các lượt đoán (Yêu cầu mở rộng) -->
+        <div id="history-section" class="history-section">
+            <h4>Lịch sử dự đoán:</h4>
+            <ul id="history-list" class="history-list">
+                <!-- Thêm động bằng JS -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Khai báo các biến quản lý trạng thái của trò chơi
+        let soBiMat;
+        let soLuotDoanDaDung = 0;
+        let gioiHanLuotDoan = 10;
+        let dangTrongTran = true;
+        let phamViMin = 1;
+        let phamViMax = 100;
+        let lichSuChoi = [];
+
+        // Hàm khởi tạo ván mới (Hướng dẫn triển khai 4)
+        function khoiTaoVanMoi() {
+            const difficulty = document.getElementById('difficulty').value;
+
+            // Định cấu hình trò chơi dựa theo mức độ khó đã chọn (Yêu cầu mở rộng)
+            if (difficulty === 'easy') {
+                phamViMin = 1;
+                phamViMax = 10;
+                gioiHanLuotDoan = 3;
+            } else if (difficulty === 'medium') {
+                phamViMin = 1;
+                phamViMax = 100;
+                gioiHanLuotDoan = 10;
+            } else if (difficulty === 'hard') {
+                phamViMin = 1;
+                phamViMax = 100;
+                gioiHanLuotDoan = 5;
+            }
+
+            // 1. Sinh ngẫu nhiên số bí mật trong khoảng cho trước (Yêu cầu cơ bản)
+            soBiMat = Math.floor(Math.random() * (phamViMax - phamViMin + 1)) + phamViMin;
+            soLuotDoanDaDung = 0;
+            dangTrongTran = true;
+            lichSuChoi = [];
+
+            // Đặt lại các trạng thái giao diện hiển thị
+            document.getElementById('status-badge').textContent = `Đoán số từ ${phamViMin} đến ${phamViMax} | Lượt còn lại: ${gioiHanLuotDoan}`;
+
+            const guessInput = document.getElementById('guess-input');
+            guessInput.value = '';
+            guessInput.disabled = false;
+            guessInput.min = phamViMin;
+            guessInput.max = phamViMax;
+
+            document.getElementById('btn-submit').disabled = false;
+
+            const feedback = document.getElementById('feedback-area');
+            feedback.textContent = 'Trò chơi đã được thiết lập lại. Hãy nhập con số dự đoán của bạn!';
+            feedback.className = 'feedback feedback-info';
+
+            renderLichSu();
+        }
+
+        // Hàm xử lý khi người dùng nhấn nút Đoán (Hướng dẫn triển khai 3)
+        function xuLyDuDoan() {
+            if (!dangTrongTran) return;
+
+            const inputElement = document.getElementById('guess-input');
+            const feedback = document.getElementById('feedback-area');
+            const rawInput = inputElement.value;
+
+            // Kiểm tra hợp lệ dữ liệu đầu vào
+            if (rawInput.trim() === '') {
+                feedback.textContent = 'Vui lòng điền một con số cụ thể.';
+                feedback.className = 'feedback feedback-warning';
+                return;
+            }
+
+            const soDoan = Number(rawInput);
+            if (isNaN(soDoan) || soDoan < phamViMin || soDoan > phamViMax) {
+                feedback.textContent = `Giá trị nhập vào phải là số nguyên từ ${phamViMin} đến ${phamViMax}.`;
+                feedback.className = 'feedback feedback-warning';
+                return;
+            }
+
+            // Tăng số lượt thử
+            soLuotDoanDaDung++;
+            const luotConLai = gioiHanLuotDoan - soLuotDoanDaDung;
+            document.getElementById('status-badge').textContent = `Đoán số từ ${phamViMin} đến ${phamViMax} | Lượt còn lại: ${Math.max(0, luotConLai)}`;
+
+            // So sánh giá trị dự đoán với số bí mật (Yêu cầu cơ bản)
+            if (soDoan === soBiMat) {
+                feedback.textContent = `Chính xác! Bạn đã tìm ra số bí mật là ${soBiMat} sau ${soLuotDoanDaDung} lượt đoán.`;
+                feedback.className = 'feedback feedback-success';
+                ketThucTran();
+            } else {
+                // Xác định phản hồi lớn hơn hoặc nhỏ hơn
+                const huongGoiY = soDoan > soBiMat ? 'Lớn hơn số bí mật' : 'Nhỏ hơn số bí mật';
+                const nhanLichSu = soDoan > soBiMat ? 'Quá cao ↑' : 'Quá thấp ↓';
+                const lopNhanCss = soDoan > soBiMat ? 'tag-high' : 'tag-low';
+
+                // Lưu dữ liệu vào mảng lịch sử (Yêu cầu mở rộng)
+                lichSuChoi.push({
+                    luot: soLuotDoanDaDung,
+                    so: soDoan,
+                    goiY: nhanLichSu,
+                    classCss: lopNhanCss
+                });
+
+                // Kiểm tra trạng thái hết lượt đoán (Yêu cầu mở rộng)
+                if (soLuotDoanDaDung >= gioiHanLuotDoan) {
+                    feedback.textContent = `Trò chơi kết thúc! Bạn đã hết lượt chơi. Số bí mật là ${soBiMat}.`;
+                    feedback.className = 'feedback feedback-danger';
+                    ketThucTran();
+                } else {
+                    feedback.textContent = `Số ${soDoan} đang ${huongGoiY.toLowerCase()}. Hãy thử lại!`;
+                    feedback.className = 'feedback feedback-info';
+                }
+            }
+
+            renderLichSu();
+        }
+
+        // Hàm khóa chức năng biểu mẫu khi kết thúc trò chơi
+        function ketThucTran() {
+            dangTrongTran = false;
+            document.getElementById('guess-input').disabled = true;
+            document.getElementById('btn-submit').disabled = true;
+        }
+
+        // Hàm hiển thị danh sách lịch sử các lần đoán (Yêu cầu mở rộng)
+        function renderLichSu() {
+            const historySection = document.getElementById('history-section');
+            const historyList = document.getElementById('history-list');
+
+            if (lichSuChoi.length === 0) {
+                historySection.style.display = 'none';
+                historyList.innerHTML = '';
+                return;
+            }
+
+            historySection.style.display = 'block';
+            historyList.innerHTML = lichSuChoi.map(item => `
+            <li class="history-item">
+                <span>Lượt đoán ${item.luot}: <strong>${item.so}</strong></span>
+                <span class="tag ${item.classCss}">${item.goiY}</span>
+            </li>
+        `).join('');
+        }
+
+        // Khởi động trò chơi tự động khi mở trang
+        window.onload = khoiTaoVanMoi;
+    </script>
+
+</body>
+
+</html>

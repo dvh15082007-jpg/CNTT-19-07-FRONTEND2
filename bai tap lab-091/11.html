@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra Cứu Thông Tin Đối Tượng - Bài Lab 11</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .search-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 25px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+            box-sizing: border-box;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #1a202c;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #3182ce;
+            padding-bottom: 12px;
+        }
+        /* Thanh điều khiển tra cứu đa tiêu chí */
+        
+        .search-form {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 480px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-input,
+        .form-select {
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            box-sizing: border-box;
+        }
+        
+        .btn-search {
+            background-color: #3182ce;
+            color: white;
+        }
+        
+        .btn-search:hover {
+            background-color: #2b6cb0;
+        }
+        /* Nút xóa nội dung (Yêu cầu mở rộng) */
+        
+        .btn-clear {
+            background-color: #e2e8f0;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
+        }
+        
+        .btn-clear:hover {
+            background-color: #cbd5e0;
+        }
+        /* Vùng hiển thị kết quả */
+        
+        .result-section {
+            margin-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+            min-height: 120px;
+        }
+        /* Thẻ hồ sơ cá nhân khi tìm thấy đối tượng duy nhất */
+        
+        .profile-card {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        @media (max-width: 480px) {
+            .profile-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #cbd5e0;
+            background-color: #e2e8f0;
+        }
+        
+        .profile-info {
+            text-align: left;
+        }
+        
+        .profile-info h3 {
+            margin: 0 0 8px 0;
+            color: #2d3748;
+            font-size: 18px;
+        }
+        
+        .profile-detail {
+            font-size: 14px;
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
+        /* Danh sách hiển thị khi có nhiều kết quả phù hợp (Lọc theo tên/lớp/email) */
+        
+        .results-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .results-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #edf2f7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background-color: #ffffff;
+            transition: background-color 0.2s;
+        }
+        
+        .results-item:last-child {
+            border-bottom: none;
+        }
+        
+        .results-item:hover {
+            background-color: #f7fafc;
+        }
+        
+        .results-item-title {
+            text-align: left;
+        }
+        /* Trạng thái cảnh báo */
+        
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .alert-info {
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            border: 1px solid #bee3f8;
+        }
+        
+        .alert-warning {
+            background-color: #fffaf0;
+            color: #dd6b20;
+            border: 1px solid #feebc8;
+        }
+        
+        .alert-danger {
+            background-color: #fff5f5;
+            color: #c53030;
+            border: 1px solid #fed7d7;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="search-card">
+        <h2>Tra Cứu Thông Tin Đối Tượng</h2>
+
+        <!-- Bộ khung chọn tiêu chí và ô nhập dữ liệu -->
+        <div class="search-form">
+            <!-- Cho phép chọn tra cứu theo nhiều trường khác nhau (Yêu cầu mở rộng) -->
+            <select id="search-field" class="form-select">
+            <option value="id">Mã số (ID)</option>
+            <option value="name">Họ và tên</option>
+            <option value="email">Địa chỉ Email</option>
+            <option value="class">Mã lớp học</option>
+        </select>
+            <input type="text" id="search-input" class="form-input" placeholder="Nhập giá trị cần tra cứu...">
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-search" onclick="xuLyTraCuu()">Tra cứu</button>
+            <!-- Nút xóa nội dung tìm kiếm và đặt lại giao diện (Yêu cầu mở rộng) -->
+            <button class="btn btn-clear" onclick="datLaiGiaoDien()">Xóa dữ liệu</button>
+        </div>
+
+        <!-- Phân vùng hiển thị kết quả -->
+        <div id="result-section" class="result-section">
+            <div class="alert alert-info">
+                Vui lòng chọn tiêu chí, nhập thông tin và bấm nút "Tra cứu".
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Khai báo địa chỉ Endpoint MockAPI của bạn (Sinh viên thay thế địa chỉ này)
+        // Ví dụ: 'https://65xxxxxxxx.mockapi.io/api/v1' [1]
+        const BASE_URL = 'https://65xxxxxx.mockapi.io/api/v1';
+
+        // CƠ SỞ DỮ LIỆU GIẢ LẬP ĐỂ TEST OFFLINE (BẬT TỰ ĐỘNG NẾU GIỮ NGUYÊN BASE_URL MẶC ĐỊNH)
+        const dbGiaLap = [{
+            id: "1",
+            name: "Nguyễn Văn Trỗi",
+            email: "troi.nguyen@gmail.com",
+            class: "WD18301",
+            phone: "0901234567",
+            avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
+        }, {
+            id: "2",
+            name: "Trần Thị Mai",
+            email: "mai.tran@yahoo.com",
+            class: "WD18301",
+            phone: "0912345678",
+            avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150"
+        }, {
+            id: "3",
+            name: "Lê Hoàng Nam",
+            email: "nam.le@hotmail.com",
+            class: "WD18302",
+            phone: "0983456789",
+            avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150"
+        }, {
+            id: "4",
+            name: "Phạm Minh Tuấn",
+            email: "tuan.pham@outlook.com",
+            class: "WD18302",
+            phone: "0974567890",
+            avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150"
+        }, {
+            id: "5",
+            name: "Vũ Thu Thảo",
+            email: "thao.vu@gmail.com",
+            class: "WD18303",
+            phone: "0965678901",
+            avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150"
+        }];
+
+        // Hàm điều phối trung gian gọi mạng: Tự động phát hiện sử dụng giả lập hoặc gọi fetch thật
+        async function goiApiFetch(url) {
+            if (url.includes('65xxxxxx')) {
+                return giaLapResponseMockApi(url);
+            }
+            return fetch(url);
+        }
+
+        // Hàm xử lý logic giả lập hành vi MockAPI phục vụ test nhanh không cần cấu hình mạng
+        function giaLapResponseMockApi(url) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // Thao tác 1: Tìm kiếm theo ID trực tiếp dạng /students/1
+                    const idMatch = url.match(/\/students\/([a-zA-Z0-9]+)$/);
+                    if (idMatch) {
+                        const idTimKiem = idMatch[1];
+                        const ketQua = dbGiaLap.find(item => item.id === idTimKiem);
+                        if (ketQua) {
+                            resolve({
+                                ok: true,
+                                status: 200,
+                                json: async() => ketQua
+                            });
+                        } else {
+                            resolve({
+                                ok: false,
+                                status: 404
+                            });
+                        }
+                        return;
+                    }
+
+                    // Thao tác 2: Tra cứu đa trường có tham số dạng /students?field=value
+                    const queryMatch = url.match(/\/students\?([a-zA-Z0-9]+)=(.+)$/);
+                    if (queryMatch) {
+                        const truongDuLieu = queryMatch[1];
+                        const tuKhoaMaHoa = queryMatch[2];
+                        const giaTriTraCuu = decodeURIComponent(tuKhoaMaHoa).toLowerCase();
+
+                        const danhSachLoc = dbGiaLap.filter(item => {
+                            if (item[truongDuLieu]) {
+                                return item[truongDuLieu].toLowerCase().includes(giaTriTraCuu);
+                            }
+                            return false;
+                        });
+
+                        resolve({
+                            ok: true,
+                            status: 200,
+                            json: async() => danhSachLoc
+                        });
+                        return;
+                    }
+
+                    resolve({
+                        ok: false,
+                        status: 404
+                    });
+                }, 300); // Tạo độ trễ mạng giả lập 300ms
+            });
+        }
+
+        // 2. Viết hàm xử lý gọi fetch và template string (Kiến thức sử dụng)
+        async function xuLyTraCuu() {
+            const searchField = document.getElementById('search-field').value;
+            const searchVal = document.getElementById('search-input').value.trim();
+            const resultSection = document.getElementById('result-section');
+
+            if (searchVal === '') {
+                resultSection.innerHTML = `<div class="alert alert-warning">Vui lòng nhập từ khóa để thực hiện tra cứu.</div>`;
+                return;
+            }
+
+            // Trạng thái đang tải dữ liệu
+            resultSection.innerHTML = `
+            <div style="text-align: center; padding: 15px;">
+                <div style="display: inline-block; width: 25px; height: 25px; border: 3px solid #cbd5e0; border-top: 3px solid #3182ce; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+                <div style="margin-top: 8px; color: #4a5568; font-size: 14px;">Đang tìm kiếm thông tin...</div>
+            </div>
+            <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+        `;
+
+            // Tạo URL động tùy biến theo tiêu chí tra cứu đã lựa chọn
+            let duongDanUrl = '';
+            if (searchField === 'id') {
+                // Tra cứu trực tiếp theo ID: /students/1 [1]
+                duongDanUrl = `${BASE_URL}/students/${encodeURIComponent(searchVal)}`;
+            } else {
+                // Tra cứu theo bộ lọc tham số: /students?name=Nguyễn [1]
+                duongDanUrl = `${BASE_URL}/students?${searchField}=${encodeURIComponent(searchVal)}`;
+            }
+
+            try {
+                const phanHoi = await goiApiFetch(duongDanUrl);
+
+                // Xử lý trường hợp không tìm thấy (Mã lỗi 404) hoặc lỗi khác
+                if (!phanHoi.ok) {
+                    if (phanHoi.status === 404) {
+                        resultSection.innerHTML = `<div class="alert alert-warning">Không tìm thấy đối tượng có mã định danh phù hợp.</div>`;
+                    } else {
+                        throw new Error(`Mã lỗi mạng: ${phanHoi.status}`);
+                    }
+                    return;
+                }
+
+                const ketQuaLayDuoc = await phanHoi.json();
+
+                // Phân bổ kết quả hiển thị dựa trên tiêu chí tìm kiếm
+                if (searchField === 'id') {
+                    // Tìm theo ID trả về một đối tượng đơn lẻ
+                    renderHoSoCaNhan(ketQuaLayDuoc);
+                } else {
+                    // Tìm theo bộ lọc tham số trả về một mảng danh sách
+                    if (Array.isArray(ketQuaLayDuoc)) {
+                        if (ketQuaLayDuoc.length === 0) {
+                            resultSection.innerHTML = `<div class="alert alert-warning">Không tìm thấy đối tượng có thông tin phù hợp.</div>`;
+                        } else if (ketQuaLayDuoc.length === 1) {
+                            renderHoSoCaNhan(ketQuaLayDuoc[0]);
+                        } else {
+                            // Nếu tìm thấy từ 2 kết quả trở lên, hiển thị danh sách thu gọn để người dùng lựa chọn
+                            renderDanhSachKetQua(ketQuaLayDuoc);
+                        }
+                    } else {
+                        renderHoSoCaNhan(ketQuaLayDuoc);
+                    }
+                }
+
+            } catch (error) {
+                console.error("Lỗi khi gọi API:", error);
+                resultSection.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Đã xảy ra sự cố kết nối!</strong><br>
+                    <span>Không thể truy xuất dữ liệu từ máy chủ API. Vui lòng thử lại sau.</span>
+                </div>
+            `;
+            }
+        }
+
+        // 3. Hàm render hiển thị chi tiết hồ sơ đối tượng duy nhất (DOM render chi tiết)
+        function renderHoSoCaNhan(student) {
+            const resultSection = document.getElementById('result-section');
+            const avatarMacDinh = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23cbd5e0"/><path d="M50 20a15 15 0 1 0 15 15 15 15 0 0 0-15-15zM20 75a30 30 0 0 1 60 0z" fill="%234a5568"/></svg>';
+
+            // Sử dụng template string để nối chuỗi cấu trúc HTML chi tiết
+            resultSection.innerHTML = `
+            <div class="profile-card">
+                <img src="${student.avatar || avatarMacDinh}" class="profile-avatar" alt="Hồ sơ đối tượng" onerror="this.src='${avatarMacDinh}'">
+                <div class="profile-info">
+                    <h3>${student.name}</h3>
+                    <div class="profile-detail"><strong>Mã số (ID):</strong> #${student.id}</div>
+                    <div class="profile-detail"><strong>Lớp học:</strong> ${student.class || 'Chưa cập nhật'}</div>
+                    <div class="profile-detail"><strong>Email:</strong> ${student.email || 'Chưa cập nhật'}</div>
+                    <div class="profile-detail"><strong>Điện thoại:</strong> ${student.phone || 'Chưa cập nhật'}</div>
+                </div>
+            </div>
+        `;
+        }
+
+        // Hàm render hiển thị danh sách khi tìm kiếm theo mảng thu về nhiều hơn 1 kết quả
+        function renderDanhSachKetQua(students) {
+            const resultSection = document.getElementById('result-section');
+
+            const danhSachHtml = students.map(s => `
+            <li class="results-item" onclick="chonNhanhDoiTuong('${s.id}')">
+                <div class="results-item-title">
+                    <strong>${s.name}</strong> <span style="color: #718096; font-size: 13px;">(ID: #${s.id})</span>
+                    <div style="font-size: 12px; color: #718096; margin-top: 2px;">Lớp: ${s.class} | Email: ${s.email}</div>
+                </div>
+                <span style="color: #3182ce; font-weight: bold; font-size: 13px;">Chi tiết ➔</span>
+            </li>
+        `).join('');
+
+            resultSection.innerHTML = `
+            <div class="alert alert-info" style="margin-bottom: 12px; text-align: left;">
+                Tìm thấy <strong>${students.length} kết quả</strong> phù hợp. Nhấp chọn dòng để xem chi tiết.
+            </div>
+            <ul class="results-list">
+                ${danhSachHtml}
+            </ul>
+        `;
+        }
+
+        // Khi click chọn đối tượng trong danh sách nhiều kết quả
+        function chonNhanhDoiTuong(id) {
+            // Tự động chuyển bộ tiêu chí về ID và dán ID được nhấp vào để thực hiện tìm kiếm trực tiếp
+            document.getElementById('search-field').value = 'id';
+            document.getElementById('search-input').value = id;
+            xuLyTraCuu();
+        }
+
+        // Hàm xử lý nút xóa nội dung tìm kiếm (Yêu cầu mở rộng)
+        function datLaiGiaoDien() {
+            document.getElementById('search-input').value = '';
+            const resultSection = document.getElementById('result-section');
+            resultSection.innerHTML = `
+            <div class="alert alert-info">
+                Vui lòng chọn tiêu chí, nhập thông tin và bấm nút "Tra cứu".
+            </div>
+        `;
+        }
+    </script>
+
+</body>
+
+</html>

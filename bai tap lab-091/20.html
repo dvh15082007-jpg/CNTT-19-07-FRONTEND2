@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Mới Dữ Liệu Bằng Biểu Mẫu Và Ajax - Bài Lab 20</title>
+    <!-- Nhúng thư viện jQuery ổn định qua CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h2.main-title {
+            text-align: center;
+            color: #111827;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 12px;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+        
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            box-sizing: border-box;
+        }
+        
+        .panel h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #2d3748;
+            border-bottom: 1px solid #edf2f7;
+            padding-bottom: 8px;
+        }
+        /* Biểu mẫu Form nhập liệu (Tối thiểu 3 trường thông tin) */
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 6px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        
+        .error-text {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            padding: 11px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+        
+        .btn-submit:hover {
+            background-color: #1d4ed8;
+        }
+        
+        .btn-submit:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        /* Bảng hiển thị danh sách sinh viên */
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .student-table th,
+        .student-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #edf2f7;
+        }
+        
+        .student-table th {
+            background-color: #f8fafc;
+            color: #4a5568;
+            font-weight: 600;
+        }
+        
+        .student-table tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .status-cell {
+            text-align: center;
+            padding: 30px !important;
+            color: #718096;
+            font-style: italic;
+        }
+        /* Thông báo phản hồi của hệ thống */
+        
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .success-alert {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .error-alert {
+            background-color: #fff5f5;
+            color: #c53030;
+            border: 1px solid #fed7d7;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2 class="main-title">Đăng Ký Thành Viên Bằng Biểu Mẫu & Ajax</h2>
+
+        <!-- Hộp thông báo kết quả chung -->
+        <div id="alert-msg" class="alert"></div>
+
+        <div class="layout-grid">
+
+            <!-- BÊN TRÁI: Biểu mẫu nhập liệu (Tối thiểu 3 trường thông tin) -->
+            <div class="panel">
+                <h3>Thêm Thành Viên Mới</h3>
+                <form id="student-form" onsubmit="xuLyThemMoi(event)">
+                    <!-- Trường 1: Họ và tên -->
+                    <div class="form-group">
+                        <label for="student-name">Họ và tên:</label>
+                        <input type="text" id="student-name" class="form-control" placeholder="Nhập họ và tên...">
+                        <small class="error-text" id="error-name"></small>
+                    </div>
+
+                    <!-- Trường 2: Email -->
+                    <div class="form-group">
+                        <label for="student-email">Địa chỉ Email:</label>
+                        <input type="text" id="student-email" class="form-control" placeholder="Nhập email liên hệ...">
+                        <small class="error-text" id="error-email"></small>
+                    </div>
+
+                    <!-- Trường 3: Mã lớp học -->
+                    <div class="form-group">
+                        <label for="student-class">Mã lớp học:</label>
+                        <input type="text" id="student-class" class="form-control" placeholder="Nhập mã lớp (Ví dụ: WD18301)...">
+                        <small class="error-text" id="error-class"></small>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="btn-submit">Thêm thành viên</button>
+                </form>
+            </div>
+
+            <!-- BÊN PHẢI: Bảng kết xuất danh sách thành viên liên kết -->
+            <div class="panel">
+                <h3>Danh Sách Thành Viên Hiện Tại</h3>
+                <div class="table-responsive">
+                    <table class="student-table">
+                        <thead>
+                            <tr>
+                                <th>Mã số (ID)</th>
+                                <th>Họ và Tên</th>
+                                <th>Email</th>
+                                <th>Lớp Học</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-tbody">
+                            <!-- Kết xuất danh sách sinh viên tự động -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 1. Khai báo địa chỉ Endpoint API giả lập của bạn
+        // Ví dụ: 'https://65xxxxxxxx.mockapi.io/api/v1'
+        const BASE_URL = 'https://65xxxxxx.mockapi.io/api/v1';
+
+        // CƠ SỞ DỮ LIỆU GIẢ LẬP ĐỂ CHẠY THỬ OFFLINE (Bật tự động nếu giữ nguyên BASE_URL mặc định)
+        let dbGiaLap = [{
+            id: "1",
+            name: "Nguyễn Văn Trỗi",
+            email: "troi.nguyen@gmail.com",
+            classCode: "WD18301"
+        }, {
+            id: "2",
+            name: "Trần Thị Mai",
+            email: "mai.tran@yahoo.com",
+            classCode: "WD18301"
+        }];
+
+        // Hàm điều phối trung gian giúp gọi các lệnh $.ajax gọi mạng thực tế hoặc giả lập
+        function thucHienAjax(options) {
+            if (options.url.includes('65xxxxxx')) {
+                return giaLapAjax(options);
+            }
+            return $.ajax(options);
+        }
+
+        // Giả lập hành vi của MockAPI cho các phương thức GET và POST
+        function giaLapAjax(options) {
+            setTimeout(() => {
+                const method = options.method || options.type || 'GET';
+
+                if (method === 'GET') {
+                    if (options.success) {
+                        options.success(dbGiaLap);
+                    }
+                } else if (method === 'POST') {
+                    let payload = {};
+                    if (typeof options.data === 'string') {
+                        payload = JSON.parse(options.data);
+                    } else {
+                        payload = options.data;
+                    }
+
+                    const itemMoi = {
+                        id: (Date.now() % 1000).toString(),
+                        ...payload
+                    };
+                    dbGiaLap.push(itemMoi);
+
+                    if (options.success) {
+                        options.success(itemMoi);
+                    }
+                } else {
+                    if (options.error) {
+                        options.error(null, 'error', 'Invalid Method');
+                    }
+                }
+            }, 300); // Trễ 300ms mô phỏng độ trễ mạng thực tế
+        }
+
+        // ==========================================
+        // LOGIC ĐỒNG BỘ DỮ LIỆU QUA AJAX
+        // ==========================================
+
+        // A. Hàm lấy danh sách sinh viên từ API để hiển thị (Yêu cầu cơ bản)
+        function taiDanhSachThanhVien() {
+            const tbody = $('#student-tbody');
+            tbody.html('<tr><td colspan="4" class="status-cell">Đang tải dữ liệu...</td></tr>');
+
+            thucHienAjax({
+                url: `${BASE_URL}/students`,
+                method: 'GET',
+                dataType: 'json',
+                success: function(danhSach) {
+                    renderBangDuLieu(danhSach);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Lỗi tải API:", error);
+                    hienThiThongBaoChung('Lỗi đồng bộ dữ liệu từ máy chủ API.', 'error');
+                }
+            });
+        }
+
+        // Hàm dựng bảng HTML để hiển thị dữ liệu (Yêu cầu cơ bản)
+        function renderBangDuLieu(data) {
+            const tbody = $('#student-tbody');
+            tbody.empty();
+
+            if (data.length === 0) {
+                tbody.html('<tr><td colspan="4" class="status-cell">Danh sách thành viên trống.</td></tr>');
+                return;
+            }
+
+            const rowsHtml = data.map(item => `
+            <tr>
+                <td><strong>#${item.id}</strong></td>
+                <td>${item.name}</td>
+                <td>${item.email}</td>
+                <td>${item.classCode}</td>
+            </tr>
+        `).join('');
+
+            tbody.html(rowsHtml);
+        }
+
+        // B. Hàm xử lý thêm mới dữ liệu bằng phương thức POST gửi lên MockAPI (Yêu cầu cơ bản)
+        function xuLyThemMoi(event) {
+            event.preventDefault(); // Ngăn form tải lại trang (Hướng dẫn triển khai 2)
+
+            const name = $('#student-name').val().trim();
+            const email = $('#student-email').val().trim();
+            const classCode = $('#student-class').val().trim();
+
+            // 1. Kiểm tra dữ liệu rỗng trước khi gửi (Yêu cầu mở rộng)
+            $('.error-text').hide().text(''); // Reset lỗi cũ
+            let hopLe = true;
+
+            if (name === '') {
+                $('#error-name').text('Vui lòng nhập họ và tên thành viên.').show();
+                hopLe = false;
+            }
+            if (email === '') {
+                $('#error-email').text('Vui lòng nhập địa chỉ Email.').show();
+                hopLe = false;
+            }
+            if (classCode === '') {
+                $('#error-class').text('Vui lòng nhập mã lớp học.').show();
+                hopLe = false;
+            }
+
+            if (!hopLe) return; // Dừng quy trình nếu phát hiện lỗi rỗng
+
+            // Chuẩn bị payload gửi đi dưới dạng JSON
+            const payload = {
+                name,
+                email,
+                classCode
+            };
+
+            // Vô hiệu hóa nút gửi để tránh click nhiều lần khi đang xử lý mạng
+            const btnSubmit = $('#btn-submit');
+            btnSubmit.prop('disabled', true).text('Đang xử lý...');
+
+            // Gửi dữ liệu lên máy chủ bằng phương thức POST
+            thucHienAjax({
+                url: `${BASE_URL}/students`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function(newMember) {
+                    btnSubmit.prop('disabled', false).text('Thêm thành viên');
+
+                    // Hiển thị thông báo thành công trực quan (Yêu cầu cơ bản)
+                    hienThiThongBaoChung('Thêm thành viên mới thành công!', 'success');
+
+                    // 2. Xóa dữ liệu trong form sau khi gửi thành công (Yêu cầu mở rộng)
+                    $('#student-form')[0].reset();
+
+                    // Làm mới danh sách hiển thị trên giao diện theo dữ liệu từ phản hồi từ server (Yêu cầu cơ bản)
+                    taiDanhSachThanhVien();
+                },
+                error: function(xhr, status, error) {
+                    btnSubmit.prop('disabled', false).text('Thêm thành viên');
+                    console.error("Lỗi gửi POST:", error);
+                    hienThiThongBaoChung('Đã xảy ra lỗi kết nối khi lưu dữ liệu mới.', 'error');
+                }
+            });
+        }
+
+        // Hàm phụ trợ xử lý hiển thị thông báo phản hồi của hệ thống
+        function hienThiThongBaoChung(message, type) {
+            const alertBox = $('#alert-msg');
+            alertBox.removeClass('success-alert error-alert');
+
+            if (type === 'success') {
+                alertBox.addClass('success-alert');
+            } else {
+                alertBox.addClass('error-alert');
+            }
+
+            alertBox.text(message).fadeIn('fast').delay(3500).fadeOut('slow');
+        }
+
+        // Tự động tải danh sách thành viên mẫu khi mở trang lần đầu
+        window.onload = function() {
+            taiDanhSachThanhVien();
+        };
+    </script>
+
+</body>
+
+</html>

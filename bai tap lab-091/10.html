@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hiển Thị Danh Sách Thành Viên Việt Nam - Bài Lab 10</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #1f2937;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 12px;
+        }
+        /* Grid hiển thị danh sách người dùng dưới dạng card rõ ràng */
+        
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .user-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .user-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        /* Avatar dựa trên chữ cái đầu của tên tiếng Việt */
+        
+        .avatar {
+            width: 50px;
+            height: 50px;
+            background-color: #10b981;
+            /* Đổi sang màu xanh ngọc tươi mới */
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+        
+        .user-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #111827;
+            margin: 0 0 4px 0;
+        }
+        
+        .user-username {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 15px;
+        }
+        
+        .info-item {
+            font-size: 14px;
+            color: #4b5563;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-icon {
+            font-size: 16px;
+            width: 20px;
+        }
+        /* Trạng thái thông báo */
+        
+        .status-container {
+            text-align: center;
+            padding: 50px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #4b5563;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid #10b981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .error-box {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+            max-width: 400px;
+            line-height: 1.5;
+        }
+        
+        .btn-retry {
+            margin-top: 15px;
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-retry:hover {
+            background-color: #b91c1c;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Danh Sách Thành Viên (Dữ Liệu Người Việt Nam)</h2>
+
+        <!-- Thông báo đang tải hoặc lỗi kết nối -->
+        <div id="status-container" class="status-container" style="display: none;"></div>
+
+        <!-- Danh sách hiển thị kết quả -->
+        <div id="users-container" class="users-grid"></div>
+    </div>
+
+    <script>
+        // 1. Tạo tập dữ liệu JSON người Việt Nam giả lập
+        const duLieuNguoiViet = [{
+            "id": 1,
+            "name": "Nguyễn Văn Trỗi",
+            "username": "troinguyen",
+            "email": "troi.nguyen@gmail.com",
+            "phone": "0901 234 567",
+            "website": "troinguyen.vn"
+        }, {
+            "id": 2,
+            "name": "Trần Thị Mai",
+            "username": "maitran",
+            "email": "mai.tran@yahoo.com",
+            "phone": "0912 345 678",
+            "website": "maitran.com.vn"
+        }, {
+            "id": 3,
+            "name": "Lê Hoàng Nam",
+            "username": "namle",
+            "email": "nam.le@hotmail.com",
+            "phone": "0983 456 789",
+            "website": "lehoangnam.me"
+        }, {
+            "id": 4,
+            "name": "Phạm Minh Tuấn",
+            "username": "tuanpham",
+            "email": "tuan.pham@outlook.com",
+            "phone": "0974 567 890",
+            "website": "tuanpham.vn"
+        }, {
+            "id": 5,
+            "name": "Vũ Thu Thảo",
+            "username": "thaovu",
+            "email": "thao.vu@gmail.com",
+            "phone": "0965 678 901",
+            "website": "thaovu.id.vn"
+        }, {
+            "id": 6,
+            "name": "Hoàng Anh Đức",
+            "username": "duchoang",
+            "email": "duc.hoang@student.edu.vn",
+            "phone": "0936 789 012",
+            "website": "duchoang.net"
+        }];
+
+        // Chuyển mảng dữ liệu tiếng Việt thành một chuỗi Data URI để hàm fetch() có thể thực thi chính xác
+        // GHI CHÚ: Khi nộp bài, bạn có thể thay thế giá trị API_URL này bằng đường dẫn MockAPI của bạn (ví dụ: 'https://65xxxx.mockapi.io/users') [1]
+        const API_URL = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(duLieuNguoiViet));
+
+        const usersContainer = document.getElementById('users-container');
+        const statusContainer = document.getElementById('status-container');
+
+        // 2. Viết hàm fetch lấy dữ liệu bằng cú pháp async/await
+        async function layDuLieuThanhVien() {
+            // Hiển thị thông báo trạng thái đang tải (Yêu cầu mở rộng)
+            usersContainer.innerHTML = '';
+            statusContainer.innerHTML = `
+            <div class="loading-spinner"></div>
+            <div>Đang tải dữ liệu thành viên Việt Nam...</div>
+        `;
+            statusContainer.style.display = 'block';
+
+            try {
+                // Thực hiện cuộc gọi mạng mô phỏng bằng fetch()
+                const phanHoi = await fetch(API_URL);
+
+                if (!phanHoi.ok) {
+                    throw new Error(`Lỗi kết nối HTTP status: ${phanHoi.status}`);
+                }
+
+                // Chuyển đổi dữ liệu JSON sang mảng đối tượng JavaScript
+                const danhSachThanhVien = await phanHoi.json();
+
+                // Ẩn vùng thông báo trạng thái và hiển thị dữ liệu ra màn hình
+                statusContainer.style.display = 'none';
+                renderDanhSach(danhSachThanhVien);
+
+            } catch (error) {
+                // Xử lý lỗi khi không lấy được dữ liệu (Yêu cầu mở rộng)
+                console.error("Lỗi tải dữ liệu:", error);
+                statusContainer.innerHTML = `
+                <div class="error-box">
+                    <strong>Lỗi tải dữ liệu thành viên!</strong><br>
+                    <span>Không thể kết nối đến nguồn dữ liệu. Vui lòng kiểm tra lại cấu hình đường dẫn.</span><br>
+                    <button class="btn-retry" onclick="layDuLieuThanhVien()">Thử lại</button>
+                </div>
+            `;
+                statusContainer.style.display = 'block';
+            }
+        }
+
+        // 3. Hàm render duyệt mảng dữ liệu và kết xuất ra HTML
+        function renderDanhSach(users) {
+            if (users.length === 0) {
+                usersContainer.innerHTML = '<p class="status-container">Không có dữ liệu hiển thị.</p>';
+                return;
+            }
+
+            // Duyệt qua mảng và kết xuất tối thiểu 3 trường thông tin (Họ tên, Email, Số điện thoại, Website)
+            const htmlCards = users.map(user => {
+                // Lấy chữ cái đầu của tên (ví dụ: "Nguyễn Văn Trỗi" -> Lấy chữ "N")
+                const chuCaiDau = user.name ? user.name.charAt(0) : 'U';
+
+                return `
+                <div class="user-card">
+                    <div class="avatar">${chuCaiDau}</div>
+                    <h3 class="user-name">${user.name}</h3>
+                    <div class="user-username">@${user.username}</div>
+                    
+                    <!-- Trường thông tin 1: Email -->
+                    <div class="info-item">
+                        <span class="info-icon">📧</span>
+                        <span>${user.email}</span>
+                    </div>
+                    
+                    <!-- Trường thông tin 2: Điện thoại -->
+                    <div class="info-item">
+                        <span class="info-icon">📞</span>
+                        <span>${user.phone}</span>
+                    </div>
+                    
+                    <!-- Trường thông tin 3: Website -->
+                    <div class="info-item">
+                        <span class="info-icon">🌐</span>
+                        <span>${user.website}</span>
+                    </div>
+                </div>
+            `;
+            }).join('');
+
+            usersContainer.innerHTML = htmlCards;
+        }
+
+        // 4. Tự động kiểm tra hiển thị khi tải trang (Yêu cầu cơ bản)
+        window.onload = layDuLieuThanhVien;
+    </script>
+
+</body>
+
+</html>

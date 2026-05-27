@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thay Đổi Giao Diện Với DOM - Bài Lab 07</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7fafc;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h2.title-page {
+            color: #2d3748;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        /* Hộp hiển thị sản phẩm chính (Card) */
+        
+        .product-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 360px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: all 0.4s ease;
+            box-sizing: border-box;
+        }
+        /* 3 Lớp giao diện (classList) tương ứng với 3 trạng thái hiển thị */
+        
+        .theme-blue {
+            background-color: #ebf8ff;
+            border: 3px solid #3182ce;
+        }
+        
+        .theme-green {
+            background-color: #f0fff4;
+            border: 3px solid #38a169;
+        }
+        
+        .theme-gold {
+            background-color: #fffdf5;
+            border: 3px solid #d69e2e;
+        }
+        
+        .img-container {
+            width: 160px;
+            height: 240px;
+            margin: 0 auto 20px auto;
+        }
+        
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s;
+        }
+        
+        .img-container img:hover {
+            transform: scale(1.05);
+        }
+        
+        .product-title {
+            font-size: 20px;
+            color: #1a202c;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .product-desc {
+            font-size: 14px;
+            color: #4a5568;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            height: 45px;
+        }
+        /* Bộ điều khiển nút bấm */
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13.5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        
+        .btn:active {
+            transform: scale(0.96);
+        }
+        
+        .btn-blue {
+            background-color: #3182ce;
+            color: white;
+        }
+        
+        .btn-blue:hover {
+            background-color: #2b6cb0;
+        }
+        
+        .btn-green {
+            background-color: #38a169;
+            color: white;
+        }
+        
+        .btn-green:hover {
+            background-color: #2f855a;
+        }
+        
+        .btn-gold {
+            background-color: #d69e2e;
+            color: white;
+        }
+        
+        .btn-gold:hover {
+            background-color: #b7791f;
+        }
+        
+        .btn-reset {
+            background-color: #718096;
+            color: white;
+            width: 100%;
+            margin-top: 5px;
+        }
+        
+        .btn-reset:hover {
+            background-color: #4a5568;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2 class="title-page">Thao Tác Thay Đổi Nội Dung Giao Diện Với DOM</h2>
+
+    <!-- Hộp sản phẩm cần tương tác DOM (Bắt đầu ở trạng thái Mặc định - Blue) -->
+    <div id="showcase-card" class="product-card theme-blue">
+        <!-- Khu vực chứa hình ảnh/icon (Dùng ảnh vector SVG nội tuyến làm nguồn ảnh chất lượng cao và hoạt động offline) -->
+        <div class="img-container">
+            <img id="product-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'><rect x='10' y='10' width='180' height='280' rx='20' fill='%232d3748' stroke='%23cbd5e0' stroke-width='4'/><rect x='18' y='18' width='164' height='264' rx='15' fill='%233182ce'/><circle cx='100' cy='260' r='12' fill='%23ffffff' opacity='0.8'/></svg>"
+                alt="SmartPhone Edition">
+        </div>
+
+        <!-- Tiêu đề sản phẩm -->
+        <div id="product-title" class="product-title">PhoneX - Phiên Bản Xanh Dương</div>
+
+        <!-- Đoạn văn mô tả -->
+        <p id="product-desc" class="product-desc">Phiên bản mang đậm phong cách trẻ trung, thanh lịch và mát mẻ.</p>
+
+        <!-- Bộ nút điều khiển -->
+        <div class="button-group">
+            <button class="btn btn-green" id="btn-to-green">Màu Xanh Lá</button>
+            <button class="btn btn-gold" id="btn-to-gold">Màu Vàng Gold</button>
+            <!-- Yêu cầu mở rộng: Nút khôi phục trạng thái ban đầu -->
+            <button class="btn btn-reset" id="btn-reset">Khôi phục mặc định (Xanh Dương)</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. Dùng JavaScript lấy tham chiếu đến các phần tử cần chỉnh sửa bằng ID và querySelector
+        const cardElement = document.getElementById('showcase-card');
+        const titleElement = document.getElementById('product-title');
+        const descElement = document.getElementById('product-desc');
+        const imgElement = document.getElementById('product-img');
+
+        // Lấy tham chiếu các nút bằng querySelector
+        const btnGreen = document.querySelector('#btn-to-green');
+        const btnGold = document.querySelector('#btn-to-gold');
+        const btnReset = document.querySelector('#btn-reset');
+
+        // 2. Khai báo dữ liệu các trạng thái hiển thị khác nhau (Yêu cầu mở rộng)
+        const dataStates = {
+            blue: {
+                title: "PhoneX - Phiên Bản Xanh Dương",
+                desc: "Phiên bản mang đậm phong cách trẻ trung, thanh lịch và mát mẻ.",
+                themeClass: "theme-blue",
+                // Ảnh SVG hình điện thoại màu xanh dương
+                imgSrc: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'><rect x='10' y='10' width='180' height='280' rx='20' fill='%232d3748' stroke='%23cbd5e0' stroke-width='4'/><rect x='18' y='18' width='164' height='264' rx='15' fill='%233182ce'/><circle cx='100' cy='260' r='12' fill='%23ffffff' opacity='0.8'/></svg>"
+            },
+            green: {
+                title: "PhoneX - Phiên Bản Xanh Lá",
+                desc: "Phiên bản đại diện cho thiên nhiên trong lành, tạo cảm giác dịu nhẹ và sang trọng.",
+                themeClass: "theme-green",
+                // Ảnh SVG hình điện thoại màu xanh lá
+                imgSrc: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'><rect x='10' y='10' width='180' height='280' rx='20' fill='%232d3748' stroke='%23cbd5e0' stroke-width='4'/><rect x='18' y='18' width='164' height='264' rx='15' fill='%2338a169'/><circle cx='100' cy='260' r='12' fill='%23ffffff' opacity='0.8'/></svg>"
+            },
+            gold: {
+                title: "PhoneX - Phiên Bản Vàng Gold",
+                desc: "Phiên bản quý phái, đẳng cấp, mang đến vẻ ngoài quý tộc bóng bẩy.",
+                themeClass: "theme-gold",
+                // Ảnh SVG hình điện thoại màu vàng gold
+                imgSrc: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'><rect x='10' y='10' width='180' height='280' rx='20' fill='%232d3748' stroke='%23cbd5e0' stroke-width='4'/><rect x='18' y='18' width='164' height='264' rx='15' fill='%23d69e2e'/><circle cx='100' cy='260' r='12' fill='%23ffffff' opacity='0.8'/></svg>"
+            }
+        };
+
+        // Hàm dùng chung để cập nhật trạng thái hiển thị của phần tử bằng DOM
+        function capNhatTrangThai(stateName) {
+            const state = dataStates[stateName];
+
+            // a. Thay đổi tiêu đề và mô tả bằng innerText (hoặc textContent)
+            titleElement.innerText = state.title;
+            descElement.textContent = state.desc;
+
+            // b. Thay đổi thuộc tính hình ảnh bằng src
+            imgElement.src = state.imgSrc;
+
+            // c. Thay đổi thuộc tính class của phần tử cha để cập nhật màu nền và viền (classList)
+            // Loại bỏ các class cũ trước khi gán class mới
+            cardElement.classList.remove('theme-blue', 'theme-green', 'theme-gold');
+            cardElement.classList.add(state.themeClass);
+        }
+
+        // 3. Gắn sự kiện click cho các nút điều khiển để cập nhật nội dung tương ứng
+        btnGreen.addEventListener('click', function() {
+            capNhatTrangThai('green');
+        });
+
+        btnGold.addEventListener('click', function() {
+            capNhatTrangThai('gold');
+        });
+
+        // Sự kiện khôi phục trạng thái ban đầu của nút đặt lại
+        btnReset.addEventListener('click', function() {
+            capNhatTrangThai('blue');
+        });
+    </script>
+
+</body>
+
+</html>

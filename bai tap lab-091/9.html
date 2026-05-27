@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ứng Dụng Quản Lý Công Việc - Bài Lab 09</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .todo-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 480px;
+            padding: 25px;
+            box-sizing: border-box;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #111827;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 12px;
+        }
+        /* Thanh nhập liệu */
+        
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .input-group input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        
+        .btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-add {
+            background-color: #2563eb;
+            color: white;
+        }
+        
+        .btn-add:hover {
+            background-color: #1d4ed8;
+        }
+        /* Bộ lọc danh mục (Yêu cầu mở rộng) */
+        
+        .filter-group {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f3f4f6;
+            padding: 4px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .filter-btn {
+            flex: 1;
+            padding: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            background: none;
+            color: #4b5563;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn.active {
+            background-color: #ffffff;
+            color: #2563eb;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        /* Danh sách công việc */
+        
+        .todo-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+        
+        .todo-item {
+            display: flex;
+            align-items: center;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+        /* Trạng thái đã hoàn thành */
+        
+        .todo-item.completed {
+            background-color: #f3f4f6;
+            border-color: #e5e7eb;
+        }
+        
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+        
+        .todo-text {
+            flex-grow: 1;
+            margin-left: 12px;
+            font-size: 15px;
+            color: #374151;
+            word-break: break-all;
+        }
+        /* Nút đánh dấu hoàn thành */
+        
+        .btn-toggle {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #cbd5e0;
+            border-radius: 50%;
+            background-color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #10b981;
+            font-weight: bold;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+        
+        .todo-item.completed .btn-toggle {
+            border-color: #10b981;
+            background-color: #10b981;
+            color: white;
+        }
+        /* Nút xóa công việc */
+        
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+        
+        .btn-delete:hover {
+            color: #b91c1c;
+        }
+        
+        .empty-msg {
+            text-align: center;
+            color: #9ca3af;
+            padding: 20px;
+            font-style: italic;
+            font-size: 14px;
+        }
+        /* Thanh thống kê */
+        
+        .stats-footer {
+            margin-top: 15px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13.5px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="todo-card">
+        <h2>Quản Lý Công Việc</h2>
+
+        <!-- Ô nhập nội dung công việc và nút thêm (Yêu cầu cơ bản) -->
+        <div class="input-group">
+            <input type="text" id="todo-input" placeholder="Thêm công việc cần làm hôm nay...">
+            <button class="btn btn-add" id="btn-add">Thêm mới</button>
+        </div>
+
+        <!-- Bộ lọc trạng thái công việc (Yêu cầu mở rộng) -->
+        <div class="filter-group">
+            <button id="filter-all" class="filter-btn active" onclick="chuyenBoLoc('all')">Tất cả</button>
+            <button id="filter-active" class="filter-btn" onclick="chuyenBoLoc('active')">Chưa xong</button>
+            <button id="filter-completed" class="filter-btn" onclick="chuyenBoLoc('completed')">Đã xong</button>
+        </div>
+
+        <!-- Danh sách các công việc hiển thị -->
+        <ul id="todo-list" class="todo-list">
+            <!-- Các phần tử li sẽ được chèn động bằng JS -->
+        </ul>
+
+        <!-- Dòng thống kê số lượng ở chân trang -->
+        <div class="stats-footer">
+            <span id="items-left">Chưa có công việc</span>
+            <span style="cursor: pointer; text-decoration: underline;" onclick="xoaTatCaCongViec()">Xóa tất cả</span>
+        </div>
+    </div>
+
+    <script>
+        // 1. Khai báo biến mảng đối tượng lưu danh sách công việc (Yêu cầu cơ bản)
+        let danhSachCongViec = [];
+        let boLocHienTai = 'all'; // Mặc định hiển thị tất cả: 'all' | 'active' | 'completed'
+
+        // Khởi tạo các tham chiếu đến phần tử DOM cần thiết
+        const todoInput = document.getElementById('todo-input');
+        const btnAdd = document.getElementById('btn-add');
+        const todoList = document.getElementById('todo-list');
+
+        // Tải danh sách công việc đã lưu từ localStorage khi khởi động (Yêu cầu mở rộng)
+        function taiDuLieu() {
+            const duLieuLuuTru = localStorage.getItem('todos');
+            if (duLieuLuuTru) {
+                danhSachCongViec = JSON.parse(duLieuLuuTru);
+            } else {
+                // Danh sách khởi tạo mẫu nếu chưa có dữ liệu trong LocalStorage
+                danhSachCongViec = [{
+                    id: 1,
+                    text: "Thực hành bài lab số 09 Javascript",
+                    completed: false
+                }, {
+                    id: 2,
+                    text: "Đọc tài liệu về các phương thức DOM nâng cao",
+                    completed: true
+                }];
+                luuDuLieu();
+            }
+            renderDanhSach();
+        }
+
+        // Lưu danh sách công việc vào localStorage (Yêu cầu mở rộng)
+        function luuDuLieu() {
+            localStorage.setItem('todos', JSON.stringify(danhSachCongViec));
+        }
+
+        // 2. Viết hàm render danh sách công việc sử dụng createElement (Kiến thức sử dụng)
+        function renderDanhSach() {
+            todoList.innerHTML = ''; // Làm sạch danh sách cũ trên giao diện
+
+            // Sàng lọc mảng công việc dựa trên bộ lọc đã chọn (Yêu cầu mở rộng)
+            let danhSachHienThi = danhSachCongViec;
+            if (boLocHienTai === 'active') {
+                danhSachHienThi = danhSachCongViec.filter(todo => !todo.completed);
+            } else if (boLocHienTai === 'completed') {
+                danhSachHienThi = danhSachCongViec.filter(todo => todo.completed);
+            }
+
+            // Trường hợp không có công việc nào trong danh mục hiện tại
+            if (danhSachHienThi.length === 0) {
+                const emptyLi = document.createElement('li');
+                emptyLi.className = 'empty-msg';
+                emptyLi.textContent = 'Danh sách công việc trống.';
+                todoList.appendChild(emptyLi);
+                capNhatThongKe();
+                return;
+            }
+
+            // Duyệt qua từng công việc và dựng DOM động
+            danhSachHienThi.forEach(todo => {
+                // Tạo phần tử <li> đại diện cho từng công việc
+                const li = document.createElement('li');
+                li.className = 'todo-item';
+                if (todo.completed) {
+                    li.classList.add('completed');
+                }
+
+                // Tạo nút chuyển đổi trạng thái hoàn thành (btn-toggle)
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'btn-toggle';
+                toggleBtn.textContent = todo.completed ? '✓' : '';
+                toggleBtn.addEventListener('click', function() {
+                    chuyenTrangThaiHoanThanh(todo.id);
+                });
+
+                // Tạo thẻ span chứa nội dung công việc
+                const spanText = document.createElement('span');
+                spanText.className = 'todo-text';
+                spanText.textContent = todo.text;
+
+                // Tạo nút xóa công việc (btn-delete)
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn-delete';
+                deleteBtn.textContent = '✕';
+                deleteBtn.addEventListener('click', function() {
+                    xoaCongViec(todo.id);
+                });
+
+                // Đóng gói các phần tử con vào li
+                li.appendChild(toggleBtn);
+                li.appendChild(spanText);
+                li.appendChild(deleteBtn);
+
+                // Chèn li vào thẻ ul hiển thị trên trang web
+                todoList.appendChild(li);
+            });
+
+            capNhatThongKe();
+        }
+
+        // 3. Hàm xử lý sự kiện thêm mới công việc
+        function themCongViec() {
+            const noiDung = todoInput.value.trim();
+
+            if (noiDung === '') {
+                alert('Vui lòng nhập nội dung công việc.');
+                return;
+            }
+
+            // Tạo đối tượng công việc mới
+            const congViecMoi = {
+                id: Date.now(), // Sử dụng timestamp làm ID duy nhất
+                text: noiDung,
+                completed: false
+            };
+
+            danhSachCongViec.push(congViecMoi);
+            todoInput.value = ''; // Làm sạch ô nhập liệu
+
+            luuDuLieu();
+            renderDanhSach();
+        }
+
+        // 4. Hàm xử lý đánh dấu hoàn thành/chưa hoàn thành công việc
+        function chuyenTrangThaiHoanThanh(id) {
+            danhSachCongViec = danhSachCongViec.map(todo => {
+                if (todo.id === id) {
+                    return {...todo,
+                        completed: !todo.completed
+                    };
+                }
+                return todo;
+            });
+
+            luuDuLieu();
+            renderDanhSach();
+        }
+
+        // 5. Hàm xử lý xóa công việc
+        function xoaCongViec(id) {
+            danhSachCongViec = danhSachCongViec.filter(todo => todo.id !== id);
+
+            luuDuLieu();
+            renderDanhSach();
+        }
+
+        // Hàm phụ trợ xóa toàn bộ mảng dữ liệu
+        function xoaTatCaCongViec() {
+            if (danhSachCongViec.length === 0) return;
+            if (confirm('Bạn có chắc chắn muốn xóa toàn bộ danh sách công việc không?')) {
+                danhSachCongViec = [];
+                luuDuLieu();
+                renderDanhSach();
+            }
+        }
+
+        // Hàm phụ trợ cập nhật bộ lọc hiển thị (Yêu cầu mở rộng)
+        function chuyenBoLoc(tenBoLoc) {
+            boLocHienTai = tenBoLoc;
+
+            // Cập nhật trạng thái hiển thị của các nút tab lọc trên CSS
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`filter-${tenBoLoc}`).classList.add('active');
+
+            renderDanhSach();
+        }
+
+        // Hàm thống kê số lượng đầu việc chưa hoàn thành hiển thị ở chân trang
+        function capNhatThongKe() {
+            const soLuongChuaXong = danhSachCongViec.filter(todo => !todo.completed).length;
+            const itemsLeftSpan = document.getElementById('items-left');
+
+            if (danhSachCongViec.length === 0) {
+                itemsLeftSpan.textContent = 'Danh sách trống';
+            } else {
+                itemsLeftSpan.textContent = `Còn ${soLuongChuaXong} công việc chưa hoàn thành`;
+            }
+        }
+
+        // Gắn sự kiện click cho nút "Thêm mới" và nút phím Enter trên ô nhập liệu
+        btnAdd.addEventListener('click', themCongViec);
+        todoInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                themCongViec();
+            }
+        });
+
+        // Gọi tải dữ liệu và khởi tạo giao diện lúc nạp trang
+        window.onload = taiDuLieu;
+    </script>
+
+</body>
+
+</html>

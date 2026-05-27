@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thao Tác Ẩn Hiện Bằng jQuery - Bài Lab 13</title>
+    <!-- Nhúng thư viện jQuery thông qua CDN (Hướng dẫn triển khai 1) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            box-sizing: border-box;
+        }
+        
+        h2 {
+            margin-top: 0;
+            color: #1a202c;
+            border-bottom: 2px solid #3182ce;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        /* Huy hiệu hiển thị trạng thái hiện tại (Yêu cầu mở rộng) */
+        
+        .status-badge {
+            font-size: 13px;
+            font-weight: bold;
+            padding: 6px 14px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-bottom: 20px;
+            transition: all 0.2s ease;
+        }
+        /* Khối nội dung cần điều khiển (Hướng dẫn triển khai 2) */
+        
+        .content-box {
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+            color: #2b6cb0;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-weight: 500;
+            box-sizing: border-box;
+        }
+        /* Hệ thống nút bấm điều khiển */
+        
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .row-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 11px 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            flex: 1;
+            box-sizing: border-box;
+        }
+        
+        .btn:active {
+            transform: scale(0.96);
+        }
+        
+        .btn-hide {
+            background-color: #e53e3e;
+            color: white;
+        }
+        
+        .btn-hide:hover {
+            background-color: #c53030;
+        }
+        
+        .btn-show {
+            background-color: #38a169;
+            color: white;
+        }
+        
+        .btn-show:hover {
+            background-color: #2f855a;
+        }
+        
+        .btn-toggle {
+            background-color: #3182ce;
+            color: white;
+        }
+        
+        .btn-toggle:hover {
+            background-color: #2b6cb0;
+        }
+        
+        .btn-status {
+            background-color: #718096;
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-status:hover {
+            background-color: #4a5568;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>jQuery - Thao Tác Ẩn Hiện</h2>
+
+        <!-- Huy hiệu hiển thị trạng thái động -->
+        <div id="status-badge" class="status-badge">Trạng thái: -</div>
+
+        <!-- Khối nội dung cần điều khiển (Yêu cầu cơ bản) -->
+        <div id="content-box" class="content-box">
+            Chào mừng bạn đến với bài học jQuery cơ bản! Đoạn văn này đang được điều khiển ẩn và hiện thông qua các hàm xử lý hoạt họa được thiết lập sẵn của thư viện jQuery.
+        </div>
+
+        <!-- Bộ nút điều khiển -->
+        <div class="btn-group">
+            <div class="row-buttons">
+                <!-- Nút Ẩn / Hiện cơ bản (Yêu cầu cơ bản) -->
+                <button class="btn btn-hide" id="btn-hide">Ẩn</button>
+                <button class="btn btn-show" id="btn-show">Hiện</button>
+            </div>
+
+            <!-- Nút chuyển đổi trạng thái Toggle với nhãn động (Yêu cầu cơ bản & mở rộng) -->
+            <button class="btn btn-toggle" id="btn-toggle">Ẩn Nội Dung (Toggle)</button>
+
+            <!-- Nút kiểm tra trạng thái hiển thị bằng Alert (Yêu cầu mở rộng) -->
+            <button class="btn btn-status" id="btn-status">Kiểm tra trạng thái ẩn/hiện</button>
+        </div>
+    </div>
+
+    <script>
+        // Đảm bảo mã jQuery chỉ chạy sau khi toàn bộ cấu trúc DOM của trang đã sẵn sàng
+        $(document).ready(function() {
+
+            // Hàm đồng bộ trạng thái giao diện và cập nhật nhãn của nút bấm (Yêu cầu mở rộng)
+            function capNhatGiaoDien() {
+                const contentBox = $('#content-box');
+                const btnToggle = $('#btn-toggle');
+                const statusBadge = $('#status-badge');
+
+                // Sử dụng phương thức .is(':visible') của jQuery để kiểm tra trạng thái hiển thị
+                if (contentBox.is(':visible')) {
+                    btnToggle.text('Ẩn Nội Dung (Toggle)');
+                    statusBadge.text('Trạng thái: ĐANG HIỂN THỊ')
+                        .css({
+                            'color': '#2f855a',
+                            'background-color': '#f0fff4'
+                        });
+                } else {
+                    btnToggle.text('Hiện Nội Dung (Toggle)');
+                    statusBadge.text('Trạng thái: ĐANG BỊ ẨN')
+                        .css({
+                            'color': '#c53030',
+                            'background-color': '#fff5f5'
+                        });
+                }
+            }
+
+            // Thiết lập trạng thái ban đầu cho giao diện
+            capNhatGiaoDien();
+
+            // 1. Ẩn nội dung khi bấm nút Ẩn (Yêu cầu cơ bản)
+            $('#btn-hide').click(function() {
+                // Hàm hide('fast') giúp ẩn mượt mà bằng hiệu ứng co rút và mờ dần trong thời gian ngắn
+                $('#content-box').hide('fast', function() {
+                    capNhatGiaoDien(); // Đồng bộ giao diện sau khi kết thúc hiệu ứng ẩn
+                });
+            });
+
+            // 2. Hiện lại khi bấm nút Hiện (Yêu cầu cơ bản)
+            $('#btn-show').click(function() {
+                // Hàm show('fast') khôi phục trạng thái hiển thị cho phần tử
+                $('#content-box').show('fast', function() {
+                    capNhatGiaoDien(); // Đồng bộ giao diện sau khi kết thúc hiệu ứng hiện
+                });
+            });
+
+            // 3. Sử dụng toggle để tự động chuyển đổi trạng thái (Yêu cầu cơ bản)
+            $('#btn-toggle').click(function() {
+                // Hàm toggle('fast') tự động ẩn nếu đang hiện và ngược lại
+                $('#content-box').toggle('fast', function() {
+                    capNhatGiaoDien(); // Đồng bộ giao diện sau khi kết thúc hiệu ứng chuyển đổi
+                });
+            });
+
+            // 4. Kiểm tra trạng thái đang ẩn/hiện bằng nút kiểm tra độc lập (Yêu cầu mở rộng)
+            $('#btn-status').click(function() {
+                if ($('#content-box').is(':visible')) {
+                    alert('Xác nhận: Khối nội dung hiện đang HIỂN THỊ.');
+                } else {
+                    alert('Xác nhận: Khối nội dung hiện đang BỊ ẨN.');
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

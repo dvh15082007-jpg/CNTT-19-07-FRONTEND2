@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bộ Đếm Tương Tác - Bài Lab 08</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .counter-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        
+        h2 {
+            margin-top: 0;
+            color: #2d3748;
+            font-size: 22px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+        }
+        /* Hiển thị số đếm */
+        
+        .counter-value {
+            font-size: 96px;
+            font-weight: bold;
+            margin: 20px 0;
+            transition: color 0.3s ease, transform 0.1s ease;
+            user-select: none;
+        }
+        /* Các trạng thái màu sắc theo giá trị số đếm (Yêu cầu mở rộng) */
+        
+        .neutral {
+            color: #4a5568;
+            /* Màu xám đen khi bằng 0 */
+        }
+        
+        .positive {
+            color: #38a169;
+            /* Màu xanh lá khi số dương */
+            text-shadow: 0 4px 10px rgba(56, 161, 105, 0.15);
+        }
+        
+        .negative {
+            color: #e53e3e;
+            /* Màu đỏ khi số âm */
+            text-shadow: 0 4px 10px rgba(229, 62, 62, 0.15);
+        }
+        /* Giao diện bộ nút điều khiển */
+        
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .row-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            box-sizing: border-box;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        /* Kiểu dáng cho từng nút chức năng */
+        
+        .btn-step-5 {
+            background-color: #edf2f7;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
+        }
+        
+        .btn-step-5:hover {
+            background-color: #e2e8f0;
+        }
+        
+        .btn-step-1 {
+            background-color: #3182ce;
+            color: white;
+        }
+        
+        .btn-step-1:hover {
+            background-color: #2b6cb0;
+        }
+        
+        .btn-reset {
+            background-color: #718096;
+            color: white;
+            padding: 14px;
+            font-size: 16px;
+        }
+        
+        .btn-reset:hover {
+            background-color: #4a5568;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="counter-card">
+        <h2>Bộ Đếm Tương Tác</h2>
+
+        <!-- Vùng hiển thị số đếm -->
+        <div id="count-display" class="counter-value neutral">0</div>
+
+        <!-- Các nút điều khiển -->
+        <div class="button-group">
+            <!-- Hàng nút tăng/giảm cơ bản (+1, -1) và nâng cao (+5, -5) -->
+            <div class="row-buttons">
+                <button class="btn btn-step-5" id="btn-minus-5">-5</button>
+                <button class="btn btn-step-1" id="btn-minus-1">-1</button>
+                <button class="btn btn-step-1" id="btn-plus-1">+1</button>
+                <button class="btn btn-step-5" id="btn-plus-5">+5</button>
+            </div>
+
+            <!-- Nút đặt lại về 0 -->
+            <button class="btn btn-reset" id="btn-reset">Đặt lại về 0</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. Tạo biến lưu trạng thái số đếm (State)
+        let soDem = 0;
+
+        // Lấy tham chiếu đến các phần tử DOM cần tương tác
+        const hienThiSoDem = document.getElementById('count-display');
+        const nutGiam5 = document.getElementById('btn-minus-5');
+        const nutGiam1 = document.getElementById('btn-minus-1');
+        const nutDatLai = document.getElementById('btn-reset');
+        const nutTang1 = document.getElementById('btn-plus-1');
+        const nutTang5 = document.getElementById('btn-plus-5');
+
+        // 4. Viết hàm render riêng biệt để cập nhật giao diện sau mỗi thao tác
+        // Việc tách biệt này giúp tách rời phần logic xử lý và phần hiển thị giao diện.
+        function render() {
+            // Cập nhật nội dung văn bản số đếm
+            hienThiSoDem.textContent = soDem;
+
+            // Xóa các class màu sắc cũ trước khi kiểm tra trạng thái mới
+            hienThiSoDem.classList.remove('neutral', 'positive', 'negative');
+
+            // Đổi màu số đếm khi âm hoặc dương (Yêu cầu mở rộng)
+            if (soDem > 0) {
+                hienThiSoDem.classList.add('positive');
+            } else if (soDem < 0) {
+                hienThiSoDem.classList.add('negative');
+            } else {
+                hienThiSoDem.classList.add('neutral');
+            }
+        }
+
+        // 3. Gắn sự kiện cho từng nút bằng addEventListener và cập nhật biến trạng thái
+        nutGiam5.addEventListener('click', function() {
+            soDem -= 5; // Bổ sung bước giảm nhanh theo bội số 5 (Yêu cầu mở rộng)
+            render(); // Gọi hàm render để cập nhật giao diện
+        });
+
+        nutGiam1.addEventListener('click', function() {
+            soDem -= 1;
+            render();
+        });
+
+        nutDatLai.addEventListener('click', function() {
+            soDem = 0; // Chức năng đặt lại về 0 (Yêu cầu cơ bản)
+            render();
+        });
+
+        nutTang1.addEventListener('click', function() {
+            soDem += 1;
+            render();
+        });
+
+        nutTang5.addEventListener('click', function() {
+            soDem += 5; // Bổ sung bước tăng nhanh theo bội số 5 (Yêu cầu mở rộng)
+            render();
+        });
+
+        // Chạy hàm render lần đầu để hiển thị trạng thái ban đầu của bộ đếm (0)
+        render();
+    </script>
+
+</body>
+
+</html>

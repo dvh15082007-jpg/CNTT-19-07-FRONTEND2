@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonVibe • Đăng Nhập</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            max-width: 420px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: linear-gradient(90deg, #ff6b6b, #ff8e53, #feca57);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: white;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            border-radius: 16px;
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .btn-login {
+            background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+            border: none;
+            border-radius: 16px;
+            padding: 14px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 15px 30px -10px rgba(255, 107, 107, 0.6);
+        }
+        
+        .input-group-text {
+            border-radius: 16px 0 0 16px;
+            background: #f8f9fa;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #444;
+        }
+        
+        .social-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="glass-card mx-auto">
+            <!-- Header -->
+            <div class="card-header">
+                <div class="logo text-white">ChiDatVibe</div>
+                <p class="mb-0 opacity-90">Chào mừng bạn trở lại ✨</p>
+            </div>
+
+            <!-- Body -->
+            <div class="p-5">
+                <form>
+                    <!-- Email -->
+                    <div class="mb-4">
+                        <label class="form-label">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input type="email" class="form-control" placeholder="you@example.com" required>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-4">
+                        <label class="form-label">Mật khẩu</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <!-- Remember & Forgot -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remember">
+                            <label class="form-check-label" for="remember" style="font-weight: 500;">
+                                Ghi nhớ tôi
+                            </label>
+                        </div>
+                        <a href="#" class="text-decoration-none" style="color: #ff6b6b; font-weight: 500;">
+                            Quên mật khẩu?
+                        </a>
+                    </div>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="btn btn-login w-100 text-white mb-4">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        ĐĂNG NHẬP
+                    </button>
+
+                    <!-- Divider -->
+                    <div class="d-flex align-items-center gap-3 my-4">
+                        <hr class="flex-grow-1">
+                        <span class="text-muted small">hoặc</span>
+                        <hr class="flex-grow-1">
+                    </div>
+
+                    <!-- Social Login -->
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-outline-dark w-100 social-btn">
+                                <i class="fab fa-google me-2"></i> Google
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-outline-primary w-100 social-btn">
+                                <i class="fab fa-facebook-f me-2"></i> Facebook
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Register Link -->
+                    <div class="text-center mt-5">
+                        <p class="mb-0 text-muted">
+                            Chưa có tài khoản?
+                            <a href="#" class="text-decoration-none fw-semibold" style="color: #667eea;">Đăng ký ngay</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
