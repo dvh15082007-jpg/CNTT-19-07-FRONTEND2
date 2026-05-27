@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 7: Sức Mạnh Biến Đổi DOM</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 40px;
+        transition: all 0.5s ease;
+      }
+      .card {
+        max-width: 350px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border: 2px solid #ddd;
+      }
+      .dark-mode {
+        background-color: #2c3e50;
+        color: #ecf0f1;
+      }
+      .dark-mode .card {
+        background-color: #34495e;
+        border-color: #455a64;
+        color: #fff;
+      }
+      button {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2 id="mainTitle">Học phần: Cơ bản Front-End</h2>
+      <p id="descText">
+        Chào mừng các bạn sinh viên lớp công nghệ thông tin Đại học Đại Nam học
+        tập môn lập trình JavaScript cơ bản.
+      </p>
+      <img
+        id="avatarImg"
+        src="https://picsum.photos/id/1/150/150"
+        alt="Demo Image"
+        style="border-radius: 50%; margin: 10px 0"
+      /><br />
+      <button onclick="transformUI()">Kích Hoạt Biến Đổi</button>
+    </div>
+
+    <script>
+      let isTransformed = false;
+
+      function transformUI() {
+        const title = document.getElementById("mainTitle");
+        const desc = document.getElementById("descText");
+        const img = document.getElementById("avatarImg");
+
+        if (!isTransformed) {
+          // Thay đổi đồng loạt nội dung text, thuộc tính src ảnh và classList giao diện
+          title.innerText = "🚀 Lập trình JavaScript Master";
+          desc.innerText =
+            "Bạn vừa thay đổi thành công cấu trúc cây thư mục DOM! Trạng thái Dark Mode đã được kích hoạt ảo dịu.";
+          img.src = "https://picsum.photos/id/10/150/150";
+          document.body.classList.add("dark-mode");
+          isTransformed = true;
+        } else {
+          // Khôi phục trạng thái cũ ban đầu (Đáp ứng yêu cầu mở rộng phục hồi trạng thái)
+          title.innerText = "Học phần: Cơ bản Front-End";
+          desc.innerText =
+            "Chào mừng các bạn sinh viên lớp công nghệ thông tin Đại học Đại Nam học tập môn lập trình JavaScript cơ bản.";
+          img.src = "https://picsum.photos/id/1/150/150";
+          document.body.classList.remove("dark-mode");
+          isTransformed = false;
+        }
+      }
+    </script>
+  </body>
+</html>

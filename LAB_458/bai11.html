@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 11: Tra Cứu Đối Tượng ID (Bản Local TXT)</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        margin: 30px;
+      }
+      .search-box {
+        max-width: 450px;
+        background: white;
+        margin: 0 auto;
+        padding: 20px;
+        border-radius: 6px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .search-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .search-bar input {
+        flex: 1;
+        padding: 8px;
+      }
+      .search-bar button {
+        background: #34495e;
+        color: white;
+        border: none;
+        padding: 0 15px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .search-bar button:hover {
+        background: #2c3e50;
+      }
+      .info-card {
+        background: #ecf0f1;
+        padding: 15px;
+        border-radius: 4px;
+        display: none;
+        border-left: 5px solid #2c3e50;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="search-box">
+      <h2>Hệ Thống Tra Cứu Sinh Viên 🕵️‍♂️</h2>
+      <div class="search-bar">
+        <input
+          type="text"
+          id="studentId"
+          placeholder="Nhập mã định danh ID (VD: 1, 2)..."
+        />
+        <button onclick="lookupStudent()">Tìm kiếm</button>
+      </div>
+      <div class="info-card" id="profileCard"></div>
+    </div>
+
+    <script>
+      async function lookupStudent() {
+        const id = document.getElementById("studentId").value.trim();
+        const card = document.getElementById("profileCard");
+
+        if (!id) {
+          alert("Oops! Bạn quên nhập mã định danh rồi kìa! 😅");
+          return;
+        }
+
+        card.style.display = "none";
+
+        try {
+          // Gọi trực tiếp đến file txt nằm cùng thư mục
+          const resp = await fetch("CNTT1907.txt");
+
+          if (!resp.ok) throw new Error("Không thể mở được 'cuốn sổ' dữ liệu!");
+
+          // Đọc dữ liệu từ file txt và chuyển thành mảng đối tượng
+          const allStudents = await resp.json();
+
+          // Dùng hàm find() để tìm sinh viên có id khớp với id nhập vào
+          const student = allStudents.find((s) => s.id === id);
+
+          if (!student) {
+            // Trường hợp tìm mỏi mắt không ra
+            card.innerHTML = `<b style="color:#e74c3c;">⚠️ Rất tiếc, không tìm thấy đối tượng sinh viên mang mã ID số ${id} trong kho dữ liệu!</b>`;
+            card.style.display = "block";
+            return;
+          }
+
+          // Trường hợp tìm thấy "người ấy"
+          card.innerHTML = `
+                    <h3 style="margin-top:0; color:#2c3e50;">📋 Thông tin chi tiết:</h3>
+                    <p><b>Mã ID hệ thống:</b> ${student.id}</p>
+                    <p><b>Tên thành viên:</b> ${student.name}</p>
+                    <p><b>Địa chỉ Email:</b> ${student.email || "Chưa cập nhật 🤷‍♂️"}</p>
+                `;
+          card.style.display = "block";
+        } catch (error) {
+          console.error(error);
+          alert(
+            "Úi, đã xảy ra lỗi trong quá trình đọc file. Hãy kiểm tra xem đã chạy bằng Local Server chưa nhé! 🛠️",
+          );
+        }
+      }
+    </script>
+  </body>
+</html>

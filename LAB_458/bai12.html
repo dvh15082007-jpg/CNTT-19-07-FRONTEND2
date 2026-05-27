@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 12: Trình Quản Lý CRUD Sinh Viên</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background: #fafafa;
+      }
+      .main-wrapper {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      }
+      .input-form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        background: #f1f2f6;
+        padding: 15px;
+        border-radius: 6px;
+      }
+      .input-form input {
+        padding: 8px;
+        flex: 1;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .input-form button {
+        background: #2ed573;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        font-weight: bold;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background: #5352ed;
+        color: white;
+      }
+      .btn-delete-api {
+        background: #ff4757;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <h2>Hệ Thống Đồng Bộ Sinh Viên (Full CRUD API)</h2>
+
+      <div class="input-form">
+        <input
+          type="text"
+          id="addName"
+          placeholder="Nhập họ tên sinh viên mới..."
+        />
+        <input type="email" id="addEmail" placeholder="Nhập địa chỉ email..." />
+        <button onclick="createRecord()">Thêm Mới Sinh Viên</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Mã ID</th>
+            <th>Họ Và Tên</th>
+            <th>Hộp Thư Email</th>
+            <th>Hành Động</th>
+          </tr>
+        </thead>
+        <tbody id="studentTableBody"></tbody>
+      </table>
+    </div>
+
+    <script>
+      const endpoint = "https://664dbcc7ede96048be6b7b20.mockapi.io/users";
+
+      // Thao tác 1: Gọi GET nạp và hiển thị toàn bộ danh sách lên bảng dữ liệu
+      async function loadRecords() {
+        try {
+          const response = await fetch(endpoint);
+          const list = await response.json();
+          const tbody = document.getElementById("studentTableBody");
+          tbody.innerHTML = "";
+
+          list.forEach((student) => {
+            tbody.innerHTML += `
+                        <tr>
+                            <td>${student.id}</td>
+                            <td><b>${student.name}</b></td>
+                            <td>${student.email || "N/A"}</td>
+                            <td><button class="btn-delete-api" onclick="deleteRecord('${student.id}')">Xóa bỏ</button></td>
+                        </tr>
+                    `;
+          });
+        } catch (err) {
+          console.error("Lỗi nạp bảng: ", err);
+        }
+      }
+
+      // Thao tác 2: Gửi dữ liệu bằng phương thức POST tạo sinh viên mới
+      async function createRecord() {
+        const name = document.getElementById("addName").value.trim();
+        const email = document.getElementById("addEmail").value.trim();
+
+        if (!name || !email) {
+          alert("Vui lòng nhập đầy đủ các thông tin bắt buộc!");
+          return;
+        }
+
+        try {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: name, email: email }),
+          });
+          if (res.ok) {
+            document.getElementById("addName").value = "";
+            document.getElementById("addEmail").value = "";
+            loadRecords(); // Đồng bộ refresh giao diện ngay sau khi thêm
+          }
+        } catch (err) {
+          alert("Không thể ghi nhận dữ liệu mới!");
+        }
+      }
+
+      // Thao tác 3: Gửi lệnh DELETE triệt tiêu phần tử dựa theo khóa ID định dạng
+      async function deleteRecord(id) {
+        if (!confirm(`Xác nhận xóa bỏ vĩnh viễn sinh viên mang ID số ${id}?`))
+          return;
+
+        try {
+          const res = await fetch(`${endpoint}/${id}`, { method: "DELETE" });
+          if (res.ok) loadRecords(); // Đồng bộ cập nhật lại dữ liệu giao diện hiển thị
+        } catch (err) {
+          alert("Thao tác xóa thất bại!");
+        }
+      }
+
+      window.onload = loadRecords;
+    </script>
+  </body>
+</html>

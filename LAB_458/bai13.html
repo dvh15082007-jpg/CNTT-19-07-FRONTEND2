@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 13: Ẩn Hiện Nội Dung jQuery</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding-top: 40px;
+      }
+      .info-panel {
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 25px;
+        background: #ffeaa7;
+        border: 1px solid #tsb14c;
+        font-size: 16px;
+        border-radius: 4px;
+      }
+      .btn-ctrl {
+        padding: 8px 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Thao Tác Ẩn/Hiện Nội Dung Bằng jQuery</h2>
+    <button class="btn-ctrl" id="btnHide">Ẩn Đi</button>
+    <button class="btn-ctrl" id="btnShow">Hiện Lại</button>
+    <button
+      class="btn-ctrl"
+      id="btnToggle"
+      style="background: #ff7675; color: white"
+    >
+      Chuyển Đổi Trạng Thái
+    </button>
+
+    <div class="info-panel" id="contentBox">
+      🎯 Chào các bạn sinh viên Khoa Công nghệ thông tin Đại học Đại Nam! Đây là
+      khối hộp thông tin thử nghiệm các phương thức tương tác hiển thị giao diện
+      của thư viện jQuery.
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        // Lắng nghe sự kiện click sử dụng các hàm cơ bản của jQuery
+        $("#btnHide").click(function () {
+          $("#contentBox").hide(300); // Ẩn mượt mà trong 300ms
+        });
+
+        $("#btnShow").click(function () {
+          $("#contentBox").show(300); // Hiện lại mượt mà
+        });
+
+        $("#btnToggle").click(function () {
+          $("#contentBox").toggle(400); // Tự động hoán chuyển đảo trạng thái
+        });
+      });
+    </script>
+  </body>
+</html>

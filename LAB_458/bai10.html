@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 10: Tải API Dữ Liệu Với Fetch</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        margin: 30px;
+      }
+      .list-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+      .user-card {
+        padding: 12px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .user-card:last-child {
+        border: none;
+      }
+      .user-name {
+        font-weight: bold;
+        color: #2c3e50;
+        font-size: 16px;
+      }
+      .user-email {
+        color: #7f8c8d;
+        font-size: 14px;
+      }
+      #loadingText {
+        text-align: center;
+        font-weight: bold;
+        color: #3498db;
+        padding: 20px;
+      }
+      #errorText {
+        text-align: center;
+        font-weight: bold;
+        color: #e74c3c;
+        padding: 20px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="list-container">
+      <h2>Danh Sách Thành Viên (Fetch API)</h2>
+      <div id="loadingText">
+        ⏳ Hệ thống đang nạp dữ liệu từ máy chủ, vui lòng đợi...
+      </div>
+      <div id="errorText">
+        ❌ Thao tác nạp dữ liệu thất bại hoặc máy chủ mất kết nối!
+      </div>
+      <div id="dataBox"></div>
+    </div>
+
+    <script>
+      // Sử dụng endpoint mockapi định danh dùng chung quy định bài học
+      const apiEndpoint = "https://664dbcc7ede96048be6b7b20.mockapi.io/users";
+
+      async function loadUsersData() {
+        try {
+          const response = await fetch(apiEndpoint);
+          if (!response.ok) throw new Error("Lỗi phản hồi hệ thống!");
+
+          const dataList = await response.json();
+
+          document.getElementById("loadingText").style.display = "none";
+          const dataBox = document.getElementById("dataBox");
+          dataBox.innerHTML = "";
+
+          // Duyệt mảng cấu trúc và đổ xuất dữ liệu tối thiểu 3 trường thông tin chi tiết ra thẻ HTML
+          dataList.slice(0, 8).forEach((user) => {
+            dataBox.innerHTML += `
+                        <div class="user-card">
+                            <div class="user-name">👤 Mã ID: ${user.id} - Họ Tên: ${user.name}</div>
+                            <div class="user-email">✉️ Địa chỉ Email: ${user.email || "chua_cap_nhat@dnu.edu.vn"}</div>
+                            <div style="font-size:12px; color:#95a5a6;">📅 Ngày tham gia hệ thống: ${user.createdAt || "N/A"}</div>
+                        </div>
+                    `;
+          });
+        } catch (err) {
+          document.getElementById("loadingText").style.display = "none";
+          document.getElementById("errorText").style.display = "block";
+          console.error("Chi tiết lỗi phát sinh: ", err);
+        }
+      }
+
+      window.onload = loadUsersData;
+    </script>
+  </body>
+</html>

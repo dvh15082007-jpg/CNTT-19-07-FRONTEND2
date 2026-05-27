@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 20: Đẩy Thêm Dữ Liệu Ajax POST</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 30px;
+      }
+      .form-card {
+        max-width: 400px;
+        border: 1px solid #ddd;
+        padding: 20px;
+        background: #fafafa;
+        border-radius: 5px;
+      }
+      .input-item {
+        margin-bottom: 12px;
+      }
+      .input-item label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+      .input-item input {
+        width: 100%;
+        padding: 6px;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-card">
+      <h3>Thêm Thành Viên Vào API</h3>
+      <form id="ajaxPostForm">
+        <div class="input-item">
+          <label>Tên nhân sự:</label>
+          <input type="text" id="postName" placeholder="Nhập tên..." />
+        </div>
+        <div class="input-item">
+          <label>Hộp thư điện tử:</label>
+          <input type="email" id="postEmail" placeholder="Nhập email..." />
+        </div>
+        <button
+          type="submit"
+          style="
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+          "
+        >
+          Gửi Lên Hệ Thống
+        </button>
+      </form>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        const apiLink = "https://664dbcc7ede96048be6b7b20.mockapi.io/users";
+
+        $("#ajaxPostForm").submit(function (e) {
+          e.preventDefault();
+
+          let payload = {
+            name: $("#postName").val().trim(),
+            email: $("#postEmail").val().trim(),
+          };
+
+          if (!payload.name || !payload.email) {
+            alert("Vui lòng điền thông tin đầy đủ trước khi đẩy!");
+            return;
+          }
+
+          // Sử dụng Ajax POST đẩy gói JSON dữ liệu lên server backend
+          $.ajax({
+            url: apiLink,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: function (result) {
+              alert(
+                `Thành công! Đã tạo thành công bản ghi thành viên có ID: ${result.id}`,
+              );
+              $("#ajaxPostForm")[0].reset(); // Làm rỗng form sau khi gửi thành công
+            },
+            error: function () {
+              alert("Xảy ra lỗi thất bại trong quá trình truyền dữ liệu!");
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

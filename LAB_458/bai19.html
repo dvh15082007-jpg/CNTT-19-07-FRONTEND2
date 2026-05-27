@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 19: Tải Dữ Liệu Qua jQuery Ajax</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 25px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        max-width: 650px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #2980b9;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Bảng Dữ Liệu Nhân Sự (jQuery Ajax GET)</h3>
+    <button
+      id="triggerAjaxLoadBtn"
+      style="
+        padding: 8px 12px;
+        margin-bottom: 15px;
+        background: #2980b9;
+        color: white;
+        border: none;
+        cursor: pointer;
+      "
+    >
+      Nạp Dữ Liệu Từ Server
+    </button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Mã ID</th>
+          <th>Họ Và Tên</th>
+          <th>Địa Chỉ Email</th>
+        </tr>
+      </thead>
+      <tbody id="ajaxTableBody">
+        <tr>
+          <td colspan="3" style="text-align: center; color: #aaa">
+            Bấm nút phía trên để nạp dữ liệu...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <script>
+      $(document).ready(function () {
+        const apiLink = "https://664dbcc7ede96048be6b7b20.mockapi.io/users";
+
+        $("#triggerAjaxLoadBtn").click(function () {
+          $("#ajaxTableBody").html(
+            '<tr><td colspan="3" style="text-align:center;">🔄 Đang kết nối máy chủ dữ liệu...</td></tr>',
+          );
+
+          // Khởi chạy gói cấu trúc $.ajax chuẩn của thư viện jQuery
+          $.ajax({
+            url: apiLink,
+            type: "GET",
+            dataType: "json",
+            success: function (responseList) {
+              let rows = "";
+              // Duyệt dữ liệu xuất tối thiểu 3 cột thông tin cấu trúc rõ ràng ra bảng
+              responseList.slice(0, 6).forEach((item) => {
+                rows += `
+                                <tr>
+                                    <td>${item.id}</td>
+                                    <td><b>${item.name}</b></td>
+                                    <td>${item.email || "N/A"}</td>
+                                </tr>
+                            `;
+              });
+              $("#ajaxTableBody").html(rows);
+            },
+            error: function () {
+              $("#ajaxTableBody").html(
+                '<tr><td colspan="3" style="text-align:center; color:red;">❌ Xảy ra sự cố lỗi trong quá trình tải dữ liệu!</td></tr>',
+              );
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

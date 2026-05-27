@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 5: Quản Lý Sản Phẩm</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 30px;
+        background-color: #f4f7f6;
+      }
+      .box {
+        max-width: 650px;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+      input,
+      select {
+        padding: 6px;
+        border: 1px solid #ccc;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #16a085;
+        color: white;
+      }
+      .inventory-summary {
+        background: #e8f8f5;
+        padding: 10px;
+        margin-top: 15px;
+        font-weight: bold;
+        border-left: 4px solid #16a085;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>Quản Lý Danh Sách Sản Phẩm Siêu Thị</h2>
+      <div class="controls">
+        <input
+          type="text"
+          id="searchName"
+          placeholder="Tìm sản phẩm theo tên..."
+          onkeyup="filterProducts()"
+        />
+        <select id="priceFilter" onchange="filterProducts()">
+          <option value="all">Tất cả các mức giá</option>
+          <option value="low">Dưới 500.000đ</option>
+          <option value="high">Từ 500.000đ trở lên</option>
+        </select>
+        <select id="sortOrder" onchange="filterProducts()">
+          <option value="none">Sắp xếp theo...</option>
+          <option value="asc">Giá tăng dần</option>
+          <option value="desc">Giá giảm dần</option>
+        </select>
+      </div>
+
+      <table id="productTable">
+        <thead>
+          <tr>
+            <th>Tên Sản Phẩm</th>
+            <th>Đơn Giá</th>
+            <th>Số Lượng</th>
+            <th>Thành Tiền</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="inventory-summary" id="summaryBlock"></div>
+    </div>
+
+    <script>
+      // Mảng đối tượng chứa ít nhất 5 dữ liệu mẫu đầu vào
+      let products = [
+        { id: 1, name: "Bàn phím cơ AKKO", price: 1250000, quantity: 5 },
+        {
+          id: 2,
+          name: "Chuột không dây Logitech",
+          price: 350000,
+          quantity: 12,
+        },
+        { id: 3, name: "Tai nghe Gaming chụp tai", price: 890000, quantity: 8 },
+        { id: 4, name: "Lót chuột đại size", price: 150000, quantity: 20 },
+        { id: 5, name: "Cáp sạc Type-C bọc dù", price: 95000, quantity: 45 },
+      ];
+
+      function renderTable(dataList) {
+        const tbody = document.querySelector("#productTable tbody");
+        tbody.innerHTML = "";
+
+        dataList.forEach((p) => {
+          tbody.innerHTML += `
+                    <tr>
+                        <td>${p.name}</td>
+                        <td>${p.price.toLocaleString("vi-VN")}đ</td>
+                        <td>${p.quantity}</td>
+                        <td>${(p.price * p.quantity).toLocaleString("vi-VN")}đ</td>
+                    </tr>
+                `;
+        });
+
+        // Yêu cầu mở rộng: Tính tổng giá trị tồn kho của toàn danh sách hiện có
+        const totalInventory = dataList.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0,
+        );
+        document.getElementById("summaryBlock").innerText =
+          `Tổng giá trị hàng hóa tồn kho hiện tại: ${totalInventory.toLocaleString("vi-VN")}đ`;
+      }
+
+      function filterProducts() {
+        const keyword = document
+          .getElementById("searchName")
+          .value.toLowerCase()
+          .trim();
+        const priceOpt = document.getElementById("priceFilter").value;
+        const sortOpt = document.getElementById("sortOrder").value;
+
+        // Xử lý tìm kiếm theo chuỗi ký tự kết hợp bộ lọc giá filter
+        let filtered = products.filter((p) => {
+          const matchesName = p.name.toLowerCase().includes(keyword);
+          let matchesPrice = true;
+          if (priceOpt === "low") matchesPrice = p.price < 500000;
+          if (priceOpt === "high") matchesPrice = p.price >= 500000;
+          return matchesName && matchesPrice;
+        });
+
+        // Thao tác sắp xếp nâng cao tăng hoặc giảm dần
+        if (sortOpt === "asc") {
+          filtered.sort((a, b) => a.price - b.price);
+        } else if (sortOpt === "desc") {
+          filtered.sort((a, b) => b.price - a.price);
+        }
+
+        renderTable(filtered);
+      }
+
+      window.onload = () => renderTable(products);
+    </script>
+  </body>
+</html>

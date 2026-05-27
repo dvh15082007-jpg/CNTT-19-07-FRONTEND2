@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 17: Giỏ Hàng Mini Tiện Ích</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 30px;
+      }
+      .cart-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 500px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        background: #fff;
+      }
+      .qty-input {
+        width: 40px;
+        text-align: center;
+        font-weight: bold;
+        margin: 0 5px;
+      }
+      .btn-qty {
+        padding: 3px 8px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .subtotal-panel {
+        max-width: 500px;
+        text-align: right;
+        padding: 10px 15px;
+        font-size: 18px;
+        font-weight: bold;
+        background: #f1f2f6;
+        border: 1px solid #ddd;
+        border-top: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Giỏ Hàng Trực Tuyến Của Bạn</h2>
+    <div class="cart-item">
+      <div>
+        <h4 style="margin: 0">Tai nghe chụp tai Sony WH-1000XM4</h4>
+        <span style="color: #7f8c8d">Đơn giá: </span
+        ><b id="unitPrice">5500000</b>đ
+      </div>
+      <div>
+        <button class="btn-qty" id="qtyDown">-</button>
+        <input type="text" class="qty-input" id="qtyBox" value="1" readonly />
+        <button class="btn-qty" id="qtyUp">+</button>
+      </div>
+    </div>
+    <div class="subtotal-panel">
+      Tổng hóa đơn:
+      <span style="color: #e74c3c" id="totalCartView">5,500,000</span>đ
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        const price = parseInt($("#unitPrice").text());
+
+        function recaclulateCart() {
+          let currentQty = parseInt($("#qtyBox").val());
+
+          // Quy tắc ràng buộc: Không cho phép số lượng đặt mua hạ thấp dưới mốc 1 phần tử
+          if (currentQty < 1) {
+            currentQty = 1;
+            $("#qtyBox").val(1);
+          }
+
+          // Công thức tính thành tiền chuẩn hóa
+          let totalBill = currentQty * price;
+          $("#totalCartView").text(totalBill.toLocaleString("vi-VN"));
+        }
+
+        $("#qtyUp").click(function () {
+          let current = parseInt($("#qtyBox").val());
+          $("#qtyBox").val(current + 1);
+          recaclulateCart();
+        });
+
+        $("#qtyDown").click(function () {
+          let current = parseInt($("#qtyBox").val());
+          if (current > 1) {
+            $("#qtyBox").val(current - 1);
+            recaclulateCart();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

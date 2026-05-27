@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 16: Bộ Đếm Lượt Tương Tác jQuery</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding-top: 50px;
+      }
+      .display-counter {
+        font-size: 64px;
+        font-weight: bold;
+        margin: 15px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      style="
+        max-width: 350px;
+        margin: 0 auto;
+        border: 1px solid #ccc;
+        padding: 20px;
+        background: #f9f9f9;
+      "
+    >
+      <h2>Bộ Đếm Lượt Tương Tác</h2>
+      <div class="display-counter" id="numView">0</div>
+      <button id="minusBtn">Giảm (-1)</button>
+      <button id="clearBtn">Đặt Lại</button>
+      <button id="plusBtn">Tăng (+1)</button>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        let counterState = 0;
+
+        function syncScreen() {
+          // Đổ xuất nội dung số liệu ra ngoài DOM qua hàm text() jQuery
+          $("#numView").text(counterState);
+
+          // Yêu cầu mở rộng: Nhuộm màu trạng thái dựa vào tính chất số âm/dương
+          if (counterState > 0) $("#numView").style("color", "#2ecc71");
+          else if (counterState < 0) $("#numView").style("color", "#e74c3c");
+          else $("#numView").style("color", "#333");
+        }
+
+        $("#plusBtn").click(function () {
+          counterState++;
+          syncScreen();
+        });
+        $("#minusBtn").click(function () {
+          counterState--;
+          syncScreen();
+        });
+        $("#clearBtn").click(function () {
+          counterState = 0;
+          syncScreen();
+        });
+      });
+    </script>
+  </body>
+</html>

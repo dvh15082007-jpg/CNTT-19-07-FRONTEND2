@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 9: Trình Quản Lý Công Việc To-Do</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #e0eae9;
+        padding: 30px;
+      }
+      .todo-app {
+        max-width: 450px;
+        background: white;
+        margin: 0 auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+      .input-section {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .input-section input {
+        flex: 1;
+        padding: 10px;
+        font-size: 14px;
+      }
+      .input-section button {
+        background: #009688;
+        color: white;
+        border: none;
+        padding: 0 15px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+      li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        background: #fdfdfd;
+        margin-bottom: 5px;
+        border-radius: 4px;
+      }
+      .completed {
+        text-decoration: line-through;
+        color: #aaa;
+        background: #f1f1f1;
+      }
+      .actions button {
+        margin-left: 5px;
+        padding: 4px 8px;
+        font-size: 12px;
+        cursor: pointer;
+        border: none;
+        border-radius: 3px;
+      }
+      .btn-done {
+        background: #2ecc71;
+        color: white;
+      }
+      .btn-del {
+        background: #e74c3c;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="todo-app">
+      <h2>Nhật Ký Công Việc Cá Nhân</h2>
+      <div class="input-section">
+        <input
+          type="text"
+          id="taskInput"
+          placeholder="Nhập tiêu đề công việc cần làm..."
+        />
+        <button onclick="addNewTask()">Thêm</button>
+      </div>
+      <ul id="taskList"></ul>
+    </div>
+
+    <script>
+      let listData = JSON.parse(localStorage.getItem("myTodoList")) || [];
+
+      function renderList() {
+        const ul = document.getElementById("taskList");
+        ul.innerHTML = "";
+
+        listData.forEach((item, index) => {
+          const li = document.createElement("li");
+          if (item.done) li.classList.add("completed");
+
+          li.innerHTML = `
+                    <span>${item.text}</span>
+                    <div class="actions">
+                        <button class="btn-done" onclick="toggleTask(${index})">✓</button>
+                        <button class="btn-del" onclick="deleteTask(${index})">Xóa</button>
+                    </div>
+                `;
+          ul.appendChild(li);
+        });
+        // Yêu cầu mở rộng: Ghi nhớ lưu vết vào trong localStorage của máy
+        localStorage.setItem("myTodoList", JSON.stringify(listData));
+      }
+
+      function addNewTask() {
+        const input = document.getElementById("taskInput");
+        const txt = input.value.trim();
+        if (!txt) {
+          alert("Nội dung công việc không được để trống!");
+          return;
+        }
+
+        listData.push({ text: txt, done: false });
+        input.value = "";
+        renderList();
+      }
+
+      function toggleTask(index) {
+        listData[index].done = !listData[index].done;
+        renderList();
+      }
+
+      function deleteTask(index) {
+        if (confirm("Bạn chắc chắn có muốn xóa bỏ công việc này không?")) {
+          listData.splice(index, 1);
+          renderList();
+        }
+      }
+
+      window.onload = renderList;
+    </script>
+  </body>
+</html>

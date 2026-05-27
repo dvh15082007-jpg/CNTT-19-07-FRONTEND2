@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 14: Hiệu Ứng Trượt Mờ jQuery</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 40px;
+      }
+      .box-effect {
+        width: 300px;
+        height: 150px;
+        background-color: #9b59b6;
+        margin: 20px auto;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+      button {
+        padding: 8px 12px;
+        margin: 4px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Hệ Thống Điều Khiển Hiệu Ứng Hoạt Họa</h2>
+
+    <button id="fadeToggleBtn">Mờ Dần (Fade)</button>
+    <button id="slideToggleBtn">Trượt Lên/Xuống (Slide)</button>
+    <button id="chainingBtn" style="background: #e67e22; color: white">
+      Hiệu Ứng Liên Hoàn (Chaining)
+    </button>
+
+    <div class="box-effect" id="targetBox">Khối Hoạt Họa DNU</div>
+
+    <script>
+      $(document).ready(function () {
+        // Ứng dụng các hàm hiệu ứng trượt mờ thay đổi trạng thái
+        $("#fadeToggleBtn").click(function () {
+          $("#targetBox").fadeToggle(400);
+        });
+
+        $("#slideToggleBtn").click(function () {
+          $("#targetBox").slideToggle(400);
+        });
+
+        // Kỹ thuật Chaining: Thực hiện chuỗi hành động liên tiếp nối đuôi trên một dòng mã
+        $("#chainingBtn").click(function () {
+          $("#targetBox").slideUp(400).slideDown(400).fadeOut(300).fadeIn(300);
+        });
+      });
+    </script>
+  </body>
+</html>

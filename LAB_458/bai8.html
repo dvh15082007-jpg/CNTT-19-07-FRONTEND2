@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 8: Bộ Đếm Tương Tác</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding-top: 50px;
+        background-color: #f5f5f5;
+      }
+      .counter-box {
+        max-width: 350px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      #counterValue {
+        font-size: 72px;
+        font-weight: bold;
+        margin: 20px 0;
+        color: #2c3e50;
+      }
+      .btn-group button {
+        padding: 10px 15px;
+        margin: 5px;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .btn-inc {
+        background-color: #2ecc71;
+        color: white;
+      }
+      .btn-dec {
+        background-color: #e74c3c;
+        color: white;
+      }
+      .btn-reset {
+        background-color: #95a5a6;
+        color: white;
+      }
+      .btn-fast {
+        background-color: #f1c40f;
+        color: #2c3e50;
+        width: 93%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="counter-box">
+      <h2>BỘ ĐẾM SỐ TƯƠNG TÁC</h2>
+      <div id="counterValue">0</div>
+      <div class="btn-group">
+        <button class="btn-dec" id="btnDecrease">Giảm (-1)</button>
+        <button class="btn-reset" id="btnReset">Đặt Lại</button>
+        <button class="btn-inc" id="btnIncrease">Tăng (+1)</button>
+        <button class="btn-fast" id="btnFastInc">Tăng Nhanh (+5)</button>
+      </div>
+    </div>
+
+    <script>
+      // Khai báo biến lưu giữ trạng thái của bộ đếm ứng dụng
+      let count = 0;
+      const counterDisplay = document.getElementById("counterValue");
+
+      // Hàm render đảm nhiệm đồng bộ biến dữ liệu sang màn hình hiển thị
+      function renderUI() {
+        counterDisplay.innerText = count;
+        // Yêu cầu mở rộng: Đổi màu sắc số đếm linh hoạt khi giá trị âm hoặc dương
+        if (count > 0) {
+          counterDisplay.style.color = "#2ecc71"; // Xanh khi dương
+        } else if (count < 0) {
+          counterDisplay.style.color = "#e74c3c"; // Đỏ khi âm
+        } else {
+          counterDisplay.style.color = "#2c3e50"; // Màu xám tối mặc định khi bằng 0
+        }
+      }
+
+      // Gắn lắng nghe tương tác bằng phương thức chuẩn addEventListener
+      document.getElementById("btnIncrease").addEventListener("click", () => {
+        count++;
+        renderUI();
+      });
+      document.getElementById("btnDecrease").addEventListener("click", () => {
+        count--;
+        renderUI();
+      });
+      document.getElementById("btnReset").addEventListener("click", () => {
+        count = 0;
+        renderUI();
+      });
+
+      // Yêu cầu mở rộng: Bổ sung bước tăng nhanh nhảy vọt theo bội số 5 đơn vị
+      document.getElementById("btnFastInc").addEventListener("click", () => {
+        count += 5;
+        renderUI();
+      });
+    </script>
+  </body>
+</html>

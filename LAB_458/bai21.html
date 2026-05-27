@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 21: Full CRUD Mini Project Ajax</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 25px;
+        background-color: #f7f9fa;
+      }
+      .grid-panel {
+        display: flex;
+        gap: 20px;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .form-side {
+        flex: 1;
+        background: #fff;
+        padding: 15px;
+        border: 1px solid #ccc;
+        height: fit-content;
+      }
+      .table-side {
+        flex: 2;
+        background: #fff;
+        padding: 15px;
+        border: 1px solid #ccc;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 6px 10px;
+        text-align: left;
+        font-size: 14px;
+      }
+      th {
+        background: #2c3e50;
+        color: white;
+      }
+      button {
+        padding: 4px 8px;
+        font-size: 12px;
+        cursor: pointer;
+        margin: 2px;
+      }
+      .btn-save {
+        background: #2ecc71;
+        color: white;
+        border: none;
+        font-weight: bold;
+        padding: 8px 12px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h2 style="text-align: center; color: #2c3e50">
+      Quản Lý Thành Viên Lớp Học (jQuery Ajax CRUD)
+    </h2>
+    <div class="grid-panel">
+      <div class="form-side">
+        <h4 id="formActionTitle" style="margin-top: 0; color: #2980b9">
+          Thêm Thành Viên Mới
+        </h4>
+        <input type="hidden" id="crudTargetId" />
+        <div style="margin-bottom: 8px">
+          <label style="display: block; font-size: 12px; font-weight: bold"
+            >Họ và tên:</label
+          >
+          <input
+            type="text"
+            id="crudName"
+            style="width: 100%; padding: 5px; box-sizing: border-box"
+          />
+        </div>
+        <div style="margin-bottom: 12px">
+          <label style="display: block; font-size: 12px; font-weight: bold"
+            >Email học viên:</label
+          >
+          <input
+            type="email"
+            id="crudEmail"
+            style="width: 100%; padding: 5px; box-sizing: border-box"
+          />
+        </div>
+        <button class="btn-save" id="btnSubmitCrud">Lưu Lại</button>
+        <button
+          id="btnCancelEdit"
+          style="width: 100%; margin-top: 5px; display: none"
+        >
+          Hủy Chế Độ Sửa
+        </button>
+      </div>
+
+      <div class="table-side">
+        <h4>Bảng Danh Sách Đồng Bộ</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Mã ID</th>
+              <th>Họ Tên</th>
+              <th>Email</th>
+              <th>Hành Động</th>
+            </tr>
+          </thead>
+          <tbody id="mainCrudTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      const apiBaseUrl = "https://664dbcc7ede96048be6b7b20.mockapi.io/users";
+
+      function refreshTable() {
+        $.ajax({
+          url: apiBaseUrl,
+          type: "GET",
+          success: function (list) {
+            let htmlRows = "";
+            list.forEach((item) => {
+              htmlRows += `
+                            <tr>
+                                <td>${item.id}</td>
+                                <td><b>${item.name}</b></td>
+                                <td>${item.email}</td>
+                                <td>
+                                    <button style="background:#f1c40f; border:none;" onclick="enterEditMode('${item.id}', '${item.name}', '${item.email}')">Sửa</button>
+                                    <button style="background:#e74c3c; color:white; border:none;" onclick="triggerDelete('${item.id}')">Xóa</button>
+                                </td>
+                            </tr>
+                        `;
+            });
+            $("#mainCrudTbody").html(htmlRows);
+          },
+        });
+      }
+
+      // Nhận dữ liệu đẩy ngược lên Form kích hoạt chế độ sửa đổi cập nhật nội dung dữ liệu
+      function enterEditMode(id, name, email) {
+        $("#crudTargetId").val(id);
+        $("#crudName").val(name);
+        $("#crudEmail").val(email);
+        $("#formActionTitle")
+          .text(`Cập Nhật Thành Viên #${id}`)
+          .css("color", "#d35400");
+        $("#btnCancelEdit").show();
+      }
+
+      function leaveEditMode() {
+        $("#crudTargetId").val("");
+        $("#crudName").val("");
+        $("#crudEmail").val("");
+        $("#formActionTitle")
+          .text("Thêm Thành Viên Mới")
+          .css("color", "#2980b9");
+        $("#btnCancelEdit").hide();
+      }
+
+      $("#btnCancelEdit").click(function () {
+        leaveEditMode();
+      });
+
+      $("#btnSubmitCrud").click(function () {
+        let id = $("#crudTargetId").val();
+        let name = $.trim($("#crudName").val());
+        let email = $.trim($("#crudEmail").val());
+
+        if (!name || !email) {
+          alert("Thông tin trống!");
+          return;
+        }
+
+        let payload = { name: name, email: email };
+
+        if (id === "") {
+          // Hành vi tạo mới POST
+          $.ajax({
+            url: apiBaseUrl,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: function () {
+              refreshTable();
+              leaveEditMode();
+            },
+          });
+        } else {
+          // Hành vi sửa đổi cập nhật dữ liệu qua PUT
+          $.ajax({
+            url: `${apiBaseUrl}/${id}`,
+            type: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: function () {
+              refreshTable();
+              leaveEditMode();
+            },
+          });
+        }
+      });
+
+      function triggerDelete(id) {
+        if (!confirm("Xác nhận xóa bỏ vĩnh viễn?")) return;
+        $.ajax({
+          url: `${apiBaseUrl}/${id}`,
+          type: "DELETE",
+          success: function () {
+            refreshTable();
+          },
+        });
+      }
+
+      $(document).ready(function () {
+        refreshTable();
+      });
+    </script>
+  </body>
+</html>

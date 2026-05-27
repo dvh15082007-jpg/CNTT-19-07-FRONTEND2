@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 15: Kiểm Tra Form Đăng Ký</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f1f2f6;
+        padding: 30px;
+      }
+      .reg-form {
+        max-width: 400px;
+        margin: 0 auto;
+        background: white;
+        padding: 25px;
+        border-radius: 6px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      .input-group {
+        margin-bottom: 12px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+      }
+      .error-msg {
+        color: #e74c3c;
+        font-size: 13px;
+        margin-top: 4px;
+        display: none;
+      }
+      .success-banner {
+        background: #2ecc71;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        display: none;
+        margin-bottom: 10px;
+      }
+      /* Style mở rộng đổi màu viền */
+      .invalid-border {
+        border: 1px solid #e74c3c !important;
+      }
+      .valid-border {
+        border: 1px solid #2ecc71 !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reg-form">
+      <div class="success-banner" id="successMsg">
+        🎉 Đăng ký tài khoản hoàn tất thành công!
+      </div>
+      <h3>Tạo Tài Khoản Thành Viên</h3>
+      <form id="myRegisterForm">
+        <div class="input-group">
+          <label>Họ và tên:</label>
+          <input type="text" id="fullName" />
+          <div class="error-msg" id="errName">
+            Họ tên không được phép bỏ trống!
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Hòm thư Email:</label>
+          <input type="text" id="userEmail" />
+          <div class="error-msg" id="errEmail">
+            Định dạng email không hợp lệ!
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Mật khẩu:</label>
+          <input type="password" id="userPwd" />
+          <div class="error-msg" id="errPwd">
+            Mật khẩu bắt buộc tối thiểu từ 6 ký tự trở lên!
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Xác nhận mật khẩu:</label>
+          <input type="password" id="confirmPwd" />
+          <div class="error-msg" id="errConfirm">
+            Mật khẩu xác nhận lại chưa khớp nhau!
+          </div>
+        </div>
+        <button
+          type="submit"
+          style="
+            width: 100%;
+            padding: 10px;
+            background: #3498db;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+          "
+        >
+          Đăng Ký Ngay
+        </button>
+      </form>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        $("#myRegisterForm").submit(function (event) {
+          event.preventDefault(); // Chặn hành vi tải lại trang mặc định của biểu mẫu submit
+
+          let isValid = true;
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+          // 1. Kiểm tra Họ và Tên
+          if ($.trim($("#fullName").val()) === "") {
+            $("#errName").show();
+            $("#fullName").addClass("invalid-border");
+            isValid = false;
+          } else {
+            $("#errName").hide();
+            $("#fullName")
+              .removeClass("invalid-border")
+              .addClass("valid-border");
+          }
+
+          // 2. Kiểm tra định dạng Email qua mẫu biểu thức chính quy regex
+          if (!emailRegex.test($("#userEmail").val())) {
+            $("#errEmail").show();
+            $("#userEmail").addClass("invalid-border");
+            isValid = false;
+          } else {
+            $("#errEmail").hide();
+            $("#userEmail")
+              .removeClass("invalid-border")
+              .addClass("valid-border");
+          }
+
+          // 3. Kiểm tra độ dài an toàn mật khẩu
+          if ($("#userPwd").val().length < 6) {
+            $("#errPwd").show();
+            $("#userPwd").addClass("invalid-border");
+            isValid = false;
+          } else {
+            $("#errPwd").hide();
+            $("#userPwd")
+              .removeClass("invalid-border")
+              .addClass("valid-border");
+          }
+
+          // 4. Kiểm tra sự tương khớp chính xác của mật khẩu nhắc lại
+          if (
+            $("#userPwd").val() !== $("#confirmPwd").val() ||
+            $("#confirmPwd").val() === ""
+          ) {
+            $("#errConfirm").show();
+            $("#confirmPwd").addClass("invalid-border");
+            isValid = false;
+          } else {
+            $("#errConfirm").hide();
+            $("#confirmPwd")
+              .removeClass("invalid-border")
+              .addClass("valid-border");
+          }
+
+          if (isValid) {
+            $("#successMsg").fadeIn().delay(3000).fadeOut();
+            // Reset form
+            $("#myRegisterForm")[0].reset();
+            $("input").removeClass("valid-border");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

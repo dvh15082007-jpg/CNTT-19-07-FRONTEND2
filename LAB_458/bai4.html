@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 4: Quản Lý Điểm Học Phần</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 30px;
+        background-color: #f4f7f6;
+      }
+      .box {
+        max-width: 500px;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .input-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      input {
+        flex: 1;
+        padding: 8px;
+      }
+      button {
+        padding: 8px 15px;
+        background: #e67e22;
+        border: none;
+        color: white;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .score-item {
+        display: inline-block;
+        background: #ecf0f1;
+        padding: 5px 10px;
+        margin: 4px;
+        border-radius: 20px;
+        font-weight: bold;
+      }
+      .report {
+        margin-top: 20px;
+        background: #f9f9f9;
+        padding: 15px;
+        border-left: 5px solid #e67e22;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>Xử Lý Dữ Liệu Điểm Sinh Viên</h2>
+      <div class="input-row">
+        <input
+          type="number"
+          id="newScore"
+          placeholder="Nhập điểm mới (0 - 10)..."
+          min="0"
+          max="10"
+          step="0.1"
+        />
+        <button onclick="addScore()">Thêm điểm</button>
+      </div>
+
+      <div style="font-weight: bold; margin-bottom: 5px">
+        Mảng điểm hiện tại:
+      </div>
+      <div id="scoreContainer"></div>
+
+      <div class="report" id="reportCard">
+        Xang kết quả tổng hợp sẽ hiển thị tại đây...
+      </div>
+    </div>
+
+    <script>
+      // Khởi tạo mảng điểm gồm ít nhất 5 phần tử mặc định ban đầu
+      let scoreArray = [8.5, 6.4, 9.0, 4.5, 7.2];
+
+      function renderScores() {
+        const container = document.getElementById("scoreContainer");
+        container.innerHTML = "";
+        scoreArray.forEach((score) => {
+          container.innerHTML += `<span class="score-item">${score}</span>`;
+        });
+        calculateReport();
+      }
+
+      function addScore() {
+        const input = document.getElementById("newScore");
+        const val = parseFloat(input.value);
+        if (isNaN(val) || val < 0 || val > 10) {
+          alert("Vui lòng nhập điểm số chính xác từ 0 đến 10!");
+          return;
+        }
+        scoreArray.push(val);
+        input.value = "";
+        renderScores();
+      }
+
+      function calculateReport() {
+        if (scoreArray.length === 0) {
+          document.getElementById("reportCard").innerHTML = "Mảng điểm trống!";
+          return;
+        }
+
+        let total = 0;
+        scoreArray.forEach((num) => (total += num));
+        const average = (total / scoreArray.length).toFixed(2);
+
+        // Xử lý logic phân loại học lực theo các thang điểm chuẩn quy định
+        let grade = "";
+        if (average >= 8.5) grade = "Giỏi 🥇";
+        else if (average >= 7.0) grade = "Khá 🥈";
+        else if (average >= 5.0) grade = "Trung bình 🥉";
+        else grade = "Yếu ⛔";
+
+        document.getElementById("reportCard").innerHTML = `
+                <p>Tổng số lượng điểm: <b>${scoreArray.length}</b></p>
+                <p>Điểm trung bình học phần: <b style="color:#d35400; font-size:18px;">${average}</b></p>
+                <p>Xếp loại học lực tổng thể: <b>${grade}</b></p>
+            `;
+      }
+
+      window.onload = renderScores;
+    </script>
+  </body>
+</html>

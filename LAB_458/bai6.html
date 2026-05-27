@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 6: Quy Trình Đơn Hàng Callback</title>
+    <style>
+      body {
+        font-family: Courier, monospace;
+        margin: 30px;
+        background-color: #2c3e50;
+        color: #ecf0f1;
+      }
+      .receipt-box {
+        max-width: 450px;
+        background: #34495e;
+        padding: 20px;
+        border-radius: 4px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        border-top: 10px solid #f1c40f;
+      }
+      h3 {
+        text-align: center;
+        color: #f1c40f;
+      }
+      .step-log {
+        font-size: 13px;
+        background: #1a252f;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-left: 3px solid #f1c40f;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="receipt-box">
+      <h3>HỆ THỐNG XỬ LÝ ĐƠN HÀNG V2</h3>
+      <p>Bấm nút kích hoạt dây chuyền xử lý dữ liệu tự động:</p>
+      <button
+        style="
+          background: #f1c40f;
+          border: none;
+          padding: 10px 15px;
+          font-weight: bold;
+          cursor: pointer;
+        "
+        onclick="runOrderPipeline()"
+      >
+        Khởi Chạy Xử Lý
+      </button>
+
+      <div style="margin-top: 20px" id="pipelineLogs"></div>
+    </div>
+
+    <script>
+      let logsHTML = "";
+
+      // Bước 1: Tính tiền gốc hàng hóa
+      function stepCalculateRaw(cartItems, callback) {
+        let rawTotal = cartItems.reduce(
+          (sum, item) => sum + item.price * item.qty,
+          0,
+        );
+        logsHTML += `<div class="step-log">▶️ [BƯỚC 1] Tính tổng tiền hàng gốc: <b>${rawTotal.toLocaleString()}đ</b></div>`;
+        callback(rawTotal);
+      }
+
+      // Bước 2: Khấu trừ giảm giá quà tặng
+      function stepApplyDiscount(amount, callback) {
+        let discount = amount > 500000 ? amount * 0.1 : 0; // Giảm 10% cho đơn lớn
+        let remaining = amount - discount;
+        logsHTML += `<div class="step-log">▶️ [BƯỚC 2] Áp dụng chiết khấu giảm giá: <b>-${discount.toLocaleString()}đ</b> (Còn lại: ${remaining.toLocaleString()}đ)</div>`;
+        callback(remaining);
+      }
+
+      // Bước 3: Tính toán phí vận chuyển gia tăng
+      function stepAddShipping(amount, callback) {
+        let shippingFee = amount > 400000 ? 0 : 35000;
+        let currentTotal = amount + shippingFee;
+        logsHTML += `<div class="step-log">▶️ [BƯỚC 3] Tính cước phí giao hàng: <b>+${shippingFee.toLocaleString()}đ</b></div>`;
+        callback(currentTotal);
+      }
+
+      // Yêu cầu mở rộng: Bổ sung bước tính thuế VAT 10% vào chuỗi callback xử lý
+      function stepApplyTax(amount, callback) {
+        let tax = amount * 0.1;
+        let finalTotal = amount + tax;
+        logsHTML += `<div class="step-log">▶️ [BƯỚC BỔ SUNG] Áp dụng thuế GTGT (VAT 10%): <b>+${tax.toLocaleString()}đ</b></div>`;
+        callback(finalTotal);
+      }
+
+      function runOrderPipeline() {
+        logsHTML = "";
+        // Chuẩn bị dữ liệu đầu vào giả lập
+        const myCart = [
+          { name: "Sách Clean Code", price: 220000, qty: 2 },
+          { name: "Chuột chuyên game", price: 310000, qty: 1 },
+        ];
+
+        // Vận hành chuỗi lồng callback liên hoàn (Callback Hell cấu trúc kiểm soát)
+        stepCalculateRaw(myCart, function (rawPrice) {
+          stepApplyDiscount(rawPrice, function (priceAfterDiscount) {
+            stepAddShipping(priceAfterDiscount, function (priceAfterShipping) {
+              stepApplyTax(priceAfterShipping, function (finalTotal) {
+                logsHTML += `
+                                <div style="text-align:center; margin-top:15px; padding:10px; background:#2ecc71; color:white; font-weight:bold;">
+                                    🧾 TỔNG HOÁ ĐƠN CUỐI CÙNG: ${finalTotal.toLocaleString()}đ
+                                </div>
+                            `;
+                document.getElementById("pipelineLogs").innerHTML = logsHTML;
+              });
+            });
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

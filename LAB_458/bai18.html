@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài Lab 18: Quản Lý Thành Viên Danh Sách</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 30px;
+      }
+      .wrapper {
+        max-width: 450px;
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #ccc;
+      }
+      .input-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 15px;
+      }
+      .input-row input {
+        flex: 1;
+        padding: 6px;
+      }
+      .member-list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+        background: #f9f9f9;
+        border-bottom: 1px solid #eee;
+      }
+      .btn-del-member {
+        background: #ff7675;
+        color: white;
+        border: none;
+        padding: 3px 8px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <h3>Danh Sách Nhóm Thành Viên</h3>
+      <div class="input-row">
+        <input
+          type="text"
+          id="memberNameInput"
+          placeholder="Nhập tên thành viên mới..."
+        />
+        <button
+          id="addMemberBtn"
+          style="
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 0 12px;
+            cursor: pointer;
+          "
+        >
+          Thêm
+        </button>
+      </div>
+      <div id="memberContainer">
+        <div class="member-list-item">
+          <span class="name-label">Hoàng Văn Toàn</span>
+          <button class="btn-del-member">Xóa</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        // Thêm mới phần tử vào danh sách dùng append()
+        $("#addMemberBtn").click(function () {
+          let name = $.trim($("#memberNameInput").val());
+          if (!name) {
+            alert("Tên không hợp lệ!");
+            return;
+          }
+
+          let itemTemplate = `
+                    <div class="member-list-item">
+                        <span class="name-label">${name}</span>
+                        <button class="btn-del-member">Xóa</button>
+                    </div>
+                `;
+          $("#memberContainer").append(itemTemplate);
+          $("#memberNameInput").val("");
+        });
+
+        // Sử dụng cơ chế Event Delegation để lắng nghe sự kiện click cho các nút Xóa sinh ra động
+        $(document).on("click", ".btn-del-member", function () {
+          // closest() tìm ngược lên trên để chọn đúng khối bọc ngoài của dòng đó và triệt tiêu
+          $(this).closest(".member-list-item").remove();
+        });
+      });
+    </script>
+  </body>
+</html>
