@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 24 - Landing Page Sự Kiện</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand { font-weight: 800; letter-spacing: -0.5px; }
+        .hero-section {
+            background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(30, 41, 59, 0.85)), url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80') center/cover;
+            padding: 120px 0;
+        }
+        .section-padding { padding: 70px 0; }
+        .carousel-item img { height: 450px; object-fit: cover; border-radius: 16px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top bg-opacity-95 shadow-sm">
+    <div class="container">
+        <a class="navbar-brand text-primary fs-4" href="#">🚀 TECH CON 2026</a>
+        <button class="navbar-dark navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav gap-2">
+                <li class="nav-item"><a class="nav-link active" href="#about">Giới thiệu</a></li>
+                <li class="nav-item"><a class="nav-link" href="#gallery">Hình ảnh</a></li>
+                <li class="nav-item"><a class="nav-link" href="#schedule">Lịch trình</a></li>
+                <li class="nav-item"><a class="btn btn-primary btn-sm text-white px-3 fw-bold" href="#register">Đăng ký ngay</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section class="hero-section text-white text-center">
+    <div class="container">
+        <span class="badge bg-primary px-3 py-2 fs-6 mb-3 rounded-pill">SỰ KIỆN CÔNG NGHỆ LỚN NHẤT NĂM</span>
+        <h1 class="display-3 fw-extrabold mb-3">Chinh Phục Kỷ Nguyên AI</h1>
+        <p class="lead text-light max-width-600 mx-auto mb-4">Hội tụ hơn 50 diễn giả hàng đầu thế giới chia sẻ về xu hướng chuyển dịch trí tuệ nhân tạo toàn cầu.</p>
+        <a href="#register" class="btn btn-primary btn-lg fw-bold px-4 shadow shadow-lg">Nhận Vé Tham Gia Miễn Phí</a>
+    </div>
+</section>
+
+<section id="about" class="section-padding bg-light">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-12 col-md-6">
+                <h2 class="fw-bold mb-3 text-dark">Giá Trị Độc Quyền Nhận Được</h2>
+                <p class="text-muted">Đến với Tech Con, bạn không chỉ được lắng nghe kiến thức hàn lâm mà còn trực tiếp trải nghiệm các công nghệ phần cứng đột phá.</p>
+                <ul class="list-group list-group-flush bg-transparent">
+                    <li class="list-group-item bg-transparent px-0">🌟 Gặp gỡ trực tiếp các CTO tập đoàn công nghệ lớn.</li>
+                    <li class="list-group-item bg-transparent px-0">🤝 Cơ hội tuyển dụng làm việc trực tiếp tại chỗ.</li>
+                    <li class="list-group-item bg-transparent px-0">🎁 Nhận trọn bộ mã nguồn thử nghiệm giải pháp AI.</li>
+                </ul>
+            </div>
+            <div class="col-12 col-md-6" id="gallery">
+                <div id="eventCarousel" class="carousel slide shadow" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=600&q=80" class="d-block w-100" alt="Slide 1">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=600&q=80" class="d-block w-100" alt="Slide 2">
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="register" class="section-padding bg-white">
+    <div class="container" style="max-width: 600px;">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-dark">Đăng ký giữ chỗ</h2>
+            <p class="text-muted small">Số lượng ghế ngồi tại hội trường có hạn, vui lòng để lại thông tin chính xác.</p>
+        </div>
+        <div class="card p-4 shadow-sm border-0 bg-light rounded-4">
+            <form>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Họ và tên</label>
+                    <input type="text" class="form-control" placeholder="Nguyễn Văn A" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Số điện thoại</label>
+                    <input type="tel" class="form-control" placeholder="0987654321" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Email cá nhân</label>
+                    <input type="email" class="form-control" placeholder="name@domain.com" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-2">Gửi biểu mẫu đăng ký</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 05 - Quản lý Sản Phẩm</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .actions { margin: 15px 0; display: flex; gap: 10px; flex-wrap: wrap;}
+        input, button { padding: 6px; }
+        .summary { margin-top: 15px; font-weight: bold; color: #d9534f; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Quản Lý Tồn Kho</h2>
+        
+        <div class="actions">
+            <input type="text" id="searchName" placeholder="Nhập chính xác tên...">
+            <button onclick="handleSearch()">Tìm kiếm (Find)</button>
+
+            <input type="number" id="filterPrice" placeholder="Giá tối đa...">
+            <button onclick="handleFilter()">Lọc giá (Filter)</button>
+
+            <button onclick="handleSort('asc')">Giá Tăng Dần</button>
+            <button onclick="handleSort('desc')">Giá Giảm Dần</button>
+            <button onclick="renderTable(products)">Hiển thị tất cả</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá (VNĐ)</th>
+                    <th>Số lượng</th>
+                </tr>
+            </thead>
+            <tbody id="productBody"></tbody>
+        </table>
+
+        <div class="summary" id="inventoryValue"></div>
+    </div>
+
+    <script>
+        // Mảng đối tượng ít nhất 5 sản phẩm
+        const products = [
+            { name: "Laptop Dell", price: 15000000, qty: 5 },
+            { name: "Chuột Logitech", price: 300000, qty: 50 },
+            { name: "Bàn phím cơ", price: 800000, qty: 20 },
+            { name: "Màn hình LG", price: 3500000, qty: 10 },
+            { name: "Tai nghe Sony", price: 1200000, qty: 15 }
+        ];
+
+        const formatMoney = (amount) => new Intl.NumberFormat('vi-VN').format(amount);
+
+        // Hàm render động
+        function renderTable(dataList) {
+            const tbody = document.getElementById('productBody');
+            tbody.innerHTML = ""; // Xóa dữ liệu cũ
+            
+            if (dataList.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='3' style='text-align:center;'>Không có dữ liệu!</td></tr>";
+                return;
+            }
+
+            dataList.forEach(item => {
+                let tr = `<tr>
+                            <td>${item.name}</td>
+                            <td>${formatMoney(item.price)}</td>
+                            <td>${item.qty}</td>
+                          </tr>`;
+                tbody.innerHTML += tr;
+            });
+
+            // Yêu cầu mở rộng: Hiển thị tổng giá trị tồn kho
+            let totalValue = dataList.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            document.getElementById('inventoryValue').innerText = `Tổng giá trị tồn kho hiển thị: ${formatMoney(totalValue)} VNĐ`;
+        }
+
+        // Tìm kiếm chính xác (Dùng find)
+        function handleSearch() {
+            let keyword = document.getElementById('searchName').value.trim().toLowerCase();
+            if (!keyword) return;
+            
+            let found = products.find(p => p.name.toLowerCase() === keyword);
+            renderTable(found ? [found] : []);
+        }
+
+        // Lọc theo giá (Dùng filter)
+        function handleFilter() {
+            let maxPrice = Number(document.getElementById('filterPrice').value);
+            if (maxPrice <= 0) return;
+
+            let filtered = products.filter(p => p.price <= maxPrice);
+            renderTable(filtered);
+        }
+
+        // Yêu cầu mở rộng: Sắp xếp
+        function handleSort(order) {
+            let sortedProducts = [...products]; // Tránh thay đổi mảng gốc
+            if (order === 'asc') {
+                sortedProducts.sort((a, b) => a.price - b.price);
+            } else {
+                sortedProducts.sort((a, b) => b.price - a.price);
+            }
+            renderTable(sortedProducts);
+        }
+
+        // Render mặc định khi mở trang
+        renderTable(products);
+    </script>
+</body>
+</html>

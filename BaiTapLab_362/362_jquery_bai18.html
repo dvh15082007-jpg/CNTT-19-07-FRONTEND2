@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 18 - Quản lý thành viên</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto; }
+        .input-group { display: flex; margin-bottom: 20px; }
+        #member-name { flex: 1; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px 0 0 4px; }
+        #btn-add { padding: 10px 20px; background: #28a745; color: white; border: none; cursor: pointer; border-radius: 0 4px 4px 0;}
+        ul { list-style-type: none; padding: 0; }
+        li { background: #f9f9f9; margin-bottom: 10px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; }
+        .stt { font-weight: bold; margin-right: 10px; color: #555;}
+        .name-display { flex: 1; font-size: 16px; }
+        .edit-input { flex: 1; font-size: 16px; padding: 5px; margin-right: 10px; }
+        button { padding: 5px 10px; margin-left: 5px; cursor: pointer; border: none; border-radius: 3px; color: white;}
+        .btn-edit { background: #17a2b8; }
+        .btn-save { background: #28a745; }
+        .btn-del { background: #dc3545; }
+    </style>
+</head>
+<body>
+
+    <h2>Quản Lý Thành Viên</h2>
+    
+    <div class="input-group">
+        <input type="text" id="member-name" placeholder="Nhập tên thành viên...">
+        <button id="btn-add">Thêm Mới</button>
+    </div>
+
+    <ul id="member-list">
+        </ul>
+
+    <script>
+        $(document).ready(function() {
+            
+            // Hàm đánh số thứ tự tự động (Yêu cầu mở rộng)
+            function updateIndex() {
+                $('#member-list li').each(function(index) {
+                    $(this).find('.stt').text((index + 1) + ".");
+                });
+            }
+
+            // 1. Chức năng THÊM thành viên
+            $('#btn-add').click(function() {
+                let name = $('#member-name').val().trim();
+                if (name !== "") {
+                    // Tạo HTML cho một dòng (li) mới
+                    let newMemberHTML = `
+                        <li>
+                            <span class="stt"></span>
+                            <span class="name-display">${name}</span>
+                            <input type="text" class="edit-input" value="${name}" style="display:none;">
+                            <button class="btn-edit">Sửa</button>
+                            <button class="btn-save" style="display:none;">Lưu</button>
+                            <button class="btn-del">Xóa</button>
+                        </li>
+                    `;
+                    // Chèn vào cuối danh sách (append)
+                    $('#member-list').append(newMemberHTML);
+                    
+                    // Reset ô nhập và cập nhật STT
+                    $('#member-name').val('').focus();
+                    updateIndex();
+                } else {
+                    alert("Vui lòng nhập tên thành viên!");
+                }
+            });
+
+            // Sử dụng Event Delegation cho các phần tử động (Xóa, Sửa, Lưu)
+            
+            // 2. Chức năng XÓA (remove & closest)
+            $('#member-list').on('click', '.btn-del', function() {
+                if(confirm('Bạn có chắc muốn xóa thành viên này?')) {
+                    $(this).closest('li').remove();
+                    updateIndex(); // Cập nhật lại số thứ tự sau khi xóa
+                }
+            });
+
+            // 3. Chức năng SỬA (Hiển thị ô input trực tiếp)
+            $('#member-list').on('click', '.btn-edit', function() {
+                let li = $(this).closest('li');
+                li.find('.name-display').hide();
+                li.find('.edit-input').show().focus();
+                li.find('.btn-edit').hide();
+                li.find('.btn-save').show();
+            });
+
+            // 4. Chức năng LƯU (Sau khi sửa xong)
+            $('#member-list').on('click', '.btn-save', function() {
+                let li = $(this).closest('li');
+                let newName = li.find('.edit-input').val().trim();
+                
+                if (newName !== "") {
+                    li.find('.name-display').text(newName);
+                    
+                    // Quay về trạng thái hiển thị bình thường
+                    li.find('.edit-input').hide();
+                    li.find('.name-display').show();
+                    li.find('.btn-save').hide();
+                    li.find('.btn-edit').show();
+                } else {
+                    alert("Tên không được để trống!");
+                    li.find('.edit-input').focus();
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>

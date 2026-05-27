@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 09 - To-do List</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f7f6; display: flex; justify-content: center; padding: 20px; }
+        .todo-container { background: #fff; width: 100%; max-width: 400px; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        .input-group input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .input-group button { padding: 10px 15px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        
+        .filter-group { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; }
+        .filter-group select { padding: 5px; border-radius: 5px; }
+
+        ul { list-style: none; padding: 0; margin: 0; }
+        li { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+        li.completed span { text-decoration: line-through; color: #888; }
+        
+        .task-actions button { margin-left: 5px; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px; color: white;}
+        .btn-done { background: #17a2b8; }
+        .btn-delete { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="todo-container">
+        <h2>Quản Lý Công Việc</h2>
+        
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="Nhập công việc mới...">
+            <button onclick="addTask()">Thêm</button>
+        </div>
+
+        <div class="filter-group">
+            <span>Danh sách công việc:</span>
+            <select id="taskFilter" onchange="renderTasks()">
+                <option value="all">Tất cả</option>
+                <option value="pending">Chưa hoàn thành</option>
+                <option value="completed">Đã hoàn thành</option>
+            </select>
+        </div>
+
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        // 1. Dữ liệu (State) - Yêu cầu mở rộng: Lấy từ localStorage
+        let tasks = JSON.parse(localStorage.getItem('todo_tasks')) || [];
+
+        // Lưu dữ liệu vào LocalStorage
+        function saveTasks() {
+            localStorage.setItem('todo_tasks', JSON.stringify(tasks));
+        }
+
+        // 2. Hàm render danh sách ra UI
+        function renderTasks() {
+            const listElement = document.getElementById('taskList');
+            const filterValue = document.getElementById('taskFilter').value;
+            listElement.innerHTML = ''; // Xóa rỗng trước khi render lại
+
+            // Lọc mảng theo trạng thái
+            let filteredTasks = tasks.filter(task => {
+                if (filterValue === 'completed') return task.completed;
+                if (filterValue === 'pending') return !task.completed;
+                return true; // 'all'
+            });
+
+            if (filteredTasks.length === 0) {
+                listElement.innerHTML = "<li style='justify-content:center; color:#999;'>Không có công việc nào!</li>";
+                return;
+            }
+
+            filteredTasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                if (task.completed) li.classList.add('completed');
+                
+                // Cấu trúc HTML của từng dòng công việc
+                li.innerHTML = `
+                    <span>${task.name}</span>
+                    <div class="task-actions">
+                        <button class="btn-done" onclick="toggleTask(${task.id})">${task.completed ? 'Hoàn tác' : 'Xong'}</button>
+                        <button class="btn-delete" onclick="deleteTask(${task.id})">Xóa</button>
+                    </div>
+                `;
+                listElement.appendChild(li);
+            });
+        }
+
+        // 3. Xử lý Thêm công việc
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const text = input.value.trim();
+            if (text === "") {
+                alert("Vui lòng nhập nội dung công việc!");
+                return;
+            }
+
+            const newTask = {
+                id: Date.now(), // Tạo ID ngẫu nhiên bằng timestamp
+                name: text,
+                completed: false
+            };
+
+            tasks.push(newTask);
+            saveTasks();
+            input.value = ""; // Xóa input
+            renderTasks();
+        }
+
+        // 4. Xử lý Đánh dấu Hoàn thành / Chưa hoàn thành
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                saveTasks();
+                renderTasks();
+            }
+        }
+
+        // 5. Xử lý Xóa công việc
+        function deleteTask(id) {
+            if(confirm("Bạn có chắc chắn muốn xóa công việc này?")) {
+                tasks = tasks.filter(t => t.id !== id);
+                saveTasks();
+                renderTasks();
+            }
+        }
+
+        // Khởi chạy khi load trang
+        renderTasks();
+
+        // Thêm tính năng bấm Enter để Add
+        document.getElementById("taskInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                addTask();
+            }
+        });
+    </script>
+</body>
+</html>

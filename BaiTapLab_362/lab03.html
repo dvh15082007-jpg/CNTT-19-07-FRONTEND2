@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 03 - Đoán Số</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 400px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; text-align: center; }
+        input { width: 60%; padding: 8px; margin: 10px; }
+        button { padding: 8px 15px; cursor: pointer; }
+        #message { font-weight: bold; margin: 15px 0; }
+        #history { text-align: left; background: #eee; padding: 10px; border-radius: 5px; font-size: 14px;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Trò Chơi Đoán Số (1 - 100)</h2>
+        <p>Bạn có tối đa <b>7</b> lần đoán!</p>
+        
+        <input type="number" id="guessInput" placeholder="Nhập số bạn đoán...">
+        <button id="guessBtn" onclick="checkGuess()">Đoán</button>
+        <button id="resetBtn" onclick="initGame()" style="display:none;">Chơi lại</button>
+        
+        <div id="message"></div>
+        <div id="history">Lịch sử đoán: <br></div>
+    </div>
+
+    <script>
+        let secretNumber;
+        let attempts;
+        const maxAttempts = 7; // Yêu cầu mở rộng: Giới hạn số lần chơi
+        let historyArray = []; // Yêu cầu mở rộng: Lịch sử đoán
+
+        // Hàm khởi tạo game
+        function initGame() {
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            attempts = 0;
+            historyArray = [];
+            
+            document.getElementById('guessInput').value = "";
+            document.getElementById('guessInput').disabled = false;
+            document.getElementById('guessBtn').disabled = false;
+            document.getElementById('resetBtn').style.display = "none";
+            document.getElementById('message').innerHTML = "Trò chơi đã sẵn sàng!";
+            document.getElementById('message').style.color = "black";
+            updateHistory();
+        }
+
+        function checkGuess() {
+            let guess = Number(document.getElementById('guessInput').value);
+            let msgDiv = document.getElementById('message');
+
+            if (guess < 1 || guess > 100) {
+                msgDiv.innerHTML = "Vui lòng nhập số từ 1 đến 100!";
+                msgDiv.style.color = "orange";
+                return;
+            }
+
+            attempts++;
+            historyArray.push(guess);
+
+            if (guess === secretNumber) {
+                msgDiv.innerHTML = `🎉 Chính xác! Bạn đã đoán trúng số ${secretNumber} sau ${attempts} lần.`;
+                msgDiv.style.color = "green";
+                endGame();
+            } else {
+                if (attempts >= maxAttempts) {
+                    msgDiv.innerHTML = `💀 Thua cuộc! Bạn đã hết ${maxAttempts} lượt. Số bí mật là ${secretNumber}.`;
+                    msgDiv.style.color = "red";
+                    endGame();
+                } else {
+                    let hint = guess > secretNumber ? "Lớn hơn số bí mật ⬇️" : "Nhỏ hơn số bí mật ⬆️";
+                    msgDiv.innerHTML = `Sai rồi! ${hint} (Còn ${maxAttempts - attempts} lượt)`;
+                    msgDiv.style.color = "blue";
+                }
+            }
+            updateHistory();
+            document.getElementById('guessInput').value = ""; // Xóa ô nhập sau mỗi lần đoán
+        }
+
+        function updateHistory() {
+            // Yêu cầu mở rộng: Hiển thị lịch sử
+            document.getElementById('history').innerHTML = "Lịch sử đoán: " + historyArray.join(" -> ");
+        }
+
+        function endGame() {
+            document.getElementById('guessInput').disabled = true;
+            document.getElementById('guessBtn').disabled = true;
+            document.getElementById('resetBtn').style.display = "inline-block";
+        }
+
+        // Bắt đầu game khi tải trang
+        window.onload = initGame;
+    </script>
+</body>
+</html>

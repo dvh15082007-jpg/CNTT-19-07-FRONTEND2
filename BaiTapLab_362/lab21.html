@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 21 - Hệ thống CRUD Premium</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: #f8fafc; padding: 40px; color: #1e293b; }
+        .main-grid { display: grid; grid-template-columns: 320px 1fr; gap: 30px; max-width: 1200px; margin: 0 auto; }
+        
+        /* Box Styles */
+        .box { background: white; border-radius: 14px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); height: fit-content; }
+        h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #0f172a; }
+        
+        /* Form controls */
+        label { display: block; font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 6px; }
+        input { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 15px; outline: none; font-size: 14px; }
+        input:focus { border-color: #6366f1; }
+        
+        button { padding: 10px 14px; font-size: 14px; font-weight: 600; border-radius: 6px; border: none; cursor: pointer; transition: 0.2s; }
+        .btn-submit { background: #6366f1; color: white; width: 100%; }
+        .btn-submit:hover { background: #4f46e5; }
+        .btn-cancel { background: #94a3b8; color: white; width: 100%; margin-top: 8px; }
+        
+        /* Live Search Bar */
+        .search-wrapper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; gap: 20px; }
+        .search-input { margin-bottom: 0; max-width: 300px; background: #fff; }
+
+        /* Table styles */
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background: #f8fafc; color: #64748b; font-weight: 600; padding: 12px 16px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }
+        td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        tr:hover td { background: #fafafa; }
+        
+        .action-cell { display: flex; gap: 6px; }
+        .btn-edit { background: #fef3c7; color: #d97706; }
+        .btn-edit:hover { background: #fde68a; }
+        .btn-delete { background: #fee2e2; color: #dc2626; }
+        .btn-delete:hover { background: #fca5a5; }
+    </style>
+</head>
+<body>
+
+<div class="main-grid">
+    <div class="box">
+        <h3 id="panelTitle">📝 Thêm thành viên</h3>
+        <input type="hidden" id="memberId">
+        
+        <label>Họ và Tên</label>
+        <input type="text" id="memberName" placeholder="Nhập tên...">
+        
+        <label>Địa chỉ Email</label>
+        <input type="email" id="memberEmail" placeholder="name@company.com">
+        
+        <label>Bộ phận công tác</label>
+        <input type="text" id="memberRole" placeholder="Nhập chức danh...">
+        
+        <button id="saveBtn" class="btn-submit">Lưu lại</button>
+        <button id="cancelBtn" class="btn-cancel" style="display:none;">Hủy sửa đổi</button>
+    </div>
+
+    <div class="box">
+        <div class="search-wrapper">
+            <h3>📋 Cơ sở dữ liệu nhân sự</h3>
+            <input type="text" id="searchBar" class="search-input" placeholder="🔍 Gõ tìm tên thành viên...">
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 60px;">ID</th>
+                    <th>Họ và Tên</th>
+                    <th>Email</th>
+                    <th>Bộ phận</th>
+                    <th style="width: 140px;">Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="crudTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        const API_URL = "https://6650aa11ec9b4a5a7504bb52.mockapi.io/api/v1/members";
+
+        // 1. GET - Tải dữ liệu ban đầu
+        function loadData() {
+            $.get(API_URL, function(members) {
+                $("#crudTableBody").empty();
+                members.forEach(m => {
+                    let row = `
+                        <tr class="member-row" data-name="${m.name.toLowerCase()}">
+                            <td><b>#${m.id}</b></td>
+                            <td class="m-name" style="font-weight:500;">${m.name}</td>
+                            <td class="m-email">${m.email}</td>
+                            <td class="m-role">${m.role}</td>
+                            <td>
+                                <div class="action-cell">
+                                    <button class="btn-edit" onclick="setEditMode('${m.id}', '${m.name}', '${m.email}', '${m.role}')">Sửa</button>
+                                    <button class="btn-delete" onclick="deleteMember('${m.id}')">Xóa</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    $("#crudTableBody").append(row);
+                });
+            });
+        }
+
+        // 2. POST / PUT - Xử lý Lưu dữ liệu
+        $("#saveBtn").click(function() {
+            let id = $("#memberId").val();
+            let name = $("#memberName").val().trim();
+            let email = $("#memberEmail").val().trim();
+            let role = $("#memberRole").val().trim();
+
+            if(!name || !email || !role) { alert("Vui lòng nhập đầy đủ!"); return; }
+            let payload = { name, email, role };
+
+            if(id) {
+                // Chế độ Cập nhật (PUT)
+                $.ajax({
+                    url: `${API_URL}/${id}`,
+                    type: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify(payload),
+                    success: function() { resetForm(); loadData(); }
+                });
+            } else {
+                // Chế độ Thêm mới (POST)
+                $.ajax({
+                    url: API_URL,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(payload),
+                    success: function() { resetForm(); loadData(); }
+                });
+            }
+        });
+
+        // 3. DELETE - Xóa bản ghi
+        window.deleteMember = function(id) {
+            if(confirm(`Xác nhận xóa thành viên mã #${id}?`)) {
+                $.ajax({
+                    url: `${API_URL}/${id}`,
+                    type: "DELETE",
+                    success: function() { loadData(); }
+                });
+            }
+        }
+
+        // Đưa dữ liệu cần sửa lên Form
+        window.setEditMode = function(id, name, email, role) {
+            $("#memberId").val(id);
+            $("#memberName").val(name);
+            $("#memberEmail").val(email);
+            $("#memberRole").val(role);
+            $("#panelTitle").text("📝 Cập nhật thông tin");
+            $("#cancelBtn").show();
+        }
+
+        window.resetForm = function() {
+            $("#memberId").val("");
+            $("#memberName").val("");
+            $("#memberEmail").val("");
+            $("#memberRole").val("");
+            $("#panelTitle").text("📝 Thêm thành viên");
+            $("#cancelBtn").hide();
+        }
+
+        $("#cancelBtn").click(resetForm);
+
+        // Yêu cầu mở rộng: Xử lý bộ lọc tìm kiếm phía Client
+        $("#searchBar").on("input", function() {
+            let val = $(this).val().toLowerCase();
+            $(".member-row").each(function() {
+                let nameAttr = $(this).attr("data-name");
+                $(this).toggle(nameAttr.includes(val));
+            });
+        });
+
+        loadData(); // Khởi động nạp dữ liệu
+    });
+</script>
+</body>
+</html>

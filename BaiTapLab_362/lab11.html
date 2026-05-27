@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 11 - Tra cứu Thành viên</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f1f5f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .search-card { background: #ffffff; width: 100%; max-width: 450px; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        h3 { color: #1e293b; margin-bottom: 20px; font-size: 22px; font-weight: 700; text-align: center; }
+        label { font-size: 14px; font-weight: 600; color: #64748b; display: block; margin-bottom: 8px; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; transition: all 0.3s ease; outline: none; background: #f8fafc; }
+        select:focus, input:focus { border-color: #6366f1; background: #fff; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        .input-group { display: flex; gap: 10px; margin-top: 15px; }
+        button { padding: 12px 20px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+        .btn-search { background: #6366f1; color: white; flex: 2; }
+        .btn-search:hover { background: #4f46e5; }
+        .btn-clear { background: #e2e8f0; color: #475569; flex: 1; }
+        .btn-clear:hover { background: #cbd5e1; }
+        .error-box { background: #fef2f2; border-left: 4px solid #ef4444; color: #b91c1c; padding: 12px; border-radius: 6px; margin-top: 15px; font-size: 14px; display: none; }
+        
+        /* Profile Detail Card */
+        .profile-box { margin-top: 25px; padding: 20px; border-radius: 12px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #e2e8f0; display: none; animation: fadeIn 0.4s ease; }
+        .profile-header { display: flex; align-items: center; gap: 15px; }
+        .profile-header img { width: 65px; height: 65px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); object-fit: cover; }
+        .profile-info h4 { color: #0f172a; font-size: 18px; margin-bottom: 4px; }
+        .profile-info p { color: #64748b; font-size: 14px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="search-card">
+        <h3>🔍 Tra Cứu Thành Viên</h3>
+        
+        <label>Tìm kiếm theo trường dữ liệu:</label>
+        <select id="searchField">
+            <option value="id">Mã số định danh (ID)</option>
+            <option value="name">Họ và Tên (Tương đối)</option>
+        </select>
+
+        <div class="input-group">
+            <input type="text" id="keywordInput" placeholder="Nhập thông tin tìm kiếm...">
+            <button class="btn-search" onclick="searchData()">Tìm kiếm</button>
+            <button class="btn-clear" onclick="clearSearch()">Xóa</button>
+        </div>
+
+        <div id="errorBox" class="error-box"></div>
+
+        <div id="resultBox" class="profile-box">
+            <div class="profile-header">
+                <img id="userAvatar" src="" alt="Avatar">
+                <div class="profile-info">
+                    <h4 id="userName">Nguyễn Văn A</h4>
+                    <p id="userEmail">email@example.com</p>
+                    <p id="userId" style="font-size:12px; color:#94a3b8; margin-top:4px;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_API = "https://6650aa11ec9b4a5a7504bb52.mockapi.io/api/v1/users";
+
+        async function searchData() {
+            const field = document.getElementById("searchField").value;
+            const keyword = document.getElementById("keywordInput").value.trim();
+            const resultBox = document.getElementById("resultBox");
+            const errorBox = document.getElementById("errorBox");
+
+            resultBox.style.display = "none";
+            errorBox.style.display = "none";
+
+            if (!keyword) {
+                errorBox.innerText = "⚠️ Vui lòng nhập từ khóa tìm kiếm!";
+                errorBox.style.display = "block";
+                return;
+            }
+
+            let url = field === "id" ? `${BASE_API}/${keyword}` : `${BASE_API}?name=${keyword}`;
+
+            try {
+                let response = await fetch(url);
+                if (!response.ok) throw new Error("Không tìm thấy kết quả phù hợp!");
+
+                let data = await response.json();
+                let user = field === "id" ? data : data[0];
+
+                if (!user) throw new Error("Không tìm thấy dữ liệu trùng khớp!");
+
+                // Gán dữ liệu vào DOM cực đẹp
+                document.getElementById("userAvatar").src = user.avatar || 'https://via.placeholder.com/65';
+                document.getElementById("userName").innerText = user.name;
+                document.getElementById("userEmail").innerText = "✉️ " + user.email;
+                document.getElementById("userId").innerText = "🆔 UID: " + user.id;
+                
+                resultBox.style.display = "block";
+            } catch (err) {
+                errorBox.innerText = "❌ " + err.message;
+                errorBox.style.display = "block";
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById("keywordInput").value = "";
+            document.getElementById("resultBox").style.display = "none";
+            document.getElementById("errorBox").style.display = "none";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 10 - Fetch API Danh Sách</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f9; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .user-card { display: flex; align-items: center; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; background: #fff; }
+        .user-card img { width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; }
+        .user-info h4 { margin: 0 0 5px 0; color: #333; }
+        .user-info p { margin: 0; color: #666; font-size: 14px; }
+        .status { text-align: center; font-weight: bold; padding: 10px; margin: 10px 0; }
+        .loading { color: #f39c12; }
+        .error { color: #e74c3c; border: 1px solid #e74c3c; background: #fde8e7; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Danh sách người dùng (API)</h2>
+        <div id="statusMessage" class="status"></div>
+        <div id="userList"></div>
+    </div>
+
+    <script>
+        // THAY ĐỔI URL NÀY THÀNH URL MOCKAPI CỦA BẠN
+        const API_URL = "https://6650aa11ec9b4a5a7504bb52.mockapi.io/api/v1/users";
+
+        async function fetchUsers() {
+            const listDiv = document.getElementById("userList");
+            const statusDiv = document.getElementById("statusMessage");
+            
+            // Yêu cầu mở rộng: Hiển thị thông báo tải dữ liệu
+            statusDiv.innerHTML = "<span class='loading'>🔄 Đang tải dữ liệu, vui lòng đợi...</span>";
+            listDiv.innerHTML = "";
+
+            try {
+                let response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error("Không thể kết nối đến máy chủ hoặc API lỗi!");
+                }
+                
+                let users = await response.json();
+                statusDiv.innerHTML = ""; // Xóa thông báo loading khi thành công
+
+                if (users.length === 0) {
+                    listDiv.innerHTML = "<p style='text-align:center;'>Danh sách trống.</p>";
+                    return;
+                }
+
+                // Duyệt mảng và render tối thiểu 3 trường thông tin (Ảnh, Tên, Email)
+                users.forEach(user => {
+                    let card = `
+                        <div class="user-card">
+                            <img src="${user.avatar || 'https://via.placeholder.com/50'}" alt="Avatar">
+                            <div class="user-info">
+                                <h4>ID: ${user.id} - ${user.name}</h4>
+                                <p>Email: ${user.email}</p>
+                            </div>
+                        </div>
+                    `;
+                    listDiv.innerHTML += card;
+                });
+
+            } catch (error) {
+                // Yêu cầu mở rộng: Xử lý lỗi khi không lấy được dữ liệu
+                statusDiv.innerHTML = `<div class='error'>⚠️ Lỗi: ${error.message}</div>`;
+            }
+        }
+
+        // Tự động chạy khi tải trang
+        window.onload = fetchUsers;
+    </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 06 - Xử lý đơn hàng Callback</title>
+    <style>
+        body { font-family: monospace; font-size: 16px; background: #282c34; color: #abb2bf; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: #1e2227; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+        .log-line { margin: 10px 0; border-bottom: 1px dashed #444; padding-bottom: 5px; }
+        .highlight { color: #98c379; font-weight: bold; }
+        .total { color: #e06c75; font-size: 20px; font-weight: bold; margin-top: 20px; text-transform: uppercase;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 style="color: #61afef; text-align: center;">Terminal - Xử Lý Đơn Hàng</h2>
+        <button onclick="startProcess()" style="padding:10px; width:100%; background:#61afef; border:none; cursor:pointer; font-weight:bold;">Bắt Đầu Chạy Quy Trình</button>
+        <div id="output" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        // Dữ liệu đơn hàng mẫu
+        const orderData = {
+            id: "ORD-9981",
+            items: [
+                { name: "Áo thun", price: 150000, qty: 2 },
+                { name: "Quần Jeans", price: 350000, qty: 1 }
+            ],
+            discountRate: 0.10,   // Giảm 10%
+            shippingFee: 30000,   // Phí ship 30k
+            taxRate: 0.08         // Yêu cầu mở rộng: Thuế VAT 8%
+        };
+
+        const format = (num) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
+
+        function log(message, isTotal = false) {
+            const out = document.getElementById('output');
+            const p = document.createElement('div');
+            p.className = isTotal ? 'total' : 'log-line';
+            p.innerHTML = message;
+            out.appendChild(p);
+        }
+
+        // --- CÁC HÀM XỬ LÝ THEO BƯỚC ---
+
+        // 1. Tính tiền hàng
+        function calculateBase(order, callback) {
+            let baseAmount = order.items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            log(`[Bước 1] Tiền gốc: <span class="highlight">${format(baseAmount)}</span>`);
+            callback(baseAmount, order);
+        }
+
+        // 2. Tính giảm giá
+        function applyDiscount(currentAmount, order, callback) {
+            let discount = currentAmount * order.discountRate;
+            let newAmount = currentAmount - discount;
+            log(`[Bước 2] Trừ giảm giá (${order.discountRate * 100}%): <span class="highlight">-${format(discount)}</span> => Còn: ${format(newAmount)}`);
+            callback(newAmount, order);
+        }
+
+        // 3. Tính phí vận chuyển
+        function addShipping(currentAmount, order, callback) {
+            let newAmount = currentAmount + order.shippingFee;
+            log(`[Bước 3] Cộng phí vận chuyển: <span class="highlight">+${format(order.shippingFee)}</span> => Còn: ${format(newAmount)}`);
+            callback(newAmount, order);
+        }
+
+        // 4. MỞ RỘNG: Tính thuế
+        function addTax(currentAmount, order, callback) {
+            let tax = currentAmount * order.taxRate;
+            let finalAmount = currentAmount + tax;
+            log(`[Bước 4] Cộng thuế VAT (${order.taxRate * 100}%): <span class="highlight">+${format(tax)}</span>`);
+            callback(finalAmount); // Bước cuối nên chỉ truyền kết quả
+        }
+
+        // Hàm tổng kết (Final)
+        function finishOrder(finalAmount) {
+            log(`===> TỔNG THANH TOÁN: ${format(finalAmount)}`, true);
+        }
+
+        // --- HÀM THỰC THI (CALLBACK HELL MÔ PHỎNG) ---
+        function startProcess() {
+            document.getElementById('output').innerHTML = ""; // Clear log cũ
+            log(`Đang xử lý đơn hàng: ${orderData.id}...`);
+
+            calculateBase(orderData, function(base, order) {
+                applyDiscount(base, order, function(discounted, order) {
+                    addShipping(discounted, order, function(withShip, order) {
+                        addTax(withShip, order, finishOrder);
+                    });
+                });
+            });
+        }
+    </script>
+</body>
+</html>

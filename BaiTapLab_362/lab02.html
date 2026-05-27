@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 02 - Tính Khuyến Mãi</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 400px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        input, select, button { width: 100%; margin: 10px 0; padding: 8px; box-sizing: border-box; }
+        .bill { background: #f9f9f9; padding: 10px; margin-top: 15px; border-left: 4px solid #4CAF50; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Tính Tiền Đơn Hàng</h2>
+        <label>Giá trị đơn hàng (VNĐ):</label>
+        <input type="number" id="orderValue" placeholder="VD: 1500000">
+        
+        <label>Hạng thành viên:</label>
+        <select id="memberTier">
+            <option value="none">Khách thường</option>
+            <option value="silver">Bạc (Silver)</option>
+            <option value="gold">Vàng (Gold)</option>
+        </select>
+        
+        <button onclick="calculateTotal()">Tính Toán</button>
+        
+        <div id="receipt"></div>
+    </div>
+
+    <script>
+        // Hàm format tiền tệ
+        const formatMoney = (amount) => {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        };
+
+        function calculateTotal() {
+            let orderValue = Number(document.getElementById('orderValue').value);
+            let tier = document.getElementById('memberTier').value;
+            let receiptDiv = document.getElementById('receipt');
+
+            if (orderValue <= 0) {
+                receiptDiv.innerHTML = "<span style='color:red;'>Giá trị đơn hàng phải lớn hơn 0!</span>";
+                return;
+            }
+
+            let discountRate = 0;
+
+            // Xác định tỷ lệ giảm giá theo hạng và giá trị đơn hàng
+            if (tier === 'gold') {
+                discountRate = 0.15; // Mặc định Gold giảm 15%
+            } else if (tier === 'silver') {
+                discountRate = 0.10; // Mặc định Silver giảm 10%
+            } else {
+                // Khách thường chỉ giảm nếu mua nhiều
+                if (orderValue >= 2000000) discountRate = 0.05;
+            }
+
+            let discountAmount = orderValue * discountRate;
+            let finalTotal = orderValue - discountAmount;
+            
+            // Yêu cầu mở rộng: Miễn phí vận chuyển nếu đơn > 1,000,000
+            let freeShippingMsg = finalTotal >= 1000000 ? "<span style='color:green;'>(+ Miễn phí vận chuyển)</span>" : "";
+
+            // Hiển thị biên lai
+            receiptDiv.innerHTML = `
+                <div class="bill">
+                    <p><b>Tiền gốc:</b> ${formatMoney(orderValue)}</p>
+                    <p><b>Tỷ lệ giảm:</b> ${discountRate * 100}%</p>
+                    <p><b>Số tiền được giảm:</b> -${formatMoney(discountAmount)}</p>
+                    <hr>
+                    <p><b>Tổng thanh toán:</b> <span style='color:red; font-weight:bold;'>${formatMoney(finalTotal)}</span> ${freeShippingMsg}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

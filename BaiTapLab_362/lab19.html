@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 19 - Tải dữ liệu Ajax nâng cao</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: #f8fafc; padding: 40px; color: #334155; }
+        .container { max-width: 800px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05); padding: 30px; border: 1px solid #e2e8f0; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        h2 { font-size: 24px; color: #0f172a; font-weight: 700; }
+        .btn-refresh { background: #6366f1; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-refresh:hover { background: #4f46e5; }
+        
+        /* Table Styles */
+        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px; }
+        th { background: #f1f5f9; padding: 14px 18px; font-weight: 600; color: #64748b; font-size: 14px; border-bottom: 2px solid #e2e8f0; }
+        th:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+        th:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+        td { padding: 16px 18px; border-bottom: 1px solid #f1f5f9; font-size: 15px; color: #334155; vertical-align: middle; }
+        tr:hover td { background-color: #f8fafc; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0; }
+        .badge { background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+        
+        /* Loading & Error States */
+        .spinner { display: none; text-align: center; padding: 30px 0; color: #6366f1; font-weight: 600; font-size: 15px; }
+        .error-alert { display: none; background: #fef2f2; border: 1px solid #fca5a5; color: #b91c1c; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>👥 Danh sách thành viên</h2>
+        <button class="btn-refresh" id="loadDataBtn">Tải lại dữ liệu</button>
+    </div>
+
+    <div id="errorBox" class="error-alert"></div>
+    <div id="loadingSpinner" class="spinner">🔄 Đang đồng bộ dữ liệu từ Server...</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 80px;">Avatar</th>
+                <th>Họ và Tên</th>
+                <th>Địa chỉ Email</th>
+                <th>Chức vụ</th>
+            </tr>
+        </thead>
+        <tbody id="memberTableBody">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function() {
+        const API_URL = "https://6650aa11ec9b4a5a7504bb52.mockapi.io/api/v1/members";
+
+        function fetchMembers() {
+            $("#loadingSpinner").show();
+            $("#errorBox").hide();
+            $("#memberTableBody").empty();
+
+            // Gọi Ajax GET lấy dữ liệu
+            $.ajax({
+                url: API_URL,
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    $("#loadingSpinner").hide();
+                    if(data.length === 0) {
+                        $("#memberTableBody").html('<tr><td colspan="4" style="text-align:center; color:#94a3b8;">Danh sách trống</td></tr>');
+                        return;
+                    }
+                    
+                    // Duyệt và hiển thị tối thiểu 3 trường thông tin
+                    data.forEach(member => {
+                        let row = `
+                            <tr>
+                                <td><img src="${member.avatar || 'https://via.placeholder.com/40'}" class="avatar" alt="Avatar"></td>
+                                <td style="font-weight: 600; color: #0f172a;">${member.name}</td>
+                                <td>${member.email}</td>
+                                <td><span class="badge">${member.role || 'Thành viên'}</span></td>
+                            </tr>
+                        `;
+                        $("#memberTableBody").append(row);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    // Yêu cầu mở rộng: Xử lý lỗi API
+                    $("#loadingSpinner").hide();
+                    $("#errorBox").text("❌ Không thể kết nối dữ liệu: " + (error || "Lỗi mạng hoặc sai URL API!")).show();
+                }
+            });
+        }
+
+        $("#loadDataBtn").click(fetchMembers);
+        fetchMembers(); // Tự động load khi mở trang
+    });
+</script>
+</body>
+</html>

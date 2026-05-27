@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 08 - Bộ đếm tương tác</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; padding-top: 50px; }
+        .counter-app { text-align: center; border: 2px solid #ddd; padding: 30px; border-radius: 10px; width: 300px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        #counterDisplay { font-size: 60px; font-weight: bold; margin: 20px 0; transition: color 0.3s; }
+        .btn-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 15px;}
+        button { padding: 10px 15px; font-size: 16px; cursor: pointer; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9; }
+        button:hover { background: #e9e9e9; }
+        .btn-reset { width: 100%; background: #ff9800; color: white; border: none; font-weight: bold; }
+        .btn-reset:hover { background: #e68a00; }
+    </style>
+</head>
+<body>
+    <div class="counter-app">
+        <h2>Bộ Đếm (Counter)</h2>
+        <div id="counterDisplay">0</div>
+        
+        <div class="btn-group">
+            <button id="btnMinus5">-5</button>
+            <button id="btnDecrease">-1</button>
+            <button id="btnIncrease">+1</button>
+            <button id="btnPlus5">+5</button>
+        </div>
+        <button id="btnReset" class="btn-reset">Đặt lại (Reset)</button>
+    </div>
+
+    <script>
+        // 1. Biến lưu trạng thái
+        let count = 0;
+        const display = document.getElementById("counterDisplay");
+
+        // 2. Hàm render (Cập nhật giao diện riêng biệt)
+        function render() {
+            display.innerText = count;
+            // Yêu cầu mở rộng: Đổi màu theo giá trị
+            if (count > 0) {
+                display.style.color = "green";
+            } else if (count < 0) {
+                display.style.color = "red";
+            } else {
+                display.style.color = "black";
+            }
+        }
+
+        // 3. Gắn sự kiện (Event Listeners)
+        document.getElementById("btnIncrease").addEventListener("click", () => {
+            count += 1;
+            render();
+        });
+
+        document.getElementById("btnDecrease").addEventListener("click", () => {
+            count -= 1;
+            render();
+        });
+
+        document.getElementById("btnPlus5").addEventListener("click", () => {
+            count += 5;
+            render();
+        });
+
+        document.getElementById("btnMinus5").addEventListener("click", () => {
+            count -= 5;
+            render();
+        });
+
+        document.getElementById("btnReset").addEventListener("click", () => {
+            count = 0;
+            render();
+        });
+
+        // Khởi tạo lần đầu
+        render();
+    </script>
+</body>
+</html>

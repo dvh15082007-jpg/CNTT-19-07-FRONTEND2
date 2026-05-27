@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 04 - Xử lý điểm sinh viên</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 400px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        input[type="number"], button { width: 100%; margin: 10px 0; padding: 8px; box-sizing: border-box; }
+        .controls { display: flex; align-items: center; gap: 10px; margin-bottom: 10px;}
+        #result { margin-top: 15px; padding: 10px; background-color: #f0f8ff; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Quản Lý Điểm Học Phần</h2>
+        <p><b>Danh sách điểm hiện tại:</b> <span id="gradesDisplay"></span></p>
+        
+        <label>Nhập thêm điểm mới (0-10):</label>
+        <input type="number" id="newGrade" step="0.1" placeholder="VD: 8.5">
+        <button onclick="addGrade()">Thêm Điểm</button>
+
+        <div class="controls">
+            <input type="checkbox" id="removeLowest" style="width: auto;">
+            <label for="removeLowest">Bỏ điểm thấp nhất khi tính</label>
+        </div>
+        
+        <button onclick="calculateResult()" style="background-color: #4CAF50; color: white; border: none; cursor: pointer;">Tính Kết Quả</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Mảng điểm khởi tạo (ít nhất 5 giá trị)
+        let grades = [6.5, 8.0, 4.5, 9.0, 7.5];
+
+        function renderGrades() {
+            document.getElementById('gradesDisplay').innerText = grades.join(" - ");
+        }
+
+        // Yêu cầu mở rộng: Cho phép nhập thêm điểm
+        function addGrade() {
+            let input = document.getElementById('newGrade');
+            let val = Number(input.value);
+            if (val >= 0 && val <= 10 && input.value !== "") {
+                grades.push(val);
+                input.value = "";
+                renderGrades();
+            } else {
+                alert("Vui lòng nhập điểm hợp lệ từ 0 đến 10!");
+            }
+        }
+
+        function calculateResult() {
+            if (grades.length === 0) return;
+
+            let processingGrades = [...grades]; // Sao chép mảng để không làm đổi mảng gốc
+            let msgExt = "";
+
+            // Yêu cầu mở rộng: Loại bỏ điểm thấp nhất
+            let isRemoveLowest = document.getElementById('removeLowest').checked;
+            if (isRemoveLowest && processingGrades.length > 1) {
+                // Sắp xếp tăng dần và cắt bỏ phần tử đầu tiên
+                processingGrades.sort((a, b) => a - b);
+                let removed = processingGrades.shift();
+                msgExt = `<br><i>(Đã loại trừ điểm thấp nhất là ${removed})</i>`;
+            }
+
+            // Tính tổng bằng reduce
+            let sum = processingGrades.reduce((total, num) => total + num, 0);
+            let avg = sum / processingGrades.length;
+            let formattedAvg = avg.toFixed(2);
+
+            // Phân loại
+            let category = "";
+            if (avg < 5) category = "Yếu";
+            else if (avg < 7) category = "Trung bình";
+            else if (avg < 8.5) category = "Khá";
+            else category = "Giỏi";
+
+            // Hiển thị
+            document.getElementById('result').innerHTML = `
+                <b>Điểm trung bình:</b> ${formattedAvg} ${msgExt}<br>
+                <b>Xếp loại học lực:</b> <span style="color: blue; font-weight: bold;">${category}</span>
+            `;
+        }
+
+        // Khởi tạo hiển thị lúc mới tải trang
+        renderGrades();
+    </script>
+</body>
+</html>

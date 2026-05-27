@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 14 - Hiệu ứng Hoạt họa Cao Cấp</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background: #f3f4f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .panel { background: white; padding: 30px; border-radius: 16px; width: 100%; max-width: 480px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05); text-align: center; }
+        h2 { font-size: 22px; color: #111827; margin-bottom: 20px; font-weight: 700; }
+        
+        .grid-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        button { padding: 12px; font-size: 14px; font-weight: 600; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; transition: 0.2s; background: #fff; color: #374151; }
+        button:hover { background: #f9fafb; border-color: #d1d5db; }
+        .btn-premium { grid-column: span 2; background: #6366f1; color: white; border: none; }
+        .btn-premium:hover { background: #4f46e5; }
+
+        .alert-card { padding: 25px; background: #eff6ff; color: #1e40af; border-radius: 12px; font-size: 15px; font-weight: 500; border: 1px solid #bfdbfe; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        /* Trạng thái Highlight (Yêu cầu mở rộng) */
+        .alert-highlight { background: #fff7ed; color: #c2410c; border-color: #ffedd5; box-shadow: 0 10px 15px -3px rgba(234, 88, 12, 0.2); transform: scale(1.03); }
+    </style>
+</head>
+<body>
+
+    <div class="panel">
+        <h2>Effects Playground</h2>
+        
+        <div class="grid-btns">
+            <button id="fadeBtn">🎬 Fade Out/In</button>
+            <button id="slideBtn">↕️ Slide Up/Down</button>
+            <button id="chainBtn" class="btn-premium">🚀 Chaining Combo + Highlight CSS</button>
+        </div>
+
+        <div class="alert-card">🔔 <b>Thông báo:</b> Hệ thống đang chạy mượt mà ổn định với jQuery Animation!</div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Hiệu ứng Fade
+            $("#fadeBtn").click(function() {
+                $(".alert-card").fadeOut(400).fadeIn(400);
+            });
+
+            // Hiệu ứng Slide
+            $("#slideBtn").click(function() {
+                $(".alert-card").slideToggle(350);
+            });
+
+            // Kết hợp Chaining + Thêm bớt Class CSS
+            $("#chainBtn").click(function() {
+                $(".alert-card")
+                    .addClass("alert-highlight")
+                    .slideUp(400)
+                    .slideDown(400)
+                    .animate({ opacity: 0.3 }, 200)
+                    .animate({ opacity: 1.0 }, 200, function() {
+                        // Trả về giao diện ban đầu sau khi kết thúc chuỗi 1 giây
+                        setTimeout(() => {
+                            $(".alert-card").removeClass("alert-highlight");
+                        }, 1000);
+                    });
+            });
+        });
+    </script>
+</body>
+</html>

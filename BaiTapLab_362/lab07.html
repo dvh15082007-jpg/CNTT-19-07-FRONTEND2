@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 07 - Thao tác DOM cơ bản</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; transition: 0.3s; }
+        .container { max-width: 400px; margin: auto; padding: 20px; border: 2px solid #ccc; border-radius: 10px; }
+        img { width: 150px; height: 150px; border-radius: 50%; margin: 15px 0; object-fit: cover; border: 3px solid transparent;}
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
+        .btn-change { background-color: #4CAF50; color: white; }
+        .btn-reset { background-color: #f44336; color: white; }
+        
+        /* Class để thay đổi trạng thái */
+        .highlight-img { border-color: #ff9800; transform: scale(1.1); transition: 0.3s; }
+        .dark-mode { background-color: #333; color: white; }
+    </style>
+</head>
+<body id="body">
+    <div class="container" id="box">
+        <h2 id="title">Trạng thái: Bình thường</h2>
+        <p id="description">Nhấn nút bên dưới để xem sự thay đổi kì diệu bằng DOM nhé!</p>
+        
+        <img id="myImage" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Avatar">
+        
+        <br>
+        <button class="btn-change" onclick="changeContent()">Thay đổi giao diện</button>
+        <button class="btn-reset" onclick="resetContent()">Khôi phục ban đầu</button>
+    </div>
+
+    <script>
+        function changeContent() {
+            // Lấy tham chiếu các phần tử
+            let title = document.getElementById("title");
+            let desc = document.getElementById("description");
+            let img = document.querySelector("#myImage");
+            let body = document.getElementById("body");
+
+            // Thay đổi nội dung (innerText / textContent)
+            title.innerText = "Trạng thái: Đã cập nhật!";
+            desc.textContent = "Bạn đã dùng DOM để đổi text, ảnh và cả class của giao diện.";
+
+            // Thay đổi thuộc tính src
+            img.src = "https://cdn-icons-png.flaticon.com/512/4140/4140037.png";
+            
+            // Thay đổi classList (Thêm hiệu ứng)
+            img.classList.add("highlight-img");
+            body.classList.add("dark-mode");
+        }
+
+        function resetContent() {
+            // Khôi phục lại trạng thái ban đầu
+            document.getElementById("title").innerText = "Trạng thái: Bình thường";
+            document.getElementById("description").innerText = "Nhấn nút bên dưới để xem sự thay đổi kì diệu bằng DOM nhé!";
+            
+            let img = document.querySelector("#myImage");
+            img.src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+            img.classList.remove("highlight-img");
+            
+            document.getElementById("body").classList.remove("dark-mode");
+        }
+    </script>
+</body>
+</html>

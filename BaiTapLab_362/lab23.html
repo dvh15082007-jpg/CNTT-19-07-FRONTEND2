@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 23 - Store Sản Phẩm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .product-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+        }
+        .product-img {
+            height: 220px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body class="bg-light py-5">
+
+<div class="container">
+    <h2 class="fw-bold mb-4 text-center text-dark">🛍️ Bộ sưu tập Công nghệ</h2>
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        
+        <div class="col">
+            <div class="card product-card border-0 shadow-sm h-100 position-relative">
+                <span class="badge bg-danger position-absolute top-0 start-0 m-3 px-2 py-1 z-3">Bán chạy</span>
+                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=80" class="card-img-top product-img" alt="Product">
+                <div class="card-body d-flex flex-direction flex-column justify-content-between p-4">
+                    <div>
+                        <h5 class="card-title fw-bold text-dark">Tai nghe Premium Không Dây</h5>
+                        <p class="card-text text-muted small">Khử tiếng ồn chủ động vượt trội, dung lượng pin bền bỉ ấn tượng.</p>
+                    </div>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="fs-5 fw-bold text-primary">3.490.000đ</span>
+                            <span class="text-decoration-line-through text-muted small">4.200.000đ</span>
+                        </div>
+                        <button class="btn btn-outline-dark w-100 fw-semibold" data-bs-toggle="modal" data-bs-target="#quickViewModal">Xem nhanh</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card product-card border-0 shadow-sm h-100 position-relative">
+                <span class="badge bg-success position-absolute top-0 start-0 m-3 px-2 py-1 z-3">Mới về</span>
+                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=80" class="card-img-top product-img" alt="Product">
+                <div class="card-body d-flex flex-direction flex-column justify-content-between p-4">
+                    <div>
+                        <h5 class="card-title fw-bold text-dark">Đồng hồ thông minh FitPro</h5>
+                        <p class="card-text text-muted small">Theo dõi chỉ số sức khỏe liên tục, chống nước tiêu chuẩn 5ATM.</p>
+                    </div>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="fs-5 fw-bold text-primary">1.850.000đ</span>
+                        </div>
+                        <button class="btn btn-outline-dark w-100 fw-semibold" data-bs-toggle="modal" data-bs-target="#quickViewModal">Xem nhanh</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col"><div class="card product-card border-0 shadow-sm h-100"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80" class="card-img-top product-img"><div class="card-body p-4"><h5>Giày Thể Thao UltraRun</h5><p class="text-muted small">Siêu nhẹ, bảo vệ khớp cổ chân tốt.</p><div class="d-flex justify-content-between mt-3"><b>2.100.000đ</b><button class="btn btn-outline-dark btn-sm" data-bs-toggle="modal" data-bs-target="#quickViewModal">Chi tiết</button></div></div></div></div>
+        <div class="col"><div class="card product-card border-0 shadow-sm h-100"><img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=500&q=80" class="card-img-top product-img"><div class="card-body p-4"><h5>Kính Râm Thời Trang Club</h5><p class="text-muted small">Chống tia UV400, bảo vệ mắt tối đa.</p><div class="d-flex justify-content-between mt-3"><b>750.000đ</b><button class="btn btn-outline-dark btn-sm" data-bs-toggle="modal" data-bs-target="#quickViewModal">Chi tiết</button></div></div></div></div>
+        <div class="col"><div class="card product-card border-0 shadow-sm h-100"><img src="https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=500&q=80" class="card-img-top product-img"><div class="card-body p-4"><h5>Balo Du Lịch Đa Năng</h5><p class="text-muted small">Vải chống thấm, có ngăn chứa laptop 15.6 inch.</p><div class="d-flex justify-content-between mt-3"><b>1.250.000đ</b><button class="btn btn-outline-dark btn-sm" data-bs-toggle="modal" data-bs-target="#quickViewModal">Chi tiết</button></div></div></div></div>
+        <div class="col"><div class="card product-card border-0 shadow-sm h-100"><img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=500&q=80" class="card-img-top product-img"><div class="card-body p-4"><h5>Máy Ảnh Vintage Classic</h5><p class="text-muted small">Ống kính tiêu cự cố định cho màu ảnh hoài cổ.</p><div class="d-flex justify-content-between mt-3"><b>5.900.000đ</b><button class="btn btn-outline-dark btn-sm" data-bs-toggle="modal" data-bs-target="#quickViewModal">Chi tiết</button></div></div></div></div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Thông tin chi tiết</h5>
+                <button type="button" class="btn-close" data-bs-shadow="none" data-bs-skip="true" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p>Sản phẩm chính hãng đầy đủ giấy tờ phân phối. Bảo hành vàng 1 đổi 1 trong vòng 12 tháng tại các cơ sở phân phối ủy quyền trên toàn quốc.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng lại</button>
+                <button type="button" class="btn btn-primary btn-sm">Thêm vào giỏ hàng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

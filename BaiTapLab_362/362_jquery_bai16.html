@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 16 - Bộ đếm tương tác</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        #counter { font-size: 80px; font-weight: bold; margin: 20px 0; transition: color 0.3s; }
+        button { padding: 10px 20px; font-size: 16px; margin: 5px; cursor: pointer; border-radius: 5px; border: 1px solid #ccc; }
+        .btn-primary { background-color: #007bff; color: white; border: none; }
+        .btn-danger { background-color: #dc3545; color: white; border: none; }
+        .btn-success { background-color: #28a745; color: white; border: none; }
+        .btn-warning { background-color: #ffc107; border: none; }
+    </style>
+</head>
+<body>
+
+    <h2>Bộ Đếm Lượt Tương Tác</h2>
+    <div id="counter">0</div>
+    
+    <div>
+        <button id="btn-decrease" class="btn-danger">- Giảm 1</button>
+        <button id="btn-reset" class="btn-warning">Đặt lại (0)</button>
+        <button id="btn-increase" class="btn-primary">+ Tăng 1</button>
+        <button id="btn-increase-10" class="btn-success">+ Tăng 10</button>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let count = 0;
+
+            function updateUI() {
+                $('#counter').text(count);
+                if (count > 0) {
+                    $('#counter').css('color', 'green');
+                } else if (count < 0) {
+                    $('#counter').css('color', 'red');
+                } else {
+                    $('#counter').css('color', 'black');
+                }
+            }
+            $('#btn-increase').click(function() {
+                count++;
+                updateUI();
+            });
+
+            $('#btn-decrease').click(function() {
+                count--; 
+                updateUI();
+            });
+
+            $('#btn-reset').click(function() {
+                count = 0;
+                updateUI();
+            });
+            $('#btn-increase-10').click(function() {
+                count += 10;
+                updateUI();
+            });
+        });
+    </script>
+</body>
+</html>
