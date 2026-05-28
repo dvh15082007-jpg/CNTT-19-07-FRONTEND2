@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 21 - CRUD Sinh Viên (Ajax)</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 min-h-screen py-12 text-white">
+    <div class="max-w-6xl mx-auto px-4">
+        <h1 class="text-4xl font-bold text-center mb-10">📋 CRUD Sinh Viên - jQuery Ajax</h1>
+
+        <button onclick="showAddForm()" 
+                class="mb-8 bg-emerald-600 hover:bg-emerald-700 px-8 py-4 rounded-2xl flex items-center gap-3">
+            <i class="fas fa-plus"></i> Thêm Sinh Viên Mới
+        </button>
+
+        <!-- Form -->
+        <div id="formContainer" class="hidden bg-zinc-900 rounded-3xl p-8 mb-10">
+            <h2 id="formTitle" class="text-2xl font-bold mb-6">Thêm Sinh Viên</h2>
+            <input id="sName" type="text" placeholder="Họ tên" class="w-full mb-4 bg-zinc-800 border border-zinc-700 rounded-2xl px-6 py-4">
+            <input id="sCode" type="text" placeholder="Mã SV" class="w-full mb-4 bg-zinc-800 border border-zinc-700 rounded-2xl px-6 py-4">
+            <button onclick="saveStudent()" class="w-full bg-emerald-600 py-5 rounded-2xl font-bold">Lưu Thông Tin</button>
+        </div>
+
+        <!-- Danh sách -->
+        <div id="studentTable" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
+
+    <script>
+        let students = [];
+
+        function loadStudents() {
+            // Mock data
+            students = [
+                {id: 1, name: "Nguyễn Văn A", code: "SV001"},
+                {id: 2, name: "Trần Thị B", code: "SV002"},
+            ];
+            renderStudents();
+        }
+
+        function renderStudents() {
+            let html = '';
+            students.forEach(s => {
+                html += `
+                    <div class="bg-zinc-900 rounded-3xl p-6">
+                        <h3 class="font-bold text-xl">${s.name}</h3>
+                        <p class="text-sky-400">${s.code}</p>
+                        <div class="mt-6 flex gap-3">
+                            <button onclick="editStudent(${s.id})" class="flex-1 bg-blue-600 py-3 rounded-2xl">Sửa</button>
+                            <button onclick="deleteStudent(${s.id})" class="flex-1 bg-red-600 py-3 rounded-2xl">Xóa</button>
+                        </div>
+                    </div>`;
+            });
+            $("#studentTable").html(html);
+        }
+
+        function showAddForm() {
+            $("#formContainer").removeClass('hidden');
+            $("#sName").val('').focus();
+            window.editingId = null;
+        }
+
+        function saveStudent() {
+            const name = $("#sName").val();
+            if (!name) return alert("Vui lòng nhập tên!");
+
+            if (window.editingId) {
+                students = students.map(s => s.id === window.editingId ? {...s, name} : s);
+            } else {
+                students.push({id: Date.now(), name, code: "SV" + Math.floor(1000 + Math.random()*9000)});
+            }
+            
+            $("#formContainer").addClass('hidden');
+            renderStudents();
+        }
+
+        function editStudent(id) {
+            const student = students.find(s => s.id === id);
+            $("#sName").val(student.name);
+            window.editingId = id;
+            $("#formContainer").removeClass('hidden');
+        }
+
+        function deleteStudent(id) {
+            if (confirm("Xóa sinh viên?")) {
+                students = students.filter(s => s.id !== id);
+                renderStudents();
+            }
+        }
+
+        $(document).ready(loadStudents);
+    </script>
+</body>
+</html>

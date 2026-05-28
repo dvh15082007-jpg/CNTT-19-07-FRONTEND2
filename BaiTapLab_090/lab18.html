@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 18 - Quản Lý Thành Viên</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-zinc-950 min-h-screen py-12 text-white">
+    <div class="max-w-4xl mx-auto px-4">
+        <h1 class="text-4xl font-bold text-center mb-10 flex items-center justify-center gap-3">
+            👥 Quản Lý Thành Viên
+        </h1>
+
+        <!-- Add Form -->
+        <div class="bg-zinc-900 rounded-3xl p-8 mb-10">
+            <div class="flex gap-4">
+                <input type="text" id="memberName" placeholder="Nhập tên thành viên..." 
+                       class="flex-1 bg-zinc-800 border border-zinc-700 rounded-2xl px-6 py-4 focus:outline-none">
+                <button onclick="addMember()" 
+                        class="bg-violet-600 hover:bg-violet-700 px-10 rounded-2xl font-medium">Thêm</button>
+            </div>
+        </div>
+
+        <!-- Member List -->
+        <div id="memberList" class="space-y-4"></div>
+    </div>
+
+    <script>
+        let members = [
+            {id: 1, name: "Nguyễn Thị Hương"},
+            {id: 2, name: "Trần Văn Nam"},
+            {id: 3, name: "Lê Thị Mai"}
+        ];
+
+        function renderMembers() {
+            let html = '';
+            members.forEach(member => {
+                html += `
+                    <div class="bg-zinc-900 rounded-3xl p-6 flex items-center justify-between group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-2xl flex items-center justify-center font-bold">
+                                ${member.name.charAt(0)}
+                            </div>
+                            <span class="text-lg">${member.name}</span>
+                        </div>
+                        <div class="flex gap-3 opacity-0 group-hover:opacity-100 transition">
+                            <button onclick="editMember(${member.id})" class="text-blue-400 hover:text-blue-500">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteMember(${member.id})" class="text-red-400 hover:text-red-500">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>`;
+            });
+            $("#memberList").html(html);
+        }
+
+        function addMember() {
+            const name = $("#memberName").val().trim();
+            if (!name) return alert("Vui lòng nhập tên!");
+            
+            members.push({id: Date.now(), name: name});
+            $("#memberName").val('');
+            renderMembers();
+        }
+
+        function editMember(id) {
+            const member = members.find(m => m.id === id);
+            const newName = prompt("Sửa tên thành viên:", member.name);
+            if (newName && newName.trim() !== "") {
+                member.name = newName.trim();
+                renderMembers();
+            }
+        }
+
+        function deleteMember(id) {
+            if (confirm("Xóa thành viên này?")) {
+                members = members.filter(m => m.id !== id);
+                renderMembers();
+            }
+        }
+
+        $(document).ready(renderMembers);
+    </script>
+</body>
+</html>

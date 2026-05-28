@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 22 - Đăng Nhập Glassmorphism</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --shadow-color: rgba(102, 126, 234, 0.4);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* Floating particles background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 20s infinite;
+        }
+        
+        .particle:nth-child(1) { width: 80px; height: 80px; left: 10%; top: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { width: 60px; height: 60px; left: 70%; top: 30%; animation-delay: 2s; }
+        .particle:nth-child(3) { width: 100px; height: 100px; left: 50%; top: 60%; animation-delay: 4s; }
+        .particle:nth-child(4) { width: 70px; height: 70px; left: 20%; top: 70%; animation-delay: 6s; }
+        .particle:nth-child(5) { width: 90px; height: 90px; left: 80%; top: 80%; animation-delay: 8s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+        
+        .login-container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 50px 40px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 
+                0 8px 32px 0 rgba(31, 38, 135, 0.37),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .brand-logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .brand-logo i {
+            font-size: 60px;
+            color: white;
+            margin-bottom: 15px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .brand-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .brand-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+        
+        .form-label {
+            color: white;
+            font-weight: 500;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .input-group-custom {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        
+        .input-group-custom i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            z-index: 10;
+            transition: color 0.3s ease;
+        }
+        
+        .form-control-glass {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 15px 20px 15px 50px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control-glass::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .form-control-glass:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            outline: none;
+            color: white;
+        }
+        
+        .form-control-glass:focus + i {
+            color: white;
+        }
+        
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .form-check {
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .form-check-input:checked {
+            background: white;
+            border-color: white;
+        }
+        
+        .form-check-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        
+        .forgot-link {
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .forgot-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: white;
+            transition: width 0.3s ease;
+        }
+        
+        .forgot-link:hover {
+            color: white;
+            transform: translateX(3px);
+        }
+        
+        .forgot-link:hover::after {
+            width: 100%;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        
+        .btn-login span {
+            position: relative;
+            z-index: 1;
+            transition: color 0.4s ease;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-login:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+        
+        .btn-login:hover span {
+            color: white;
+        }
+        
+        .btn-login:active {
+            transform: translateY(-1px);
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .divider span {
+            padding: 0 15px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+        
+        .social-login {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .social-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .social-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .register-link {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+        }
+        
+        .register-link a {
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            margin-left: 5px;
+            position: relative;
+        }
+        
+        .register-link a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: white;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .register-link a:hover::after {
+            transform: scaleX(1);
+        }
+        
+        /* Password toggle */
+        .password-toggle {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            z-index: 10;
+            transition: color 0.3s ease;
+        }
+        
+        .password-toggle:hover {
+            color: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 576px) {
+            .login-card {
+                padding: 40px 30px;
+            }
+            
+            .brand-title {
+                font-size: 2rem;
+            }
+            
+            .social-login {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+        }
+        
+        /* Loading animation */
+        .btn-login.loading {
+            pointer-events: none;
+        }
+        
+        .btn-login.loading span {
+            opacity: 0;
+        }
+        
+        .spinner {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .btn-login.loading .spinner {
+            display: block;
+        }
+        
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Brand Logo -->
+            <div class="brand-logo">
+                <i class="fas fa-gem"></i>
+                <h1 class="brand-title">Elysium</h1>
+                <p class="brand-subtitle">Nơi những ý tưởng tỏa sáng</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+                <!-- Email Input -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-group-custom">
+                        <i class="fas fa-envelope"></i>
+                        <input 
+                            type="email" 
+                            class="form-control form-control-glass" 
+                            id="email" 
+                            placeholder="example@email.com"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mật khẩu</label>
+                    <div class="input-group-custom">
+                        <i class="fas fa-lock"></i>
+                        <input 
+                            type="password" 
+                            class="form-control form-control-glass" 
+                            id="password" 
+                            placeholder="Nhập mật khẩu"
+                            required
+                        >
+                        <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                    </div>
+                </div>
+
+                <!-- Remember & Forgot -->
+                <div class="remember-forgot">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="remember">
+                        <label class="form-check-label" for="remember">
+                            Ghi nhớ đăng nhập
+                        </label>
+                    </div>
+                    <a href="#" class="forgot-link">Quên mật khẩu?</a>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="btn btn-login">
+                    <span>Đăng nhập</span>
+                    <div class="spinner"></div>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider">
+                <span>Hoặc tiếp tục với</span>
+            </div>
+
+            <!-- Social Login -->
+            <div class="social-login">
+                <div class="social-btn" title="Google">
+                    <i class="fab fa-google"></i>
+                </div>
+                <div class="social-btn" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </div>
+                <div class="social-btn" title="Apple">
+                    <i class="fab fa-apple"></i>
+                </div>
+            </div>
+
+            <!-- Register Link -->
+            <div class="register-link">
+                Chưa có tài khoản?<a href="#">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Password toggle
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+        
+        // Form submission
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = loginForm.querySelector('.btn-login');
+        
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Add loading state
+            loginBtn.classList.add('loading');
+            
+            // Simulate API call
+            setTimeout(() => {
+                loginBtn.classList.remove('loading');
+                
+                // Show success message
+                const email = document.getElementById('email').value;
+                alert(`Đăng nhập thành công!\nChào mừng ${email} đến với Elysium!`);
+                
+                // Reset form
+                loginForm.reset();
+            }, 2000);
+        });
+        
+        // Input focus animation
+        const inputs = document.querySelectorAll('.form-control-glass');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+        
+        // Social login handlers
+        const socialBtns = document.querySelectorAll('.social-btn');
+        socialBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const platform = this.getAttribute('title');
+                alert(`Đăng nhập bằng ${platform} (Demo)`);
+            });
+        });
+        
+        // Forgot password handler
+        document.querySelector('.forgot-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            const email = prompt('Nhập email để khôi phục mật khẩu:');
+            if (email) {
+                alert(`Email khôi phục đã được gửi đến ${email}`);
+            }
+        });
+        
+        // Add parallax effect to particles on mouse move
+        document.addEventListener('mousemove', function(e) {
+            const particles = document.querySelectorAll('.particle');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            particles.forEach((particle, index) => {
+                const speed = (index + 1) * 0.5;
+                const xMove = (x - 0.5) * speed * 20;
+                const yMove = (y - 0.5) * speed * 20;
+                particle.style.transform = `translate(${xMove}px, ${yMove}px)`;
+            });
+        });
+    </script>
+</body>
+</html>

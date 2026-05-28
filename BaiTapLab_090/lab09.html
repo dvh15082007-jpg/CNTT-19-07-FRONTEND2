@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-do List</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-5">
+
+    <div class="bg-white w-full max-w-xl rounded-3xl shadow-xl p-8">
+
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">
+            <i class="fas fa-list-check text-blue-500"></i>
+            Quản Lý Công Việc
+        </h1>
+
+        <!-- Input -->
+        <div class="flex gap-3 mb-6">
+            <input type="text" id="taskInput"
+                   placeholder="Nhập công việc..."
+                   class="flex-1 border rounded-2xl px-5 py-3 outline-none focus:border-blue-500">
+
+            <button onclick="addTask()"
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-6 rounded-2xl">
+                Thêm
+            </button>
+        </div>
+
+        <!-- Task List -->
+        <div id="taskList" class="space-y-3"></div>
+
+    </div>
+
+    <script>
+        let tasks = [
+            { id: 1, text: "Làm bài Lab", completed: false },
+            { id: 2, text: "Học JavaScript", completed: true }
+        ];
+
+        function renderTasks() {
+            const list = document.getElementById("taskList");
+
+            list.innerHTML = tasks.map(task => `
+                <div class="flex items-center gap-3 border rounded-2xl p-4 hover:shadow-md transition">
+
+                    <input type="checkbox"
+                        ${task.completed ? "checked" : ""}
+                        onchange="toggleTask(${task.id})"
+                        class="w-5 h-5 accent-blue-500">
+
+                    <span class="flex-1 ${
+                        task.completed ? "line-through text-gray-400" : "text-gray-700"
+                    }">
+                        ${task.text}
+                    </span>
+
+                    <button onclick="deleteTask(${task.id})"
+                            class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-trash"></i>
+                    </button>
+
+                </div>
+            `).join("");
+        }
+
+        function addTask() {
+            const input = document.getElementById("taskInput");
+
+            if (input.value.trim() === "") return;
+
+            tasks.push({
+                id: Date.now(),
+                text: input.value,
+                completed: false
+            });
+
+            input.value = "";
+            renderTasks();
+        }
+
+        function toggleTask(id) {
+            tasks = tasks.map(task =>
+                task.id === id
+                    ? { ...task, completed: !task.completed }
+                    : task
+            );
+
+            renderTasks();
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(task => task.id !== id);
+            renderTasks();
+        }
+
+        renderTasks();
+    </script>
+
+</body>
+</html>

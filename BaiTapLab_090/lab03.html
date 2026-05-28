@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 03 - Đoán Số</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%);
+        }
+        .number-circle {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-lg w-full">
+        <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl overflow-hidden">
+            
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-purple-600 to-pink-600 p-8 text-white text-center">
+                <i class="fas fa-gamepad text-5xl mb-4"></i>
+                <h1 class="text-4xl font-bold">TRÒ CHƠI ĐOÁN SỐ</h1>
+                <p class="mt-2 opacity-90">Hãy thử đoán số bí mật từ 1 đến 100!</p>
+            </div>
+
+            <div class="p-10 space-y-8">
+                <!-- Status -->
+                <div class="text-center">
+                    <div id="attempts" class="inline-flex items-center gap-2 bg-white/10 text-white px-6 py-2 rounded-full text-sm font-medium">
+                        <i class="fas fa-trophy"></i>
+                        Số lần đoán: <span id="attemptCount" class="font-bold text-yellow-400">0</span>
+                    </div>
+                </div>
+
+                <!-- Secret Number Display -->
+                <div id="secretDisplay" class="number-circle w-32 h-32 mx-auto bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-6xl font-bold text-white shadow-xl border-4 border-white/30">
+                    ?
+                </div>
+
+                <!-- Input -->
+                <div class="space-y-4">
+                    <input type="number" id="guessInput" 
+                           class="w-full text-center text-4xl font-bold py-6 bg-white/5 border border-white/30 rounded-2xl text-white focus:outline-none focus:border-yellow-400 transition"
+                           placeholder="Nhập số của bạn" min="1" max="100" onkeypress="if(event.key === 'Enter') makeGuess()">
+                    
+                    <button onclick="makeGuess()" 
+                            class="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-gray-900 font-bold text-xl py-5 rounded-2xl transition-all duration-300 flex items-center justify-center gap-3">
+                        <i class="fas fa-paper-plane"></i>
+                        ĐOÁN NGAY
+                    </button>
+                </div>
+
+                <!-- Message -->
+                <div id="message" class="min-h-[80px] text-center text-xl font-medium rounded-2xl p-6"></div>
+
+                <!-- History -->
+                <div class="bg-white/5 rounded-2xl p-6">
+                    <h3 class="text-white text-sm font-medium mb-3 flex items-center gap-2">
+                        <i class="fas fa-history"></i> LỊCH SỬ ĐOÁN
+                    </h3>
+                    <div id="history" class="flex flex-wrap gap-2 min-h-[60px]"></div>
+                </div>
+
+                <!-- Play Again -->
+                <button onclick="resetGame()" 
+                        id="playAgainBtn"
+                        class="hidden w-full bg-white/10 hover:bg-white/20 text-white font-medium py-4 rounded-2xl transition">
+                    <i class="fas fa-redo mr-2"></i> CHƠI LẠI
+                </button>
+            </div>
+        </div>
+
+        <p class="text-center text-white/60 mt-6 text-sm">
+            FIT4015 - Lab 03 • JavaScript Game
+        </p>
+    </div>
+
+    <script>
+        let secretNumber = Math.floor(Math.random() * 100) + 1;
+        let attempts = 0;
+        let gameOver = false;
+        const history = [];
+
+        const messageEl = document.getElementById('message');
+        const historyEl = document.getElementById('history');
+        const attemptCountEl = document.getElementById('attemptCount');
+        const playAgainBtn = document.getElementById('playAgainBtn');
+
+        function showMessage(text, color) {
+            messageEl.innerHTML = `<span class="${color}">${text}</span>`;
+        }
+
+        function addToHistory(guess) {
+            history.push(guess);
+            historyEl.innerHTML = history.map(num => {
+                const isCorrect = num === secretNumber;
+                return `<span class="inline-block px-4 py-2 rounded-xl text-sm font-medium ${isCorrect ? 'bg-green-500 text-white' : num < secretNumber ? 'bg-blue-500 text-white' : 'bg-red-500 text-white'}">${num}</span>`;
+            }).join('');
+        }
+
+        function makeGuess() {
+            if (gameOver) return;
+
+            const guessInput = document.getElementById('guessInput');
+            const guess = parseInt(guessInput.value);
+
+            if (!guess || guess < 1 || guess > 100) {
+                showMessage("Vui lòng nhập số từ 1 đến 100!", "text-red-400");
+                return;
+            }
+
+            attempts++;
+            attemptCountEl.textContent = attempts;
+            addToHistory(guess);
+
+            if (guess === secretNumber) {
+                showMessage(`🎉 CHÚC MỪNG! Bạn đã đoán đúng số <span class="text-3xl font-bold">${secretNumber}</span> sau ${attempts} lần!`, "text-green-400");
+                document.getElementById('secretDisplay').textContent = secretNumber;
+                gameOver = true;
+                playAgainBtn.classList.remove('hidden');
+            } else if (guess < secretNumber) {
+                showMessage("🔼 Số bí mật lớn hơn số bạn đoán!", "text-blue-400");
+            } else {
+                showMessage("🔽 Số bí mật nhỏ hơn số bạn đoán!", "text-red-400");
+            }
+
+            guessInput.value = '';
+            guessInput.focus();
+        }
+
+        function resetGame() {
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            attempts = 0;
+            gameOver = false;
+            history.length = 0;
+            
+            attemptCountEl.textContent = '0';
+            historyEl.innerHTML = '';
+            messageEl.innerHTML = '';
+            document.getElementById('secretDisplay').textContent = '?';
+            playAgainBtn.classList.add('hidden');
+            document.getElementById('guessInput').focus();
+        }
+
+        // Khởi tạo
+        window.onload = () => {
+            document.getElementById('guessInput').focus();
+        };
+    </script>
+</body>
+</html>

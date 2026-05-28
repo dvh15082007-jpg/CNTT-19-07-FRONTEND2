@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Sinh Viên</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-100 min-h-screen p-6">
+
+    <div class="max-w-5xl mx-auto">
+
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+
+            <h1 class="text-3xl font-bold text-gray-800">
+                <i class="fas fa-user-graduate text-blue-500"></i>
+                Quản Lý Sinh Viên
+            </h1>
+
+            <button onclick="showForm()"
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-3 rounded-2xl">
+                <i class="fas fa-plus"></i>
+                Thêm
+            </button>
+
+        </div>
+
+        <!-- Form -->
+        <div id="formBox"
+             class="hidden bg-white rounded-3xl shadow-lg p-6 mb-8">
+
+            <h2 id="formTitle"
+                class="text-2xl font-bold mb-5 text-gray-800">
+                Thêm Sinh Viên
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-4">
+
+                <input id="name"
+                       type="text"
+                       placeholder="Họ tên"
+                       class="border rounded-2xl px-4 py-3 outline-none focus:border-blue-500">
+
+                <input id="studentId"
+                       type="text"
+                       placeholder="Mã sinh viên"
+                       class="border rounded-2xl px-4 py-3 outline-none focus:border-blue-500">
+
+                <input id="email"
+                       type="email"
+                       placeholder="Email"
+                       class="border rounded-2xl px-4 py-3 outline-none focus:border-blue-500">
+
+                <input id="gpa"
+                       type="number"
+                       step="0.1"
+                       placeholder="GPA"
+                       class="border rounded-2xl px-4 py-3 outline-none focus:border-blue-500">
+
+            </div>
+
+            <div class="flex gap-3 mt-6">
+
+                <button onclick="saveStudent()"
+                        class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-2xl">
+                    Lưu
+                </button>
+
+                <button onclick="hideForm()"
+                        class="flex-1 bg-gray-300 hover:bg-gray-400 py-3 rounded-2xl">
+                    Hủy
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- List -->
+        <div id="studentList"
+             class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        </div>
+
+    </div>
+
+    <script>
+
+        let students = [
+            {
+                id: 1,
+                name: "Nguyễn Văn A",
+                studentId: "SV001",
+                email: "vana@gmail.com",
+                gpa: 3.8
+            },
+
+            {
+                id: 2,
+                name: "Trần Thị B",
+                studentId: "SV002",
+                email: "thib@gmail.com",
+                gpa: 3.4
+            }
+        ];
+
+        let editingId = null;
+
+        function renderStudents() {
+
+            const list = document.getElementById("studentList");
+
+            list.innerHTML = students.map(student => `
+
+                <div class="bg-white rounded-3xl shadow-md p-5">
+
+                    <div class="flex justify-between items-start">
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">
+                                ${student.name}
+                            </h3>
+
+                            <p class="text-blue-500 font-medium">
+                                ${student.studentId}
+                            </p>
+                        </div>
+
+                        <div class="text-2xl font-bold ${
+                            student.gpa >= 3.5
+                                ? 'text-green-500'
+                                : 'text-orange-500'
+                        }">
+                            ${student.gpa}
+                        </div>
+
+                    </div>
+
+                    <p class="text-gray-500 mt-3">
+                        ${student.email}
+                    </p>
+
+                    <div class="flex gap-3 mt-5">
+
+                        <button onclick="editStudent(${student.id})"
+                                class="flex-1 bg-yellow-400 hover:bg-yellow-500 text-white py-2 rounded-2xl">
+                            Sửa
+                        </button>
+
+                        <button onclick="deleteStudent(${student.id})"
+                                class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-2xl">
+                            Xóa
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `).join("");
+
+        }
+
+        function showForm() {
+
+            editingId = null;
+
+            document.getElementById("formTitle").innerText =
+                "Thêm Sinh Viên";
+
+            clearForm();
+
+            document.getElementById("formBox")
+                .classList.remove("hidden");
+        }
+
+        function hideForm() {
+
+            document.getElementById("formBox")
+                .classList.add("hidden");
+        }
+
+        function clearForm() {
+
+            document.getElementById("name").value = "";
+            document.getElementById("studentId").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("gpa").value = "";
+        }
+
+        function saveStudent() {
+
+            const name = document.getElementById("name").value;
+            const studentId = document.getElementById("studentId").value;
+            const email = document.getElementById("email").value;
+            const gpa = parseFloat(
+                document.getElementById("gpa").value
+            ) || 0;
+
+            if (name.trim() === "") {
+                alert("Vui lòng nhập tên!");
+                return;
+            }
+
+            if (editingId) {
+
+                students = students.map(student =>
+
+                    student.id === editingId
+                        ? {
+                            ...student,
+                            name,
+                            studentId,
+                            email,
+                            gpa
+                        }
+                        : student
+                );
+
+            } else {
+
+                students.push({
+                    id: Date.now(),
+                    name,
+                    studentId,
+                    email,
+                    gpa
+                });
+
+            }
+
+            hideForm();
+            renderStudents();
+        }
+
+        function editStudent(id) {
+
+            const student = students.find(s => s.id === id);
+
+            editingId = id;
+
+            document.getElementById("formTitle").innerText =
+                "Sửa Sinh Viên";
+
+            document.getElementById("name").value =
+                student.name;
+
+            document.getElementById("studentId").value =
+                student.studentId;
+
+            document.getElementById("email").value =
+                student.email;
+
+            document.getElementById("gpa").value =
+                student.gpa;
+
+            document.getElementById("formBox")
+                .classList.remove("hidden");
+        }
+
+        function deleteStudent(id) {
+
+            if (confirm("Bạn có muốn xóa?")) {
+
+                students = students.filter(
+                    student => student.id !== id
+                );
+
+                renderStudents();
+            }
+        }
+
+        renderStudents();
+
+    </script>
+
+</body>
+</html>

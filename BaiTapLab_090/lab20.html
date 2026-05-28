@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 20 - Thêm Dữ Liệu Ajax</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-zinc-950 min-h-screen py-12 text-white">
+    <div class="max-w-2xl mx-auto px-4">
+        <h1 class="text-4xl font-bold text-center mb-10">➕ Thêm Mới Sản Phẩm</h1>
+
+        <div class="bg-zinc-900 rounded-3xl p-10">
+            <form id="addForm">
+                <div class="space-y-6">
+                    <input type="text" id="prodName" placeholder="Tên sản phẩm" 
+                           class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-6 py-5">
+                    <input type="number" id="prodPrice" placeholder="Giá (VNĐ)" 
+                           class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-6 py-5">
+                    <textarea id="prodDesc" placeholder="Mô tả sản phẩm" rows="3"
+                              class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-6 py-5"></textarea>
+                </div>
+                <button type="submit" 
+                        class="mt-8 w-full bg-emerald-600 hover:bg-emerald-700 py-6 rounded-2xl text-xl font-bold">
+                    Thêm Sản Phẩm Mới
+                </button>
+            </form>
+        </div>
+
+        <div id="success" class="hidden mt-6 text-center text-emerald-400 text-xl"></div>
+    </div>
+
+    <script>
+        $("#addForm").submit(function(e) {
+            e.preventDefault();
+            
+            const name = $("#prodName").val();
+            if (!name) return alert("Vui lòng nhập tên sản phẩm!");
+
+            $.ajax({
+                url: 'https://jsonplaceholder.typicode.com/posts',
+                method: 'POST',
+                data: {
+                    title: name,
+                    body: $("#prodDesc").val(),
+                    price: $("#prodPrice").val()
+                },
+                success: function(response) {
+                    $("#success").html(`✅ Thêm thành công sản phẩm!<br>ID mới: ${response.id}`).removeClass('hidden');
+                    $("#addForm")[0].reset();
+                    
+                    setTimeout(() => $("#success").addClass('hidden'), 4000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

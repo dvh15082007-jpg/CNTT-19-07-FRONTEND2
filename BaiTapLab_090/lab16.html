@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 16 - Bộ Đếm jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-zinc-950 min-h-screen flex items-center justify-center">
+    <div class="bg-zinc-900 rounded-3xl p-12 text-center shadow-2xl border border-white/10">
+        <h1 class="text-4xl font-bold text-white mb-8">🔢 Bộ Đếm Tương Tác</h1>
+        
+        <div id="counter" class="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 mb-12 transition-all duration-200">0</div>
+        
+        <div class="flex justify-center gap-6">
+            <button onclick="changeValue(-10)" class="w-16 h-16 bg-red-500 hover:bg-red-600 rounded-2xl text-3xl font-bold transition">−10</button>
+            <button onclick="changeValue(-1)" class="w-16 h-16 bg-red-500 hover:bg-red-600 rounded-2xl text-4xl font-bold transition">−</button>
+            <button onclick="resetCounter()" class="px-10 bg-zinc-700 hover:bg-zinc-600 rounded-2xl text-lg font-medium">RESET</button>
+            <button onclick="changeValue(1)" class="w-16 h-16 bg-emerald-500 hover:bg-emerald-600 rounded-2xl text-4xl font-bold transition">+</button>
+            <button onclick="changeValue(10)" class="w-16 h-16 bg-emerald-500 hover:bg-emerald-600 rounded-2xl text-3xl font-bold transition">+10</button>
+        </div>
+    </div>
+
+    <script>
+        let count = 0;
+        function updateCounter() {
+            $("#counter").text(count);
+        }
+        function changeValue(val) {
+            count += val;
+            updateCounter();
+        }
+        function resetCounter() {
+            count = 0;
+            updateCounter();
+        }
+    </script>
+</body>
+</html>

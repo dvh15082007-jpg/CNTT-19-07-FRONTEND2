@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 14 - jQuery Effects</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 min-h-screen py-12">
+    <div class="max-w-3xl mx-auto px-4">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold text-white">🎭 jQuery Effects</h1>
+            <p class="text-slate-400 mt-3">Thử tất cả hiệu ứng đẹp</p>
+        </div>
+
+        <div id="effectBox" class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-3xl p-16 text-center text-white text-3xl font-bold mb-10 shadow-2xl">
+            Hover hoặc click nút để xem hiệu ứng!
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button onclick="$('#effectBox').fadeOut(800).fadeIn(800)" class="bg-white/10 hover:bg-white/20 py-6 rounded-2xl">Fade In/Out</button>
+            <button onclick="$('#effectBox').slideUp(600).slideDown(600)" class="bg-white/10 hover:bg-white/20 py-6 rounded-2xl">Slide</button>
+            <button onclick="$('#effectBox').hide(500).show(500)" class="bg-white/10 hover:bg-white/20 py-6 rounded-2xl">Hide/Show</button>
+            <button onclick="$('#effectBox').toggleClass('scale-75')" class="bg-white/10 hover:bg-white/20 py-6 rounded-2xl">Scale</button>
+        </div>
+    </div>
+</body>
+</html>

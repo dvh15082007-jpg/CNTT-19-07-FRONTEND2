@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 10 - Fetch Data từ API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 min-h-screen py-12 text-white">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold mb-3">📡 Hiển Thị Dữ Liệu Từ API</h1>
+            <button onclick="loadUsers()" 
+                    class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-2xl font-medium">
+                <i class="fas fa-sync"></i> Tải Danh Sách Users
+            </button>
+        </div>
+
+        <div id="userList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
+
+    <script>
+        async function loadUsers() {
+            const container = document.getElementById('userList');
+            container.innerHTML = `<p class="text-center col-span-3 text-slate-400">Đang tải dữ liệu...</p>`;
+
+            try {
+                // Sử dụng JSONPlaceholder API (public)
+                const res = await fetch('https://jsonplaceholder.typicode.com/users');
+                const users = await res.json();
+
+                container.innerHTML = users.map(user => `
+                    <div class="bg-zinc-900 rounded-3xl p-6 border border-zinc-700 hover:border-blue-500 transition">
+                        <h3 class="font-bold text-xl">${user.name}</h3>
+                        <p class="text-blue-400">${user.email}</p>
+                        <p class="text-slate-400 mt-2">${user.company.name}</p>
+                        <p class="text-sm text-slate-500 mt-4">${user.address.city}</p>
+                    </div>
+                `).join('');
+            } catch (e) {
+                container.innerHTML = `<p class="text-red-400 text-center">Lỗi khi tải dữ liệu!</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

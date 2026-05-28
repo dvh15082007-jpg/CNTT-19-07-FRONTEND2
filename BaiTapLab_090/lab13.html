@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 13 - jQuery Hide & Show</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-zinc-950 min-h-screen py-12 text-white">
+    <div class="max-w-2xl mx-auto px-4">
+        <div class="bg-zinc-900 rounded-3xl p-10 text-center">
+            <h1 class="text-4xl font-bold mb-10">✨ jQuery Hide / Show</h1>
+            
+            <div id="contentBox" class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-3xl p-12 mb-10 min-h-[300px] flex items-center justify-center text-2xl font-medium">
+                Nội dung đẹp này sẽ ẩn / hiện
+            </div>
+
+            <div class="flex gap-4 justify-center">
+                <button onclick="hideContent()" class="bg-red-500 hover:bg-red-600 px-10 py-4 rounded-2xl font-medium">Ẩn</button>
+                <button onclick="showContent()" class="bg-emerald-500 hover:bg-emerald-600 px-10 py-4 rounded-2xl font-medium">Hiện</button>
+                <button onclick="toggleContent()" class="bg-amber-500 hover:bg-amber-600 px-10 py-4 rounded-2xl font-medium">Toggle</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function hideContent() {
+            $("#contentBox").fadeOut(600);
+        }
+        function showContent() {
+            $("#contentBox").fadeIn(600);
+        }
+        function toggleContent() {
+            $("#contentBox").slideToggle(500);
+        }
+    </script>
+</body>
+</html>

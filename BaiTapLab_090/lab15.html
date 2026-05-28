@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 15 - Form Validation jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-slate-900 to-purple-950 min-h-screen py-12 text-white">
+    <div class="max-w-lg mx-auto px-4">
+        <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-10 border border-white/20">
+            <h1 class="text-4xl font-bold text-center mb-8">📝 Đăng Ký Tài Khoản</h1>
+            
+            <form id="registerForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm mb-2">Họ và tên</label>
+                    <input type="text" id="fullName" class="w-full bg-white/10 border border-white/30 rounded-2xl px-6 py-4 focus:outline-none focus:border-purple-400">
+                    <p id="nameError" class="text-red-400 text-sm mt-1 hidden"></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm mb-2">Email</label>
+                    <input type="email" id="email" class="w-full bg-white/10 border border-white/30 rounded-2xl px-6 py-4 focus:outline-none focus:border-purple-400">
+                    <p id="emailError" class="text-red-400 text-sm mt-1 hidden"></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm mb-2">Mật khẩu</label>
+                    <input type="password" id="password" class="w-full bg-white/10 border border-white/30 rounded-2xl px-6 py-4 focus:outline-none focus:border-purple-400">
+                    <p id="passwordError" class="text-red-400 text-sm mt-1 hidden"></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm mb-2">Xác nhận mật khẩu</label>
+                    <input type="password" id="confirmPassword" class="w-full bg-white/10 border border-white/30 rounded-2xl px-6 py-4 focus:outline-none focus:border-purple-400">
+                    <p id="confirmError" class="text-red-400 text-sm mt-1 hidden"></p>
+                </div>
+
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-purple-600 to-pink-600 py-5 rounded-2xl font-bold text-lg hover:scale-105 transition">
+                    ĐĂNG KÝ
+                </button>
+            </form>
+
+            <div id="successMessage" class="hidden mt-6 text-center text-emerald-400 font-medium"></div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $("#registerForm").submit(function(e) {
+                e.preventDefault();
+                let isValid = true;
+
+                // Reset errors
+                $(".text-red-400").addClass("hidden");
+
+                // Kiểm tra họ tên
+                if ($("#fullName").val().trim().length < 3) {
+                    $("#nameError").text("Họ tên phải có ít nhất 3 ký tự").removeClass("hidden");
+                    isValid = false;
+                }
+
+                // Kiểm tra email
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test($("#email").val())) {
+                    $("#emailError").text("Email không hợp lệ").removeClass("hidden");
+                    isValid = false;
+                }
+
+                // Kiểm tra mật khẩu
+                if ($("#password").val().length < 6) {
+                    $("#passwordError").text("Mật khẩu phải có ít nhất 6 ký tự").removeClass("hidden");
+                    isValid = false;
+                }
+
+                // Kiểm tra xác nhận mật khẩu
+                if ($("#password").val() !== $("#confirmPassword").val()) {
+                    $("#confirmError").text("Mật khẩu xác nhận không khớp").removeClass("hidden");
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    $("#successMessage").html("🎉 Đăng ký thành công!<br>Bạn đã hoàn thành Lab 15.").removeClass("hidden");
+                    setTimeout(() => location.reload(), 2500);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

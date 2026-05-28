@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 19 - jQuery Ajax</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 min-h-screen py-12 text-white">
+    <div class="max-w-6xl mx-auto px-4">
+        <div class="flex justify-between items-center mb-10">
+            <h1 class="text-4xl font-bold">📡 Tải Dữ Liệu Ajax</h1>
+            <button onclick="loadData()" 
+                    class="bg-sky-600 hover:bg-sky-700 px-8 py-4 rounded-2xl flex items-center gap-3">
+                <i class="fas fa-sync"></i> Tải Danh Sách
+            </button>
+        </div>
+
+        <div id="dataContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
+
+    <script>
+        function loadData() {
+            const container = $("#dataContainer");
+            container.html('<p class="col-span-3 text-center text-slate-400 py-20">Đang tải dữ liệu từ server...</p>');
+
+            $.ajax({
+                url: 'https://jsonplaceholder.typicode.com/posts',
+                method: 'GET',
+                success: function(posts) {
+                    let html = '';
+                    posts.slice(0, 9).forEach(post => {
+                        html += `
+                            <div class="bg-zinc-900 rounded-3xl p-7 hover:border-sky-500 border border-transparent transition">
+                                <h3 class="font-bold text-lg line-clamp-2">${post.title}</h3>
+                                <p class="text-slate-400 mt-4 line-clamp-3">${post.body}</p>
+                                <div class="text-xs text-sky-400 mt-6">Post ID: ${post.id}</div>
+                            </div>`;
+                    });
+                    container.html(html);
+                },
+                error: function() {
+                    container.html('<p class="text-red-400 text-center py-20">Lỗi khi tải dữ liệu!</p>');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

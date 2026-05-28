@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 16 - Bộ đếm tương tác</title>
+    <!-- JQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        #count { font-size: 50px; font-weight: bold; margin: 10px 0; }
+        .duong { color: green; }
+        .am { color: red; }
+        .bang0 { color: black; }
+        button { padding: 8px 15px; margin-right: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Bộ Đếm Tương Tác</h2>
+    <div id="count" class="bang0">0</div>
+    <button class="tang">+1</button>
+    <button class="giam">-1</button>
+    <button class="reset">Reset</button>
+    <button class="tang10">+10</button>
+    <script>
+        let soDem = 0;
+        function capNhatGiaoDien(){
+            $("#count").text(soDem);
+            // Thay doi class mau sac theo gia tri soDem
+            if(soDem > 0){
+                $("#count").removeClass("am bang0").addClass("duong");
+            }
+            else if(soDem < 0){
+                $("#count").removeClass("duong bang0").addClass("am");
+            }
+            else{
+                $("#count").removeClass("duong am").addClass("bang0");
+            }
+        }
+        // Gan su kien click cho cac nut dieu khien
+        $(".tang").click(function(){
+            soDem++;
+            capNhatGiaoDien();
+        });
+        $(".giam").click(function(){
+            soDem--;
+            capNhatGiaoDien();
+        });
+        $(".reset").click(function(){
+            soDem = 0;
+            capNhatGiaoDien();
+        });
+        $(".tang10").click(function(){
+            soDem += 10;
+            capNhatGiaoDien();
+        });
+    </script>
+</body>
+</html>

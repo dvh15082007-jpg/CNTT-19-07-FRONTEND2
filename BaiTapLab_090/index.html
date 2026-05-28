@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Windows 12 Desktop</title>
+
+<link rel="icon"
+href="https://upload.wikimedia.org/wikipedia/commons/5/5f/Windows_logo_-_2021.svg">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<style>
+
+:root{
+    --glass:rgba(255,255,255,0.10);
+    --hover:rgba(255,255,255,0.18);
+    --border:rgba(255,255,255,0.15);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+    user-select:none;
+}
+
+body{
+
+    width:100%;
+    height:100vh;
+
+    overflow:hidden;
+
+    background:url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop');
+
+    background-size:cover;
+    background-position:center;
+
+    color:white;
+
+    transition:1s;
+
+}
+
+/* =========================
+   DESKTOP
+========================= */
+
+.desktop{
+
+    width:100%;
+    height:calc(100vh - 75px);
+
+    padding:25px;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fill,120px);
+
+    gap:18px;
+
+    align-content:start;
+
+}
+
+.icon{
+
+    width:115px;
+
+    padding:14px 10px;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.icon:hover{
+
+    background:rgba(255,255,255,0.14);
+
+    transform:
+    translateY(-4px)
+    scale(1.04);
+
+}
+
+.icon i{
+
+    font-size:60px;
+
+    margin-bottom:10px;
+
+}
+
+.icon:nth-child(6n+1) i{
+    color:#60a5fa;
+}
+
+.icon:nth-child(6n+2) i{
+    color:#f472b6;
+}
+
+.icon:nth-child(6n+3) i{
+    color:#34d399;
+}
+
+.icon:nth-child(6n+4) i{
+    color:#facc15;
+}
+
+.icon:nth-child(6n+5) i{
+    color:#fb923c;
+}
+
+.icon:nth-child(6n+6) i{
+    color:#a78bfa;
+}
+
+.icon p{
+
+    font-size:14px;
+
+    text-shadow:
+    0 3px 8px rgba(0,0,0,0.5);
+
+}
+
+/* =========================
+   TASKBAR
+========================= */
+
+.taskbar{
+
+    position:fixed;
+
+    left:50%;
+    bottom:10px;
+
+    transform:translateX(-50%);
+
+    width:96%;
+    max-width:1300px;
+
+    height:68px;
+
+    border-radius:24px;
+
+    background:rgba(20,20,20,0.42);
+
+    backdrop-filter:blur(35px);
+
+    border:1px solid var(--border);
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    z-index:999;
+
+}
+
+.task-icons{
+
+    display:flex;
+
+    gap:12px;
+
+}
+
+.task-icon{
+
+    width:56px;
+    height:56px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:25px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.task-icon:hover{
+
+    background:var(--hover);
+
+    transform:
+    translateY(-3px)
+    scale(1.06);
+
+}
+
+.clock{
+
+    position:absolute;
+
+    right:22px;
+
+    text-align:center;
+
+    font-size:13px;
+
+}
+
+/* =========================
+   START MENU
+========================= */
+
+.start-menu{
+
+    position:fixed;
+
+    left:50%;
+    bottom:90px;
+
+    transform:
+    translateX(-50%)
+    scale(.92);
+
+    width:760px;
+    max-width:96%;
+
+    height:560px;
+
+    background:rgba(30,30,30,0.7);
+
+    backdrop-filter:blur(40px);
+
+    border-radius:30px;
+
+    border:1px solid rgba(255,255,255,0.1);
+
+    padding:28px;
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:.25s;
+
+    z-index:999;
+
+}
+
+.start-menu.active{
+
+    opacity:1;
+    visibility:visible;
+
+    transform:
+    translateX(-50%)
+    scale(1);
+
+}
+
+.start-top{
+
+    display:flex;
+
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+.start-title{
+
+    font-size:28px;
+    font-weight:700;
+
+}
+
+.search-box{
+
+    width:280px;
+    height:46px;
+
+    border:none;
+    outline:none;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,0.08);
+
+    color:white;
+
+    padding:0 15px;
+
+}
+
+.apps{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fill,minmax(120px,1fr));
+
+    gap:18px;
+
+}
+
+.app{
+
+    background:rgba(255,255,255,0.06);
+
+    border-radius:18px;
+
+    padding:20px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.app:hover{
+
+    background:rgba(255,255,255,0.15);
+
+    transform:translateY(-4px);
+
+}
+
+.app i{
+
+    font-size:42px;
+
+    margin-bottom:12px;
+
+    color:#60a5fa;
+
+}
+
+/* =========================
+   BROWSER WINDOW
+========================= */
+
+.browser{
+
+    position:fixed;
+
+    top:50%;
+    left:50%;
+
+    transform:
+    translate(-50%,-50%);
+
+    width:90%;
+    height:85vh;
+
+    background:white;
+
+    border-radius:22px;
+
+    overflow:hidden;
+
+    display:none;
+
+    z-index:99999;
+
+    box-shadow:
+    0 20px 60px rgba(0,0,0,0.45);
+
+}
+
+.browser.active{
+    display:block;
+}
+
+.browser-top{
+
+    height:60px;
+
+    background:#202124;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 18px;
+
+}
+
+.browser-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+.browser-dot{
+
+    width:13px;
+    height:13px;
+
+    border-radius:50%;
+
+}
+
+.red{
+    background:#ff5f57;
+}
+
+.yellow{
+    background:#ffbd2e;
+}
+
+.green{
+    background:#28c840;
+}
+
+.browser-title{
+
+    color:white;
+
+    font-size:14px;
+
+    margin-left:10px;
+
+}
+
+.browser iframe{
+
+    width:100%;
+    height:calc(100% - 60px);
+
+    border:none;
+
+}
+
+/* =========================
+   RIGHT CLICK
+========================= */
+
+.context-menu{
+
+    position:fixed;
+
+    width:240px;
+
+    background:rgba(35,35,35,0.95);
+
+    backdrop-filter:blur(30px);
+
+    border-radius:18px;
+
+    padding:10px;
+
+    display:none;
+
+    z-index:999999;
+
+}
+
+.context-menu button{
+
+    width:100%;
+
+    border:none;
+    outline:none;
+
+    background:none;
+
+    color:white;
+
+    text-align:left;
+
+    padding:13px 14px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.context-menu button:hover{
+
+    background:rgba(255,255,255,0.12);
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- DESKTOP -->
+
+<div class="desktop" id="desktop"></div>
+
+<!-- START MENU -->
+
+<div class="start-menu" id="startMenu">
+
+    <div class="start-top">
+
+        <div class="start-title">
+            Applications
+        </div>
+
+        <input
+        type="text"
+        class="search-box"
+        id="searchBox"
+        placeholder="Tìm kiếm file...">
+
+    </div>
+
+    <div class="apps" id="apps"></div>
+
+</div>
+
+<!-- TASKBAR -->
+
+<div class="taskbar">
+
+    <div class="task-icons">
+
+        <div class="task-icon"
+        id="startBtn">
+
+            <i class="fa-brands fa-windows"></i>
+
+        </div>
+
+        <div class="task-icon"
+        onclick="openWeb('https://www.google.com/webhp?igu=1','Google Chrome')">
+
+            <i class="fa-brands fa-chrome"></i>
+
+        </div>
+
+        <div class="task-icon"
+        onclick="openWeb('https://github.com','GitHub')">
+
+            <i class="fa-brands fa-github"></i>
+
+        </div>
+
+        <div class="task-icon"
+        onclick="openWeb('https://www.youtube.com','YouTube')">
+
+            <i class="fa-brands fa-youtube"></i>
+
+        </div>
+
+        <div class="task-icon"
+        onclick="openWeb('https://chatgpt.com','ChatGPT')">
+
+            <i class="fa-solid fa-robot"></i>
+
+        </div>
+
+    </div>
+
+    <div class="clock" id="clock"></div>
+
+</div>
+
+<!-- BROWSER -->
+
+<div class="browser" id="browser">
+
+    <div class="browser-top">
+
+        <div class="browser-left">
+
+            <div class="browser-dot red"
+            onclick="closeBrowser()"></div>
+
+            <div class="browser-dot yellow"></div>
+
+            <div class="browser-dot green"></div>
+
+            <div class="browser-title"
+            id="browserTitle">
+                Browser
+            </div>
+
+        </div>
+
+    </div>
+
+    <iframe id="browserFrame"></iframe>
+
+</div>
+
+<!-- RIGHT CLICK -->
+
+<div class="context-menu"
+id="contextMenu">
+
+    <button onclick="randomWallpaper()">
+        🖼️ Đổi background
+    </button>
+
+    <button onclick="location.reload()">
+        🔄 Refresh
+    </button>
+
+</div>
+
+<script>
+
+/* =========================
+   FILES
+========================= */
+
+const files = [];
+
+for(let i=1;i<=24;i++){
+
+    files.push(
+        `lab${String(i).padStart(2,'0')}.html`
+    );
+
+}
+
+/* =========================
+   ICONS
+========================= */
+
+const desktop =
+document.getElementById("desktop");
+
+const apps =
+document.getElementById("apps");
+
+function createIcons(list){
+
+    desktop.innerHTML = "";
+    apps.innerHTML = "";
+
+    list.forEach(file=>{
+
+        const name =
+        file.replace(".html","")
+            .toUpperCase();
+
+        const icon =
+        document.createElement("div");
+
+        icon.className = "icon";
+
+        icon.innerHTML = `
+            <i class="fa-solid fa-file-code"></i>
+            <p>${name}</p>
+        `;
+
+        icon.ondblclick = ()=>{
+
+            window.location.href = file;
+
+        };
+
+        desktop.appendChild(icon);
+
+        const app =
+        document.createElement("div");
+
+        app.className = "app";
+
+        app.innerHTML = `
+            <i class="fa-solid fa-laptop-code"></i>
+            <p>${name}</p>
+        `;
+
+        app.onclick = ()=>{
+
+            window.location.href = file;
+
+        };
+
+        apps.appendChild(app);
+
+    });
+
+}
+
+createIcons(files);
+
+/* =========================
+   START MENU
+========================= */
+
+const startBtn =
+document.getElementById("startBtn");
+
+const startMenu =
+document.getElementById("startMenu");
+
+startBtn.onclick = ()=>{
+
+    startMenu.classList.toggle("active");
+
+};
+
+/* =========================
+   SEARCH
+========================= */
+
+const searchBox =
+document.getElementById("searchBox");
+
+searchBox.addEventListener("input",()=>{
+
+    const keyword =
+    searchBox.value.toLowerCase();
+
+    const filtered =
+    files.filter(file=>
+        file.toLowerCase()
+        .includes(keyword)
+    );
+
+    createIcons(filtered);
+
+});
+
+/* =========================
+   CLOCK
+========================= */
+
+function updateClock(){
+
+    const now = new Date();
+
+    const time =
+    now.toLocaleTimeString(
+        'vi-VN',
+        {
+            hour:'2-digit',
+            minute:'2-digit'
+        }
+    );
+
+    const date =
+    now.toLocaleDateString('vi-VN');
+
+    document.getElementById("clock")
+    .innerHTML =
+    `${time}<br>${date}`;
+
+}
+
+setInterval(updateClock,1000);
+
+updateClock();
+
+/* =========================
+   RIGHT CLICK
+========================= */
+
+const contextMenu =
+document.getElementById("contextMenu");
+
+document.addEventListener(
+"contextmenu",e=>{
+
+    e.preventDefault();
+
+    contextMenu.style.display =
+    "block";
+
+    contextMenu.style.left =
+    e.pageX + "px";
+
+    contextMenu.style.top =
+    e.pageY + "px";
+
+});
+
+document.addEventListener(
+"click",()=>{
+
+    contextMenu.style.display =
+    "none";
+
+});
+
+/* =========================
+   WALLPAPERS
+========================= */
+
+const wallpapers = [
+
+"https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop",
+
+"https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=1920&auto=format&fit=crop",
+
+"https://images.unsplash.com/photo-1511300636408-a63a89df3482?q=80&w=1920&auto=format&fit=crop",
+
+"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1920&auto=format&fit=crop",
+
+"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop",
+
+"https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=1920&auto=format&fit=crop",
+
+"https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1920&auto=format&fit=crop",
+
+"https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=1920&auto=format&fit=crop",
+
+"https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1920&auto=format&fit=crop",
+
+"https://images.unsplash.com/photo-1511884642898-4c92249e20b6?q=80&w=1920&auto=format&fit=crop"
+
+];
+
+function randomWallpaper(){
+
+    const random =
+    wallpapers[
+        Math.floor(
+            Math.random()
+            * wallpapers.length
+        )
+    ];
+
+    document.body.style.backgroundImage =
+    `url('${random}')`;
+
+}
+
+/* =========================
+   INTERNAL WEB VIEW
+========================= */
+
+const browser =
+document.getElementById("browser");
+
+const browserFrame =
+document.getElementById("browserFrame");
+
+const browserTitle =
+document.getElementById("browserTitle");
+
+function openWeb(url,title){
+
+    browser.classList.add("active");
+
+    browserFrame.src = url;
+
+    browserTitle.innerText = title;
+
+}
+
+function closeBrowser(){
+
+    browser.classList.remove("active");
+
+    browserFrame.src = "";
+
+}
+
+</script>
+
+</body>
+</html>
